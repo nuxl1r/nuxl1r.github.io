@@ -32,3 +32,4 @@ document.addEventListener('pjax:success', () => {
     NexT.utils.updateSidebarPosition();
   }
 });
+<script src="./node_modules/pjax/pjax.js"></script>

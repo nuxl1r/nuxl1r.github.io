@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>Linux 的 nohup 命令的用法</title>
-    <url>/2022/02/23/Linux%20%E7%9A%84%20nohup%20%E5%91%BD%E4%BB%A4%E7%9A%84%E7%94%A8%E6%B3%95/</url>
+    <url>/Linux/Linux%20%E7%9A%84%20nohup%20%E5%91%BD%E4%BB%A4%E7%9A%84%E7%94%A8%E6%B3%95/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>如果你正在运行一个进程，而且你觉得在退出帐户时该进程还不会结束，那么可以使用 nohup 命令。</p>
 <span id="more"></span>
 
@@ -20,7 +20,7 @@
 <p>如果非当前 <code>shell</code> 终端，可以通过 <code>ps auxf | grep adapter-minisite</code> 获取 <code>pid</code> 然后 <code>kill pid</code>。</p>
 ]]></content>
       <categories>
-        <category>学习笔记</category>
+        <category>指令</category>
       </categories>
       <tags>
         <tag>Linux</tag>
@@ -28,11 +28,11 @@
   </entry>
   <entry>
     <title>SQL注入详解</title>
-    <url>/2022/02/23/SQL%E6%B3%A8%E5%85%A5%E8%AF%A6%E8%A7%A3/</url>
+    <url>/SQLInject/SQL%E6%B3%A8%E5%85%A5%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<h1 id="SQl注入原因（简单描述）"><a href="#SQl注入原因（简单描述）" class="headerlink" title="SQl注入原因（简单描述）"></a>SQl注入原因（简单描述）</h1><p>SQL注入是服务器端未严格检查客户端发送的数据，而导致服务端SQL语句被恶意修改并成功执行的行为称为SQL注入 </p>
 <span id="more"></span>
 
-<p><a href="https://imgchr.com/i/sj8AYR"><img data-src="https://s3.ax1x.com/2021/01/26/sj8AYR.png" alt="sj8AYR.png" border="0" /></a></p>
+<p><a href="https://imgchr.com/i/sj8AYR"><img src="https://s3.ax1x.com/2021/01/26/sj8AYR.png" alt="sj8AYR.png" border="0" /></a></p>
 <p>出现原因</p>
 <ol>
 <li>代码对带入SQL语句的参数过滤不严格</li>
