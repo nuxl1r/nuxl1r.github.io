@@ -1,32 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Linux 的 nohup 命令的用法</title>
-    <url>/Linux/Linux%20%E7%9A%84%20nohup%20%E5%91%BD%E4%BB%A4%E7%9A%84%E7%94%A8%E6%B3%95/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>如果你正在运行一个进程，而且你觉得在退出帐户时该进程还不会结束，那么可以使用 nohup 命令。</p>
-<span id="more"></span>
-
-<h1 id="命令简介"><a href="#命令简介" class="headerlink" title="命令简介"></a>命令简介</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ nohup Command [ Arg … ] [ &amp; ]</span><br></pre></td></tr></table></figure>
-
-<p>该命令可以在你退出帐户&#x2F;关闭终端之后继续运行相应的进程。<code>nohup</code>就是不挂起的意思（<code>no hang up</code>）。</p>
-<p><code>nohup</code> 运行由 <code>Command</code> 和相关的 <code>Arg</code> 参数指定的命令，忽略所有挂断（<code>SIGHUP</code>）信号。要运行后台中的 <code>nohup</code> 命令，添加 <code>&amp;</code> （ 表示 <code>and</code> 的符号）到命令的尾部。</p>
-<p>如果使用 <code>nohup</code> 命令提交作业，那么在缺省情况下该作业的所有输出都被重定向到一个名为 nohup.out 的文件中，除非另外指定了输出文件。</p>
-<h1 id="使用举例"><a href="#使用举例" class="headerlink" title="使用举例"></a>使用举例</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ nohup java -jar adapter-minisite.jar /tomcat-1 /tomcat-2 &gt; logs.txt 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
-
-<p>在上面的例子中，运行命令 <code>java -jar adapter-minisite.jar</code> 输入参数 <code>/tomcat-1</code> 和 <code>/tomcat-2</code>，输出被重定向到 <code>logs.txt</code> 文件中。</p>
-<h1 id="退出任务"><a href="#退出任务" class="headerlink" title="退出任务"></a>退出任务</h1><p>如果运行的任务在当前 <code>shell</code> 终端，可以通过 <code>jobs</code> 命令查询相关信息，并且杀掉进程。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 查看当前 shell 终端的后台运行任务进程信息</span><br><span class="line">$ jobs</span><br><span class="line">[1]+ Running nohup java -jar adapter-minisite.jar /tomcat-1 /tomcat-2 &gt; logs.txt 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line"># 杀掉任务号</span><br><span class="line">$ kill %1</span><br><span class="line"></span><br><span class="line"># 或着找到 pid</span><br><span class="line">$ jobs -l</span><br><span class="line">[1]+ 11076 Running nohup java -jar adapter-minisite.jar /tomcat-1 /tomcat-2 &gt; logs.txt 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line">$ kill 11076</span><br><span class="line"></span><br><span class="line"># 或着</span><br><span class="line">$ fg %n # 置为前端运行</span><br><span class="line"></span><br><span class="line">Ctrl + c # 退出</span><br></pre></td></tr></table></figure>
-
-<p>如果非当前 <code>shell</code> 终端，可以通过 <code>ps auxf | grep adapter-minisite</code> 获取 <code>pid</code> 然后 <code>kill pid</code>。</p>
-]]></content>
-      <categories>
-        <category>指令</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>SQL注入详解</title>
     <url>/SQLInject/SQL%E6%B3%A8%E5%85%A5%E8%AF%A6%E8%A7%A3/</url>
     <content><![CDATA[<h1 id="SQl注入原因（简单描述）"><a href="#SQl注入原因（简单描述）" class="headerlink" title="SQl注入原因（简单描述）"></a>SQl注入原因（简单描述）</h1><p>SQL注入是服务器端未严格检查客户端发送的数据，而导致服务端SQL语句被恶意修改并成功执行的行为称为SQL注入 </p>
@@ -243,6 +217,32 @@
       </categories>
       <tags>
         <tag>网络安全注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>nohup命令</title>
+    <url>/Linux/nohup%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>如果你正在运行一个进程，而且你觉得在退出帐户时该进程还不会结束，那么可以使用 nohup 命令。</p>
+<span id="more"></span>
+
+<h1 id="命令简介"><a href="#命令简介" class="headerlink" title="命令简介"></a>命令简介</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ nohup Command [ Arg … ] [ &amp; ]</span><br></pre></td></tr></table></figure>
+
+<p>该命令可以在你退出帐户&#x2F;关闭终端之后继续运行相应的进程。<code>nohup</code>就是不挂起的意思（<code>no hang up</code>）。</p>
+<p><code>nohup</code> 运行由 <code>Command</code> 和相关的 <code>Arg</code> 参数指定的命令，忽略所有挂断（<code>SIGHUP</code>）信号。要运行后台中的 <code>nohup</code> 命令，添加 <code>&amp;</code> （ 表示 <code>and</code> 的符号）到命令的尾部。</p>
+<p>如果使用 <code>nohup</code> 命令提交作业，那么在缺省情况下该作业的所有输出都被重定向到一个名为 nohup.out 的文件中，除非另外指定了输出文件。</p>
+<h1 id="使用举例"><a href="#使用举例" class="headerlink" title="使用举例"></a>使用举例</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ nohup java -jar adapter-minisite.jar /tomcat-1 /tomcat-2 &gt; logs.txt 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+
+<p>在上面的例子中，运行命令 <code>java -jar adapter-minisite.jar</code> 输入参数 <code>/tomcat-1</code> 和 <code>/tomcat-2</code>，输出被重定向到 <code>logs.txt</code> 文件中。</p>
+<h1 id="退出任务"><a href="#退出任务" class="headerlink" title="退出任务"></a>退出任务</h1><p>如果运行的任务在当前 <code>shell</code> 终端，可以通过 <code>jobs</code> 命令查询相关信息，并且杀掉进程。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 查看当前 shell 终端的后台运行任务进程信息</span><br><span class="line">$ jobs</span><br><span class="line">[1]+ Running nohup java -jar adapter-minisite.jar /tomcat-1 /tomcat-2 &gt; logs.txt 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line"># 杀掉任务号</span><br><span class="line">$ kill %1</span><br><span class="line"></span><br><span class="line"># 或着找到 pid</span><br><span class="line">$ jobs -l</span><br><span class="line">[1]+ 11076 Running nohup java -jar adapter-minisite.jar /tomcat-1 /tomcat-2 &gt; logs.txt 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line">$ kill 11076</span><br><span class="line"></span><br><span class="line"># 或着</span><br><span class="line">$ fg %n # 置为前端运行</span><br><span class="line"></span><br><span class="line">Ctrl + c # 退出</span><br></pre></td></tr></table></figure>
+
+<p>如果非当前 <code>shell</code> 终端，可以通过 <code>ps auxf | grep adapter-minisite</code> 获取 <code>pid</code> 然后 <code>kill pid</code>。</p>
+]]></content>
+      <categories>
+        <category>指令</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
       </tags>
   </entry>
 </search>
