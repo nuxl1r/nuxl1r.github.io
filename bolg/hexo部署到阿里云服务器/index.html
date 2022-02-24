@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/black/pace-theme-corner-indicator.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"nuxm.gitee.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.10.0","exturl":true,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":true,"preload":true}}</script><script src="/js/config.js"></script>
+
+  <meta name="description" content="前言 域名还没下来，就先用gitee，但是先记录一下自己hexo部署过程o(￣▽￣)o">
+<meta property="og:type" content="website">
+<meta property="og:title" content="hexo部署到阿里云服务器">
+<meta property="og:url" content="https://nuxm.gitee.io/bolg/hexo%E9%83%A8%E7%BD%B2%E5%88%B0%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/index.html">
+<meta property="og:site_name" content="This —&gt; 昊">
+<meta property="og:description" content="前言 域名还没下来，就先用gitee，但是先记录一下自己hexo部署过程o(￣▽￣)o">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s3.ax1x.com/2020/12/06/DXOrtg.png">
+<meta property="og:image" content="https://s3.ax1x.com/2020/12/06/DXzRTP.png">
+<meta property="og:image" content="https://s3.ax1x.com/2020/12/06/DjSY9S.png">
+<meta property="og:image" content="https://s3.ax1x.com/2020/12/06/DjSrNV.png">
+<meta property="og:image" content="https://s3.ax1x.com/2020/12/06/DjpPgg.png">
+<meta property="og:image" content="https://s3.ax1x.com/2020/12/06/DjpK8U.png">
+<meta property="og:image" content="https://s3.ax1x.com/2020/12/06/Djp2Pf.png">
+<meta property="og:image" content="https://s3.ax1x.com/2020/12/06/Dj98SS.png">
+<meta property="og:image" content="https://s3.ax1x.com/2020/12/06/Dj9BWT.png">
+<meta property="og:image" content="https://s3.ax1x.com/2020/12/06/DjCPmj.png">
+<meta property="og:image" content="https://s3.ax1x.com/2020/12/06/DjCncF.png">
+<meta property="og:image" content="https://s3.ax1x.com/2020/12/06/DjCl7R.png">
+<meta property="og:image" content="https://s3.ax1x.com/2020/12/06/DjC3A1.png">
+<meta property="og:image" content="https://s3.ax1x.com/2020/12/06/Dji6Og.png">
+<meta property="og:image" content="https://s3.ax1x.com/2020/12/06/DjFPne.png">
+<meta property="og:image" content="https://s3.ax1x.com/2020/12/06/DjF69x.png">
+<meta property="article:published_time" content="2022-02-23T02:55:56.022Z">
+<meta property="article:modified_time" content="2022-02-24T06:15:57.536Z">
+<meta property="article:author" content="昊">
+<meta property="article:tag" content="博客搭建">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s3.ax1x.com/2020/12/06/DXOrtg.png">
+
+
+<link rel="canonical" href="https://nuxm.gitee.io/bolg/hexo%E9%83%A8%E7%BD%B2%E5%88%B0%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/bolg/hexo%E9%83%A8%E7%BD%B2%E5%88%B0%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/","path":"bolg/hexo部署到阿里云服务器/","title":"hexo部署到阿里云服务器"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>hexo部署到阿里云服务器 | This —> 昊</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">This —> 昊</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">不过是些许风雪罢了</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E6%9C%9F%E5%87%86%E5%A4%87"><span class="nav-number">1.1.</span> <span class="nav-text">前期准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83"><span class="nav-number">1.2.</span> <span class="nav-text">服务器环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF"><span class="nav-number">1.3.</span> <span class="nav-text">思路</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A3%E6%96%87"><span class="nav-number">2.</span> <span class="nav-text">正文</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%88%9B%E5%BB%BA%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%88%9B%E5%BB%BAgit%E7%94%A8%E6%88%B7"><span class="nav-number">2.1.</span> <span class="nav-text">服务器创建服务器创建git用户</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AAgit%E7%94%A8%E6%88%B7%EF%BC%8C%E7%94%A8%E6%9D%A5%E8%BF%90%E8%A1%8Cgit%E6%9C%8D%E5%8A%A1%E3%80%82%EF%BC%88root%E4%B8%8D%E5%AE%89%E5%85%A8%EF%BC%89"><span class="nav-number">2.1.1.</span> <span class="nav-text">创建一个git用户，用来运行git服务。（root不安全）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%AF%86%E7%A0%81"><span class="nav-number">2.1.2.</span> <span class="nav-text">设置密码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0git%E7%94%A8%E6%88%B7%E6%89%A7%E8%A1%8Csudo%E7%9A%84%E6%9D%83%E9%99%90"><span class="nav-number">2.1.3.</span> <span class="nav-text">增加git用户执行sudo的权限</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%89%93%E5%BC%80RSA%E8%AE%A4%E8%AF%81"><span class="nav-number">2.2.</span> <span class="nav-text">服务器打开RSA认证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%80%E5%90%AF%E8%AE%A4%E8%AF%81%E9%85%8D%E7%BD%AE"><span class="nav-number">2.2.1.</span> <span class="nav-text">开启认证配置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%EF%BC%9A"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">服务器端：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8Bssh%E4%BF%A1%E4%BB%BB%E5%85%B3%E7%B3%BB"><span class="nav-number">2.2.2.</span> <span class="nav-text">建立ssh信任关系</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9C%A8%E6%9C%AC%E5%9C%B0%E7%94%B5%E8%84%91-%E7%94%9F%E6%88%90%E5%AF%86%E9%92%A5%E5%AF%B9"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">在本地电脑:生成密钥对</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9C%A8%E6%9C%8D%E5%8A%A1%E5%99%A8-%E5%88%87%E6%8D%A2%E8%87%B3git%E7%94%A8%E6%88%B7%EF%BC%8C%E5%88%9B%E5%BB%BA-x2F-ssh-%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">在服务器:切换至git用户，创建 ~&#x2F;.ssh 文件夹</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9C%A8%E6%9C%AC%E5%9C%B0%E7%94%B5%E8%84%91-%E5%8F%91%E9%80%81%E5%85%AC%E9%92%A5-id-rsa-pub-%E5%88%B0-x2F-home-x2F-git-x2F-ssh-x2F-authorzied-keys"><span class="nav-number">2.2.2.3.</span> <span class="nav-text">在本地电脑:发送公钥 id_rsa.pub 到 &#x2F;home&#x2F;git&#x2F;.ssh&#x2F;authorzied_keys</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%A4%B9%E6%9D%83%E9%99%90%E8%B0%83%E6%95%B4%EF%BC%9Aauthorzied-keys%E6%9D%83%E9%99%90%E4%B8%BA600%E6%97%B6%E6%89%8D%E7%94%9F%E6%95%88"><span class="nav-number">2.2.2.4.</span> <span class="nav-text">文件夹权限调整：authorzied_keys权限为600时才生效</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAblog-git%E7%A9%BA%E4%BB%93%E5%BA%93"><span class="nav-number">2.3.</span> <span class="nav-text">创建blog.git空仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%87%E6%8D%A2%E5%88%B0git%E7%94%A8%E6%88%B7%EF%BC%8C%E6%8E%A5%E4%B8%8B%E6%9D%A5%E9%83%BD%E6%98%AF%E5%9C%A8git%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E4%B8%8B%E8%BF%9B%E8%A1%8C%E6%93%8D%E4%BD%9C%EF%BC%9A"><span class="nav-number">2.3.1.</span> <span class="nav-text">切换到git用户，接下来都是在git用户权限下进行操作：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%B9%E5%8F%98-hexo-git-%E7%9B%AE%E5%BD%95%E7%9A%84%E6%8B%A5%E6%9C%89%E8%80%85%E4%B8%BAgit%E7%94%A8%E6%88%B7%EF%BC%9A"><span class="nav-number">2.3.2.</span> <span class="nav-text">改变 hexo.git 目录的拥有者为git用户：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%A4%87%E4%BB%BD%E7%9B%AE%E5%BD%95"><span class="nav-number">2.3.2.1.</span> <span class="nav-text">添加备份目录</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hexo%E9%85%8D%E7%BD%AE"><span class="nav-number">2.4.</span> <span class="nav-text">hexo配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nginx%E9%85%8D%E7%BD%AE"><span class="nav-number">2.5.</span> <span class="nav-text">nginx配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE"><span class="nav-number">2.5.1.</span> <span class="nav-text">修改配置</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="昊"
+      src="/images/2222.png">
+  <p class="site-author-name" itemprop="name">昊</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://nuxm.gitee.io/bolg/hexo%E9%83%A8%E7%BD%B2%E5%88%B0%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/2222.png">
+      <meta itemprop="name" content="昊">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="This —> 昊">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          hexo部署到阿里云服务器
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-23 10:55:56" itemprop="dateCreated datePublished" datetime="2022-02-23T10:55:56+08:00">2022-02-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-02-24 14:15:57" itemprop="dateModified" datetime="2022-02-24T14:15:57+08:00">2022-02-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Hexo/" itemprop="url" rel="index"><span itemprop="name">Hexo</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><blockquote>
+<p>域名还没下来，就先用gitee，但是先记录一下自己hexo部署过程o(<em>￣▽￣</em>)o</p>
+</blockquote>
+<span id="more"></span>
+
+<blockquote>
+<p>这里说一下vim的基本操作方便不会的同学进行搭建<br>i–&gt;编辑<br>按一下ESC输入:wq–&gt;保存并退出（冒号也要输入啊！）<br>按一下ESC输入:!wq–&gt;保存并强制退出</p>
+</blockquote>
+<h3 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h3><ul>
+<li>本地hexo构建可运行发布</li>
+<li>阿里云服务器能访问</li>
+<li>有一个域名(非必须项，可以公网ip查看嘛~)</li>
+<li>Xshell和Xftp且已连接至服务器（怎么连接自行百度，这里就不做过多讲解）</li>
+</ul>
+<h3 id="服务器环境"><a href="#服务器环境" class="headerlink" title="服务器环境"></a>服务器环境</h3><ul>
+<li>Ubantu 20.04</li>
+</ul>
+<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><ul>
+<li>回顾一下Hexo发布到gitee（Pages）的流程：</li>
+<li>本地计算机用Hexo构建静态文件public</li>
+<li>关键一步就是git上传github或gitee</li>
+<li>发布Pages将仓库目录<span class="exturl" data-url="aHR0cHM6Ly9naXRlZS5jb20vY3VuZ3VkYWZhL2N1bmd1ZGFmYS9pbmRleC5odG1sJUU2JThCJTg5JUU1JThGJTk2JUU1JTg4JUIwaHR0cHM6Ly9jdW5ndWRhZmEuZ2l0ZWUuaW8vaW5kZXguaHRtbA==">https://gitee.com/cungudafa/cungudafa/index.html拉取到https://cungudafa.gitee.io/index.html<i class="fa fa-external-link-alt"></i></span></li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/DXOrtg"><img src="https://s3.ax1x.com/2020/12/06/DXOrtg.png" alt="DXOrtg.png" border="0" /></a><br>当然我们需要上传的是public文件夹；每次xftp手动上传肯定是不现实且麻烦的，所以我们接下来要在服务器安装git。</p>
+<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><h3 id="服务器创建服务器创建git用户"><a href="#服务器创建服务器创建git用户" class="headerlink" title="服务器创建服务器创建git用户"></a>服务器创建服务器创建git用户</h3><h4 id="创建一个git用户，用来运行git服务。（root不安全）"><a href="#创建一个git用户，用来运行git服务。（root不安全）" class="headerlink" title="创建一个git用户，用来运行git服务。（root不安全）"></a>创建一个git用户，用来运行git服务。（root不安全）</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo useradd git -m</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：Ubantu下必须加上-m，才会自动新建用户目录&#x2F;home&#x2F;git&#x2F;（后面配置和博客文件都放在这里）<br>在&#x2F;home&#x2F;git&#x2F;非常重要，如果出错，可以删除sudo userdel -r git用户，重新之前的步骤。</p>
+</blockquote>
+<h4 id="设置密码"><a href="#设置密码" class="headerlink" title="设置密码"></a>设置密码</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo passwd git</span><br></pre></td></tr></table></figure>
+<p>密码就是git吧，简单为上。</p>
+<h4 id="增加git用户执行sudo的权限"><a href="#增加git用户执行sudo的权限" class="headerlink" title="增加git用户执行sudo的权限"></a>增加git用户执行sudo的权限</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 740 /etc/sudoers</span><br><span class="line">vim /etc/sudoers</span><br></pre></td></tr></table></figure>
+<p>找到以下内容：root ALL&#x3D;(ALL) ALL在下面添加一行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git     ALL=(ALL)       ALL</span><br></pre></td></tr></table></figure>
+<p>保存退出后改回权限：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 400 /etc/sudoers</span><br></pre></td></tr></table></figure>
+
+<h3 id="服务器打开RSA认证"><a href="#服务器打开RSA认证" class="headerlink" title="服务器打开RSA认证"></a>服务器打开RSA认证</h3><p>RSA用公钥加密，私钥解密，成为加密通信。<br>用私钥加密，公钥解密，就是认证。（这样就能证明消息是你发出的。）<br>因为：公钥大家都有，私钥就只有一个，在你自己手里。<br><a target="_blank" rel="noopener" href="https://imgchr.com/i/DXzRTP"><img src="https://s3.ax1x.com/2020/12/06/DXzRTP.png" alt="DXzRTP.png" border="0" /></a></p>
+<h4 id="开启认证配置"><a href="#开启认证配置" class="headerlink" title="开启认证配置"></a>开启认证配置</h4><h5 id="服务器端："><a href="#服务器端：" class="headerlink" title="服务器端："></a>服务器端：</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+<p>在sshd_config中开启以下几项：(前两项yes，后一项修改为如下)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RSAAuthentication yes</span><br><span class="line">PubkeyAuthentication yes</span><br><span class="line">AuthorizedKeysFile  .ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+<p>重启sshd</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop sshd.service</span><br><span class="line">systemctl start sshd.service</span><br></pre></td></tr></table></figure>
+<h4 id="建立ssh信任关系"><a href="#建立ssh信任关系" class="headerlink" title="建立ssh信任关系"></a>建立ssh信任关系</h4><p>本地电脑生成秘钥对-&gt;发送公钥到服务器-&gt;本地可免密连接服务器</p>
+<h5 id="在本地电脑-生成密钥对"><a href="#在本地电脑-生成密钥对" class="headerlink" title="在本地电脑:生成密钥对"></a>在本地电脑:生成密钥对</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C &quot;邮箱&quot; </span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/DjSY9S"><img src="https://s3.ax1x.com/2020/12/06/DjSY9S.png" alt="DjSY9S.png" border="0" /></a><br>成功后，会在c盘用户下新建秘钥对：<br><a target="_blank" rel="noopener" href="https://imgchr.com/i/DjSrNV"><img src="https://s3.ax1x.com/2020/12/06/DjSrNV.png" alt="DjSrNV.png" border="0" /></a></p>
+<h5 id="在服务器-切换至git用户，创建-x2F-ssh-文件夹"><a href="#在服务器-切换至git用户，创建-x2F-ssh-文件夹" class="headerlink" title="在服务器:切换至git用户，创建 ~&#x2F;.ssh 文件夹"></a>在服务器:切换至git用户，创建 ~&#x2F;.ssh 文件夹</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">su git</span><br><span class="line">mkdir ~/.ssh</span><br></pre></td></tr></table></figure>
+<p>或者root用户直接创建：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /home/git/</span><br><span class="line">mkdir .ssh</span><br></pre></td></tr></table></figure>
+
+<h5 id="在本地电脑-发送公钥-id-rsa-pub-到-x2F-home-x2F-git-x2F-ssh-x2F-authorzied-keys"><a href="#在本地电脑-发送公钥-id-rsa-pub-到-x2F-home-x2F-git-x2F-ssh-x2F-authorzied-keys" class="headerlink" title="在本地电脑:发送公钥 id_rsa.pub 到 &#x2F;home&#x2F;git&#x2F;.ssh&#x2F;authorzied_keys"></a>在本地电脑:发送公钥 id_rsa.pub 到 &#x2F;home&#x2F;git&#x2F;.ssh&#x2F;authorzied_keys</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-copy-id -i C:/Users/CUNGU/.ssh/id_rsa.pub git@47.93.50.90 //把公钥发送给服务器</span><br><span class="line">ssh git@47.93.50.90 // 测试能否登录</span><br></pre></td></tr></table></figure>
+<p>服务器文件夹也有了公钥：<br><a target="_blank" rel="noopener" href="https://imgchr.com/i/DjpPgg"><img src="https://s3.ax1x.com/2020/12/06/DjpPgg.png" alt="DjpPgg.png" border="0" /></a></p>
+<h5 id="文件夹权限调整：authorzied-keys权限为600时才生效"><a href="#文件夹权限调整：authorzied-keys权限为600时才生效" class="headerlink" title="文件夹权限调整：authorzied_keys权限为600时才生效"></a>文件夹权限调整：authorzied_keys权限为600时才生效</h5><p>git用户：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">su git</span><br><span class="line">chmod 700 ~/.ssh</span><br><span class="line">chmod 600 ~/.ssh/authorzied_keys</span><br></pre></td></tr></table></figure>
+<p>第二步没有成功，说我没有权限（Permission denied）；emmm，root设置好了<br><a target="_blank" rel="noopener" href="https://imgchr.com/i/DjpK8U"><img src="https://s3.ax1x.com/2020/12/06/DjpK8U.png" alt="DjpK8U.png" border="0" /></a><br>root设置第二步：(注意在.ssh目录下)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">exit // 退出到 root 登录</span><br><span class="line">sudo chmod 600 authorized_keys</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/Djp2Pf"><img src="https://s3.ax1x.com/2020/12/06/Djp2Pf.png" alt="Djp2Pf.png" border="0" /></a><br>现在就搭建好git桥梁，为后面实现hexo d部署时，可以自动上传啦！</p>
+<h3 id="创建blog-git空仓库"><a href="#创建blog-git空仓库" class="headerlink" title="创建blog.git空仓库"></a>创建blog.git空仓库</h3><h4 id="切换到git用户，接下来都是在git用户权限下进行操作："><a href="#切换到git用户，接下来都是在git用户权限下进行操作：" class="headerlink" title="切换到git用户，接下来都是在git用户权限下进行操作："></a>切换到git用户，接下来都是在git用户权限下进行操作：</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">su git                //切换git用户</span><br><span class="line">cd /home/git/</span><br><span class="line">mkdir -p projects/blog  //创建你的博客目录</span><br><span class="line">mkdir repos &amp;&amp; cd repos</span><br><span class="line">git init --bare blog.git  //创建一个空仓库</span><br><span class="line">cd blog.git/hooks</span><br><span class="line">vi post-receive  //创建hook钩子函数，输入以下内容</span><br><span class="line">git --work-tree=/home/git/projects/blog --git-dir=/home/git/repos/blog.git checkout -f</span><br><span class="line">chmod +x post-receive  // 修改钩子函数权限</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/Dj98SS"><img src="https://s3.ax1x.com/2020/12/06/Dj98SS.png" alt="Dj98SS.png" border="0" /></a></p>
+<h4 id="改变-hexo-git-目录的拥有者为git用户："><a href="#改变-hexo-git-目录的拥有者为git用户：" class="headerlink" title="改变 hexo.git 目录的拥有者为git用户："></a>改变 hexo.git 目录的拥有者为git用户：</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chown -R git:git blog.git</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/Dj9BWT"><img src="https://s3.ax1x.com/2020/12/06/Dj9BWT.png" alt="Dj9BWT.png" border="0" /></a></p>
+<h5 id="添加备份目录"><a href="#添加备份目录" class="headerlink" title="添加备份目录"></a>添加备份目录</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /home/git/projects/</span><br><span class="line">mkdir -p tmp/blog</span><br></pre></td></tr></table></figure>
+<p>修改钩子的内容：（重点是git clone 克隆到主目录home&#x2F;git&#x2F;projects&#x2F;blog主目录要配置到nginx中去的）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">GIT_REPO=/home/git/repos/blog.git    # git仓库</span><br><span class="line">TMP_GIT_CLONE=/home/git/projects/tmp/blog</span><br><span class="line">PUBLIC_WWW=/home/git/projects/blog  # 网站目录</span><br><span class="line">rm -rf $&#123;TMP_GIT_CLONE&#125;</span><br><span class="line">git clone $GIT_REPO $TMP_GIT_CLONE</span><br><span class="line">rm -rf $&#123;PUBLIC_WWW&#125;/*</span><br><span class="line">cp -rf $&#123;TMP_GIT_CLONE&#125;/* $&#123;PUBLIC_WWW&#125;</span><br><span class="line">chmod +x post-receive          # 赋予脚本的执行权限</span><br></pre></td></tr></table></figure>
+<p>git用户赋权：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">su git</span><br><span class="line">chmod +x post-receive</span><br><span class="line">exit // 退出到 root 登录</span><br><span class="line">chown -R git:git /home/git/repos/blog.git // 添加权限</span><br><span class="line">sudo chown git:git -R /home/git/projects/</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/DjCPmj"><img src="https://s3.ax1x.com/2020/12/06/DjCPmj.png" alt="DjCPmj.png" border="0" /></a></p>
+<p>蓝色为更新后的上传机制：<br><a target="_blank" rel="noopener" href="https://imgchr.com/i/DjCncF"><img src="https://s3.ax1x.com/2020/12/06/DjCncF.png" alt="DjCncF.png" border="0" /></a></p>
+<p>为了安全起见，我们需要关闭git账号登录shell的权限</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/passwd</span><br></pre></td></tr></table></figure>
+<p>找到git账号(一般在最后面)添加：&#x2F;usr&#x2F;bin&#x2F;git-shell</p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/DjCl7R"><img src="https://s3.ax1x.com/2020/12/06/DjCl7R.png" alt="DjCl7R.png" border="0" /></a></p>
+<p>加上git就只能git clone，如需shell操作，撤销&#x2F;usr&#x2F;bin&#x2F;git-shell即可。</p>
+<p>####在本地任意一空目录，测试git仓库是否可用（测试步骤，稍后可清除）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone git@48.53.57.50:/home/git/repos/blog.git</span><br></pre></td></tr></table></figure>
+
+<p>实际拉下来的是你的&#x2F;home&#x2F;git&#x2F;projects&#x2F;blog，哈哈哈还是空的~</p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/DjC3A1"><img src="https://s3.ax1x.com/2020/12/06/DjC3A1.png" alt="DjC3A1.png" border="0" /></a></p>
+<h3 id="hexo配置"><a href="#hexo配置" class="headerlink" title="hexo配置"></a>hexo配置</h3><p>修改博客根目录配置_config.yml，部署部分，增添repo</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  message: update</span><br><span class="line">  gitee: https://gitee.com/cungudafa/cungudafa.git</span><br><span class="line">  repo: git@48.53.57.50:/home/git/repos/blog.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>只有在ssh秘钥配置成功，才能成功上传。如果需要修改公钥，要打开git操作shell的权限哦！vim &#x2F;etc&#x2F;passwd最后一句。及时开，及时关，做到万无一失。</p>
+</blockquote>
+<h3 id="nginx配置"><a href="#nginx配置" class="headerlink" title="nginx配置"></a>nginx配置</h3><ul>
+<li>到这里，我发现一个问题，用源码安装和sudo apt install nginx安装，文件结构是不同的</li>
+<li>这里我选择的是sudo apt install nginx的方式安装<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install nginx</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
+<p>修改用户为root用户<br><a target="_blank" rel="noopener" href="https://imgchr.com/i/Dji6Og"><img src="https://s3.ax1x.com/2020/12/06/Dji6Og.png" alt="Dji6Og.png" border="0" /></a></p>
+<p>1.端口号（阿里云控制台安全组规则要打开端口哦）<br>2.修改域名<br>3.修改根目录位置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/nginx/sites-available/default</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/DjFPne"><img src="https://s3.ax1x.com/2020/12/06/DjFPne.png" alt="DjFPne.png" border="0" /></a></p>
+<blockquote>
+<p>到这里只要重启nginx就可以了，但是我没发现sbin文件，就从进程重启了</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef | grep nginx</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kill -HUP 进程号</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/DjF69x"><img src="https://s3.ax1x.com/2020/12/06/DjF69x.png" alt="DjF69x.png" border="0" /></a></p>
+<p>接下来就可以用域名或者公网IP访问了</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/" rel="tag"><i class="fa fa-tag"></i> 博客搭建</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/JAVA/IDEA%E5%BF%AB%E6%8D%B7%E7%94%9F%E6%88%90%E4%BB%A3%E7%A0%81/" rel="next" title="IDEA快捷生成代码">
+                  IDEA快捷生成代码 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">昊</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":false,"archive":false,"delay":true,"timeout":3000,"priority":true,"url":"https://nuxm.gitee.io/bolg/hexo%E9%83%A8%E7%BD%B2%E5%88%B0%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/"}</script>
+  <script src="/js/third-party/quicklink.js"></script>
+
+</body>
+</html>

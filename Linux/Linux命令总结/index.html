@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/black/pace-theme-corner-indicator.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"nuxm.gitee.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.10.0","exturl":true,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":true,"preload":true}}</script><script src="/js/config.js"></script>
+
+  <meta name="description" content="前言收集一些常用的，免得我忘记了ε&#x3D;ε&#x3D;ε&#x3D;(￣▽￣)">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Linux简单总结">
+<meta property="og:url" content="https://nuxm.gitee.io/Linux/Linux%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="This —&gt; 昊">
+<meta property="og:description" content="前言收集一些常用的，免得我忘记了ε&#x3D;ε&#x3D;ε&#x3D;(￣▽￣)">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-23T02:55:56.089Z">
+<meta property="article:modified_time" content="2022-02-24T06:18:39.660Z">
+<meta property="article:author" content="昊">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://nuxm.gitee.io/Linux/Linux%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/Linux/Linux%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/","path":"Linux/Linux命令总结/","title":"Linux简单总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Linux简单总结 | This —> 昊</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">This —> 昊</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">不过是些许风雪罢了</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AD%A3%E6%96%87"><span class="nav-number">2.</span> <span class="nav-text">正文</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4"><span class="nav-number">2.1.</span> <span class="nav-text">基本命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E6%9C%BA-and-%E9%87%8D%E5%90%AF"><span class="nav-number">2.2.</span> <span class="nav-text">关机 and 重启</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95"><span class="nav-number">2.3.</span> <span class="nav-text">文件和目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%90%9C%E7%B4%A2"><span class="nav-number">2.4.</span> <span class="nav-text">文件搜索</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%9A%84%E6%9D%83%E9%99%90-%E4%BD%BF%E7%94%A8-%E2%80%9C-%E2%80%9D-%E8%AE%BE%E7%BD%AE%E6%9D%83%E9%99%90%EF%BC%8C%E4%BD%BF%E7%94%A8-%E2%80%9C-%E2%80%9D-%E7%94%A8%E4%BA%8E%E5%8F%96%E6%B6%88"><span class="nav-number">2.5.</span> <span class="nav-text">文件的权限  使用 “+” 设置权限，使用 “-” 用于取消</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%9A%84%E7%89%B9%E6%AE%8A%E5%B1%9E%E6%80%A7-%EF%BC%8C%E4%BD%BF%E7%94%A8-%E2%80%9C-%E2%80%9D-%E8%AE%BE%E7%BD%AE%E6%9D%83%E9%99%90%EF%BC%8C%E4%BD%BF%E7%94%A8-%E2%80%9C-%E2%80%9D-%E7%94%A8%E4%BA%8E%E5%8F%96%E6%B6%88"><span class="nav-number">2.6.</span> <span class="nav-text">文件的特殊属性 ，使用 “+” 设置权限，使用 “-” 用于取消</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%93%E5%8C%85-and-%E5%8E%8B%E7%BC%A9%E6%96%87%E4%BB%B6"><span class="nav-number">2.7.</span> <span class="nav-text">打包 and 压缩文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9"><span class="nav-number">2.8.</span> <span class="nav-text">查看文件内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%97%E5%87%BA%E7%9B%AE%E5%BD%95%E5%86%85%E5%AE%B9"><span class="nav-number">2.9.</span> <span class="nav-text">列出目录内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%96%87%E4%BB%B6%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.10.</span> <span class="nav-text">查看文件的类型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#grep"><span class="nav-number">3.</span> <span class="nav-text">grep</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ln%E5%91%BD%E4%BB%A4"><span class="nav-number">4.</span> <span class="nav-text">ln命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#VIM"><span class="nav-number">5.</span> <span class="nav-text">VIM</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="昊"
+      src="/images/2222.png">
+  <p class="site-author-name" itemprop="name">昊</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://nuxm.gitee.io/Linux/Linux%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/2222.png">
+      <meta itemprop="name" content="昊">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="This —> 昊">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux简单总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-23 10:55:56" itemprop="dateCreated datePublished" datetime="2022-02-23T10:55:56+08:00">2022-02-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-02-24 14:18:39" itemprop="dateModified" datetime="2022-02-24T14:18:39+08:00">2022-02-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8C%87%E4%BB%A4/" itemprop="url" rel="index"><span itemprop="name">指令</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>收集一些常用的，免得我忘记了ε&#x3D;ε&#x3D;ε&#x3D;(<del>￣▽￣)</del></p>
+<span id="more"></span>
+
+<h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><h2 id="基本命令"><a href="#基本命令" class="headerlink" title="基本命令"></a>基本命令</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">uname -m                             显示机器的处理器架构</span><br><span class="line">uname -r                             显示正在使用的内核版本</span><br><span class="line">dmidecode -q                         显示硬件系统部件</span><br><span class="line">(SMBIOS / DMI) hdparm -i /dev/hda    罗列一个磁盘的架构特性</span><br><span class="line">hdparm -tT /dev/sda                  在磁盘上执行测试性读取操作系统信息</span><br><span class="line">arch                                 显示机器的处理器架构</span><br><span class="line">uname -m                             显示机器的处理器架构</span><br><span class="line">uname -r                             显示正在使用的内核版本</span><br><span class="line">dmidecode -q                         显示硬件系统部件 - (SMBIOS / DMI)</span><br><span class="line">hdparm -i /dev/hda                   罗列一个磁盘的架构特性</span><br><span class="line">hdparm -tT /dev/sda                  在磁盘上执行测试性读取操作</span><br><span class="line">cat /proc/cpuinfo                    显示CPU info的信息</span><br><span class="line">cat /proc/interrupts                 显示中断</span><br><span class="line">cat /proc/meminfo                    校验内存使用</span><br><span class="line">cat /proc/swaps                      显示哪些swap被使用</span><br><span class="line">cat /proc/version                    显示内核的版本</span><br><span class="line">cat /proc/net/dev                    显示网络适配器及统计</span><br><span class="line">cat /proc/mounts                     显示已加载的文件系统</span><br><span class="line">lspci -tv                            罗列 PCI 设备</span><br><span class="line">lsusb -tv                            显示 USB 设备</span><br><span class="line">date                                 显示系统日期</span><br><span class="line">cal 2007                             显示2007年的日历表</span><br><span class="line">date 041217002007.00                 设置日期和时间 - 月日时分年.秒</span><br><span class="line">clock -w                             将时间修改保存到 BIOS</span><br></pre></td></tr></table></figure>
+
+<h2 id="关机-and-重启"><a href="#关机-and-重启" class="headerlink" title="关机 and 重启"></a>关机 and 重启</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">shutdown -h now             关闭系统(1)</span><br><span class="line">init 0                      关闭系统(2)</span><br><span class="line">telinit 0                   关闭系统(3)</span><br><span class="line">shutdown -h hours:minutes &amp; 按预定时间关闭系统</span><br><span class="line">shutdown -h +10             10分钟后关机</span><br><span class="line">shutdown -c                 取消按预定时间关闭系统</span><br><span class="line">shutdown -r now             重启</span><br><span class="line">reboot                      重启</span><br><span class="line">logout                      注销</span><br></pre></td></tr></table></figure>
+
+<h2 id="文件和目录"><a href="#文件和目录" class="headerlink" title="文件和目录"></a>文件和目录</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">cd /home                      进入 / home 目录</span><br><span class="line">cd ..                         返回上一级目录</span><br><span class="line">cd ../..                      返回上两级目录</span><br><span class="line">cd                            进入个人的主目录</span><br><span class="line">cd ~user1                     进入个人的主目录</span><br><span class="line">cd -                          返回上次所在的目录</span><br><span class="line">pwd                           显示工作路径</span><br><span class="line">ls                            查看目录中的文件</span><br><span class="line">ls -F                         查看目录中的文件</span><br><span class="line">ls -l                         显示文件和目录的详细资料</span><br><span class="line">ls -a                         显示隐藏文件</span><br><span class="line">ls *[0-9]*                    显示包含数字的文件名和目录名</span><br><span class="line">tree                          显示文件和目录由根目录开始的树形结构(1)</span><br><span class="line">lstree                        显示文件和目录由根目录开始的树形结构(2)</span><br><span class="line">mkdir dir1                    创建一个叫做 dir1 的目录</span><br><span class="line">mkdir dir1 dir2               同时创建两个目录</span><br><span class="line">mkdir -p /tmp/dir1/dir2       创建一个目录树</span><br><span class="line">mv dir1 new_dir               重命名/移动 一个目录</span><br><span class="line">cp file1 file2                复制一个文件</span><br><span class="line">cp dir/* .                    复制一个目录下的所有文件到当前工作目录</span><br><span class="line">cp -a /tmp/dir1 .             复制一个目录到当前工作目录</span><br><span class="line">cp -a dir1 dir2               复制一个目录</span><br><span class="line">ln -s file1 lnk1              创建一个指向文件或目录的软链接</span><br><span class="line">ln file1 lnk1                 创建一个指向文件或目录的物理链接</span><br><span class="line">touch -t 0712250000 file1     修改一个文件或目录的时间戳 </span><br></pre></td></tr></table></figure>
+
+<h2 id="文件搜索"><a href="#文件搜索" class="headerlink" title="文件搜索"></a>文件搜索</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">find . -name *liuyazhuang*     查找当前目录下名称中含有&quot;liuyazhuang&quot;的文件</span><br><span class="line">find / -name *.conf            查找根目录下（整个硬盘）下后缀为.conf的文件</span><br><span class="line">find / -perm 777               查找所有权限是777的文件</span><br><span class="line">find / -type d                 返回根目录下所有的目录</span><br><span class="line">whereis halt 显示一个二进制文件、源码或man的位置</span><br><span class="line">which halt 显示一个二进制文件或可执行文件的完整路径</span><br></pre></td></tr></table></figure>
+
+<h2 id="文件的权限-使用-“-”-设置权限，使用-“-”-用于取消"><a href="#文件的权限-使用-“-”-设置权限，使用-“-”-用于取消" class="headerlink" title="文件的权限  使用 “+” 设置权限，使用 “-” 用于取消"></a>文件的权限  使用 “+” 设置权限，使用 “-” 用于取消</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">ls -lh                      显示权限</span><br><span class="line">ls /tmp | pr -T5 -W$COLUMNS 将终端划分成5栏显示</span><br><span class="line">chmod ugo+rwx directory1    设置目录的所有人(u)、群组(g)以及其他人(o)以读（r ）、写(w)和执行(x)的权限</span><br><span class="line">chmod go-rwx directory1     删除群组(g)与其他人(o)对目录的读写执行权限</span><br><span class="line">chown user1 file1           改变一个文件的所有人属性</span><br><span class="line">chown -R user1 directory1   改变一个目录的所有人属性并同时改变改目录下所有文件的属性</span><br><span class="line">chgrp group1 file1          改变文件的群组</span><br><span class="line">chown user1:group1 file1    改变一个文件的所有人和群组属性</span><br><span class="line">find / -perm -u+s           罗列一个系统中所有使用了SUID控制的文件</span><br><span class="line">chmod u+s /bin/file1        设置一个二进制文件的 SUID 位 - 运行该文件的用户也被赋予和所有者同样的权限</span><br><span class="line">chmod u-s /bin/file1        禁用一个二进制文件的 SUID位</span><br><span class="line">chmod g+s /home/public      设置一个目录的SGID 位 - 类似SUID ，不过这是针对目录的</span><br><span class="line">chmod g-s /home/public      禁用一个目录的 SGID 位</span><br><span class="line">chmod o+t /home/public      设置一个文件的 STIKY 位 - 只允许合法所有人删除文件</span><br><span class="line">chmod o-t /home/public      禁用一个目录的 STIKY 位</span><br><span class="line">chmod +x                    文件路径 为所有者、所属组和其他用户添加执行的权限</span><br><span class="line">chmod -x                    文件路径 为所有者、所属组和其他用户删除执行的权限</span><br><span class="line">chmod u+x                   文件路径 为所有者添加执行的权限</span><br><span class="line">chmod g+x                   文件路径 为所属组添加执行的权限</span><br><span class="line">chmod o+x                   文件路径 为其他用户添加执行的权限</span><br><span class="line">chmod ug+x                  文件路径 为所有者、所属组添加执行的权限</span><br><span class="line">chmod =wx                   文件路径 为所有者、所属组和其他用户添加写、执行的权限，取消读权限</span><br><span class="line">chmod ug=wx                 文件路径 为所有者、所属组添加写、执行的权限，取消读权限</span><br></pre></td></tr></table></figure>
+
+<h2 id="文件的特殊属性-，使用-“-”-设置权限，使用-“-”-用于取消"><a href="#文件的特殊属性-，使用-“-”-设置权限，使用-“-”-用于取消" class="headerlink" title="文件的特殊属性 ，使用 “+” 设置权限，使用 “-” 用于取消"></a>文件的特殊属性 ，使用 “+” 设置权限，使用 “-” 用于取消</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">chattr +a file1 只允许以追加方式读写文件</span><br><span class="line">chattr +c file1 允许这个文件能被内核自动压缩/解压</span><br><span class="line">chattr +d file1 在进行文件系统备份时，dump程序将忽略这个文件</span><br><span class="line">chattr +i file1 设置成不可变的文件，不能被删除、修改、重命名或者链接</span><br><span class="line">chattr +s file1 允许一个文件被安全地删除</span><br><span class="line">chattr +S file1 一旦应用程序对这个文件执行了写操作，使系统立刻把修改的结果写到磁盘</span><br><span class="line">chattr +u file1 若文件被删除，系统会允许你在以后恢复这个被删除的文件</span><br><span class="line">lsattr          显示特殊的属性</span><br></pre></td></tr></table></figure>
+
+<h2 id="打包-and-压缩文件"><a href="#打包-and-压缩文件" class="headerlink" title="打包 and 压缩文件"></a>打包 and 压缩文件</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">zip   文件名.zip    压缩文件</span><br><span class="line">gzip  文件名        压缩文件</span><br><span class="line">gizp  –l 文件名.gz：显示压缩率</span><br><span class="line">unzip 文件名.zip    解压文件</span><br><span class="line">tar：归档文件</span><br><span class="line">tar -cvf out.tar liuyazhuang  打包一个归档（将文件&quot;liuyazhuang&quot;打包成一个归档）</span><br><span class="line">tar -xvf liuyazhuang.tar     释放一个归档（释放liuyazhuang.tar归档）</span><br><span class="line">tar -cvzf backup.tar.gz/etc  </span><br><span class="line">-z参数将归档后的归档文件进行gzip压缩以减少大小。</span><br><span class="line">-c：创建一个新tar文件</span><br><span class="line">-v：显示运行过程的信息</span><br><span class="line">-f：指定文件名</span><br><span class="line">-z：调用gzip压缩命令进行压缩</span><br><span class="line">-t：查看压缩文件的内容</span><br><span class="line">-x：解开tar文件</span><br><span class="line">tar  -cvf test.tar      *：将所有文件打包成test.tar扩展名.tar需自行加上</span><br><span class="line">tar  -zcvf test.tar.gz  *：将所有文件打包成test.tar再用gzip命令压缩</span><br><span class="line">tar -tf   test.tar ：   查看test.tar文件中包括了哪些文件</span><br><span class="line">tar -xvf test.tar       将test.tar解开</span><br><span class="line">tar -zxvf foo.tar.gz    解压缩</span><br></pre></td></tr></table></figure>
+
+<h2 id="查看文件内容"><a href="#查看文件内容" class="headerlink" title="查看文件内容"></a>查看文件内容</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cat file1 从第一个字节开始正向查看文件的内容</span><br><span class="line">tac file1 从最后一行开始反向查看一个文件的内容</span><br><span class="line">more file1 查看一个长文件的内容</span><br><span class="line">less file1 类似于 more 命令，但是它允许在文件中和正向操作一样的反向操作</span><br><span class="line">head -2 file1 查看一个文件的前两行</span><br><span class="line">tail -2 file1 查看一个文件的最后两行</span><br><span class="line">tail -f /var/log/messages 实时查看被添加到一个文件中的内容</span><br></pre></td></tr></table></figure>
+
+<h2 id="列出目录内容"><a href="#列出目录内容" class="headerlink" title="列出目录内容"></a>列出目录内容</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ls -a：显示所有文件（包括隐藏文件）；</span><br><span class="line">ls -l：显示详细信息；</span><br><span class="line">ls -R：递归显示子目录结构；</span><br><span class="line">ls -ld：显示目录和链接信息；</span><br><span class="line">ctrl+r：历史记录中所搜命令（输入命令中的任意一个字符）；</span><br><span class="line">Linux中以.开头的文件是隐藏文件；</span><br><span class="line">pwd:显示当前目录</span><br></pre></td></tr></table></figure>
+
+<h2 id="查看文件的类型"><a href="#查看文件的类型" class="headerlink" title="查看文件的类型"></a>查看文件的类型</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file:查看文件的类型</span><br></pre></td></tr></table></figure>
+
+<h1 id="grep"><a href="#grep" class="headerlink" title="grep"></a>grep</h1><p>grep：功能：在文件中搜索匹配的字符并进行输出</p>
+<p>格式：grep[参数] &lt;要找的字串&gt; &lt;要寻找字 串的源文件&gt;<br>greplinux test.txt：搜索test.txt文件中字符串linux并输出</p>
+<h1 id="ln命令"><a href="#ln命令" class="headerlink" title="ln命令"></a>ln命令</h1><p>功能：在文件和目录之间建立链接</p>
+<p>格式：<code>ln [参数] &lt;源文件或目录&gt; &lt;目标文件或目录&gt;</code></p>
+<p>链接分<code>软链接</code>和<code>硬链接</code></p>
+<p>1.软链接<br>ln–s &#x2F;usr&#x2F;share&#x2F;do  doc ：创建一个链接文件doc并指向目录&#x2F;usr&#x2F;share&#x2F;do</p>
+<p>2.硬链接<br>ln  &#x2F;usr&#x2F;share&#x2F;test  hard：创建一个硬链接文件hard，这时对于test文件对应 的存储区域来说，又多了一个文件指向它</p>
+<h1 id="VIM"><a href="#VIM" class="headerlink" title="VIM"></a>VIM</h1><p>vim拥有三种模式：命令模式、插入模式、ex模式</p>
+<ul>
+<li><p>命令模式（常规模式）<br>vim启动后，默认进入命令模式，任何模式都可以通过esc键回到命令模式（可以多按几次），命令模式下可以键入不同的命令完成选择、复制、粘贴、撤销等操作。<br>命名模式常用命令如下：<br>i : 在光标前插入文本；<br>o:在当前行的下面插入新行；<br>dd:删除整行；<br>yy：将当前行的内容放入缓冲区（复制当前行）<br>n+yy :将n行的内容放入缓冲区（复制n行）<br>p:将缓冲区中的文本放入光标后（粘贴）<br>u：撤销上一个操作<br>r:替换当前字符<br>&#x2F; 查找关键字</p>
+</li>
+<li><p>插入模式<br>在命令模式下按 “ i “键，即可进入插入模式，在插入模式可以输入编辑文本内容，使用esc键可以返回命令模式。</p>
+</li>
+<li><p>ex模式<br>在命令模式中按” : “键可以进入ex模式，光标会移动到底部，在这里可以保存修改或退出vim.<br>ext模式常用命令如下：<br>:w ：保存当前的修改<br>:q ：退出<br>:q! ：强制退出，保存修改<br>:x  :保存并退出，相当于:wq<br>:set number 显示行号<br>:! 系统命令  执行一个系统命令并显示结果<br>:sh ：切换到命令行，使用ctrl+d切换回vim</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Linux/nohup%E5%91%BD%E4%BB%A4/" rel="prev" title="nohup命令">
+                  <i class="fa fa-chevron-left"></i> nohup命令
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/SQLInject/SQL%E6%B3%A8%E5%85%A5%E8%AF%A6%E8%A7%A32.0-%E9%87%8D%E6%9E%84%E7%AF%87/" rel="next" title="SQL注入详解2.0-重构篇">
+                  SQL注入详解2.0-重构篇 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">昊</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":false,"archive":false,"delay":true,"timeout":3000,"priority":true,"url":"https://nuxm.gitee.io/Linux/Linux%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/"}</script>
+  <script src="/js/third-party/quicklink.js"></script>
+
+</body>
+</html>
