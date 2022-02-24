@@ -206,6 +206,7 @@
     <title>nohup命令</title>
     <url>/Linux/nohup%E5%91%BD%E4%BB%A4/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>如果你正在运行一个进程，而且你觉得在退出帐户时该进程还不会结束，那么可以使用 nohup 命令。</p>
+<p><a href="https://sm.ms/image/tXLasnF9H5JYgfy" target="_blank"><img src="https://s2.loli.net/2022/02/24/tXLasnF9H5JYgfy.jpg" ></a></p>
 <span id="more"></span>
 
 <h1 id="命令简介"><a href="#命令简介" class="headerlink" title="命令简介"></a>命令简介</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ nohup Command [ Arg … ] [ &amp; ]</span><br></pre></td></tr></table></figure>
