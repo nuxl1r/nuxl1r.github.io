@@ -346,7 +346,7 @@
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Process, Queue</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">text1</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;线程启动了&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    q = Queue()</span><br><span class="line">    p1 = Process(target=text1, args=(q,))</span><br><span class="line">    p1.start()</span><br><span class="line">    p1.join()</span><br></pre></td></tr></table></figure>
 
 <p><font color="red"><strong>有两种启动方式，多线程必须用.start()，如果用.run()就降级为单进程了。</strong></font></p>
-<h1 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a><center>线程池</center></h1><p>主要用multiprocessing中的Pool实现</p>
+<h1 id="进程池"><a href="#进程池" class="headerlink" title="进程池"></a><center>进程池</center></h1><p>主要用multiprocessing中的Pool实现</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Pool</span><br></pre></td></tr></table></figure>
 
 <p>例子</p>
