@@ -1,6 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>JAVA EL表达式注入</title>
+    <url>/SQLInject/JAVA%20EL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><center>前言</center></h1><p>之前一直打算写一篇解析，拖了一久就开始写了。</p>
+<p><a href="https://sm.ms/image/AvYBeWiOuR3talo" target="_blank"><img src="https://s2.loli.net/2022/03/16/AvYBeWiOuR3talo.png" ></a></p>
+<span id="more"></span>
+
+<h1 id="JAVA反射机制"><a href="#JAVA反射机制" class="headerlink" title="JAVA反射机制"></a><center>JAVA反射机制</center></h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>JAVA反射机制是在运行状态中，<strong>对于任意一个类，都能够知道这个类的所有属性和方法</strong>；<strong>对于任意一个对象，都能够调用它的任意一个方法和属性</strong>；这种<code>动态获取的信息</code>以及<code>动态调用对象</code>的方法的功能称为<code>java语言的反射机制</code>。<br>要想解剖一个类,必须先要获取到该类的字节码文件对象。而解剖使用的就是Class类中的方法.所以先要获取到每一个字节码文件对应的Class类型的对象.</p>
+<p><a href="https://sm.ms/image/gSvljhYbHELAnpt" target="_blank"><img src="https://s2.loli.net/2022/03/16/gSvljhYbHELAnpt.png" ></a></p>
+<ul>
+<li>Java中编译类型有两种：<ul>
+<li><strong>静态编译</strong>：在编译时确定类型，绑定对象即通过。</li>
+<li><strong>动态编译</strong>：运行时确定类型，绑定对象。动态编译最大限度地发挥了Java的灵活性，体现了多态的应用，可以减低类之间的耦合性。</li>
+</ul>
+</li>
+<li>实现Java反射机制的类都位于<code>java.lang.reflect</code>包中：<ol>
+<li>Class类：代表一个类</li>
+<li>Field类：代表类的成员变量（类的属性）</li>
+<li>Method类：代表类的方法</li>
+<li>Constructor类：代表类的构造方法</li>
+<li>Array类：提供了动态创建数组，以及访问数组的元素的静态方法</li>
+</ol>
+</li>
+</ul>
+<p><strong>一句话概括就是使用反射可以赋予jvm动态编译的能力，否则类的元数据信息只能用静态编译的方式实现，例如热加载，Tomcat的classloader等等都没法支持。</strong></p>
+<h1 id="EL表达式基础"><a href="#EL表达式基础" class="headerlink" title="EL表达式基础"></a><center>EL表达式基础</center></h1><p>EL表达式是为了转化为JSP代码的，简洁表达式形式，相比直接使用JSP，EL表达式拥有更好的可读性。</p>
+<p>EL 表达式语法如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">$&#123;EL表达式&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>EL 表达式语法以<code>$&#123;</code>开头，以<code>&#125;</code>结束，中间为合法的表达式。</p>
+<h1 id="EL表达式注入原理解析"><a href="#EL表达式注入原理解析" class="headerlink" title="EL表达式注入原理解析"></a><center>EL表达式注入原理解析</center></h1><p><code>pagecontext</code>域可操纵<code>request</code> <code>session</code> <code>application</code>，而这几个域里面均有setAttribute方法</p>
+<ul>
+<li><p>Attribute方法</p>
+<ul>
+<li>这个方法作用就是<strong>保存数据</strong>，然后还可以用<code>getAttribute</code>方法来取出。</li>
+</ul>
+</li>
+<li><p>反射中的Method类的invoke() 和getMethod()</p>
+<ul>
+<li>getMethod() → 获得对象所声明的公开方法  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">person.getClass().getMethod(<span class="string">&quot;Speak&quot;</span>, <span class="literal">null</span>);</span><br></pre></td></tr></table></figure>
+  获得person对象的Speak方法，因为Speak方法没有形参，所以parameterTypes为null</li>
+</ul>
+</li>
+<li><p>getRuntime()方法<br>  <code>java.lang.Runtime.getRuntime() </code>方法返回与当前Java应用程序相关的运行时对象。大多数Runtime类的方法是实例方法，必须相对于当前的运行时对象被调用。</p>
+</li>
+</ul>
+<p>invoke()方法</p>
+<ul>
+<li>getInputStream方法<ul>
+<li><code>getInputStream()方法</code>在java.lang包中可用。</li>
+<li><code>getInputStream()方法</code>用于获取流程和子流程的输入流。</li>
+<li><code>getInputStream()方法</code>是一个非静态方法，只能通过类对象访问，如果尝试使用类名称访问该方法，则会收到错误消息。</li>
+<li>返回输入流时，<code>getInputStream()方法</code>不会引发异常。</li>
+</ul>
+</li>
+</ul>
+<p>pagecontext域控制request.getSession()调用其中的getAttribute，getAttribute方法取出任意值a，<code>pageContext.request.getClass().forName(&#39;java.lang.Runtime&#39;)</code>吧<code>java.lang.Runtime</code>反射出来，调用<code>java.lang.Runtime</code> 中的方法<code>getMethod（）</code> ，获得相应对象的getRuntime()方法,得到相关的Method对象，<code>invoke(null,null)</code> 反射得到exec()方法，getInputStream()方法简而言之就是可以有回显。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">$&#123;pageContext.request.getSession().setAttribute(<span class="string">&#x27;a&#x27;</span>,pageContext.request.getClass().forName(<span class="string">&#x27;java.lang.Runtime&#x27;</span>).getMethod(<span class="string">&#x27;getRuntime&#x27;</span>,<span class="literal">null</span>).invoke(<span class="literal">null</span>,<span class="literal">null</span>).exec(<span class="string">&#x27;calc&#x27;</span>).getInputStream())&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>SQLInject</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>栈溢出</title>
     <url>/PWN/%E6%A0%88%E6%BA%A2%E5%87%BA/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>研究了一段时间，所以搞了下心得总结</p>

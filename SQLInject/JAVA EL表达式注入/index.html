@@ -23,30 +23,31 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"nuxm.gitee.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.10.0","exturl":true,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":true,"preload":true}}</script><script src="/js/config.js"></script>
 
-  <meta name="description" content="前言如果你正在运行一个进程，而且你觉得在退出帐户时该进程还不会结束，那么可以使用 nohup 命令。">
+  <meta name="description" content="前言之前一直打算写一篇解析，拖了一久就开始写了。">
 <meta property="og:type" content="website">
-<meta property="og:title" content="nohup命令">
-<meta property="og:url" content="https://nuxm.gitee.io/Linux/nohup%E5%91%BD%E4%BB%A4/index.html">
+<meta property="og:title" content="JAVA EL表达式注入">
+<meta property="og:url" content="https://nuxm.gitee.io/SQLInject/JAVA%20EL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5/index.html">
 <meta property="og:site_name" content="This —&gt; 昊">
-<meta property="og:description" content="前言如果你正在运行一个进程，而且你觉得在退出帐户时该进程还不会结束，那么可以使用 nohup 命令。">
+<meta property="og:description" content="前言之前一直打算写一篇解析，拖了一久就开始写了。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://s2.loli.net/2022/02/24/y64tCrmuJcsxA98.png">
-<meta property="article:published_time" content="2022-02-23T02:55:56.062Z">
-<meta property="article:modified_time" content="2022-02-24T06:18:45.954Z">
+<meta property="og:image" content="https://s2.loli.net/2022/03/16/AvYBeWiOuR3talo.png">
+<meta property="og:image" content="https://s2.loli.net/2022/03/16/gSvljhYbHELAnpt.png">
+<meta property="article:published_time" content="2022-03-16T01:54:25.130Z">
+<meta property="article:modified_time" content="2022-03-16T02:01:21.137Z">
 <meta property="article:author" content="昊">
-<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="SQLInject">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s2.loli.net/2022/02/24/y64tCrmuJcsxA98.png">
+<meta name="twitter:image" content="https://s2.loli.net/2022/03/16/AvYBeWiOuR3talo.png">
 
 
-<link rel="canonical" href="https://nuxm.gitee.io/Linux/nohup%E5%91%BD%E4%BB%A4/">
+<link rel="canonical" href="https://nuxm.gitee.io/SQLInject/JAVA%20EL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/Linux/nohup%E5%91%BD%E4%BB%A4/","path":"Linux/nohup命令/","title":"nohup命令"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/SQLInject/JAVA%20EL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5/","path":"SQLInject/JAVA EL表达式注入/","title":"JAVA EL表达式注入"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>nohup命令 | This —> 昊</title>
+<title>JAVA EL表达式注入 | This —> 昊</title>
   
 
 
@@ -154,7 +155,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">命令简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B"><span class="nav-number">3.</span> <span class="nav-text">使用举例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%80%E5%87%BA%E4%BB%BB%E5%8A%A1"><span class="nav-number">4.</span> <span class="nav-text">退出任务</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text"></span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">2.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JAVA%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6"><span class="nav-number">3.</span> <span class="nav-text">JAVA反射机制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">3.1.</span> <span class="nav-text">原理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#EL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%9F%BA%E7%A1%80"><span class="nav-number">4.</span> <span class="nav-text">EL表达式基础</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#EL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90"><span class="nav-number">5.</span> <span class="nav-text">EL表达式注入原理解析</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -220,7 +221,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://nuxm.gitee.io/Linux/nohup%E5%91%BD%E4%BB%A4/">
+    <link itemprop="mainEntityOfPage" href="https://nuxm.gitee.io/SQLInject/JAVA%20EL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/2222.png">
@@ -233,7 +234,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          nohup命令
+          JAVA EL表达式注入
         </h1>
 
         <div class="post-meta-container">
@@ -243,15 +244,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2022-02-23 10:55:56" itemprop="dateCreated datePublished" datetime="2022-02-23T10:55:56+08:00">2022-02-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-24 14:18:45" itemprop="dateModified" datetime="2022-02-24T14:18:45+08:00">2022-02-24</time>
+      <time title="创建时间：2022-03-16 09:54:25 / 修改时间：10:01:21" itemprop="dateCreated datePublished" datetime="2022-03-16T09:54:25+08:00">2022-03-16</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -259,7 +254,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8C%87%E4%BB%A4/" itemprop="url" rel="index"><span itemprop="name">指令</span></a>
+          <a href="/categories/Web%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">Web安全</span></a>
         </span>
     </span>
 
@@ -273,22 +268,66 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>如果你正在运行一个进程，而且你觉得在退出帐户时该进程还不会结束，那么可以使用 nohup 命令。</p>
-<p><a href="https://sm.ms/image/y64tCrmuJcsxA98" target="_blank"><img src="https://s2.loli.net/2022/02/24/y64tCrmuJcsxA98.png" ></a></p>
+        <h1 id=""><a href="#" class="headerlink" title=""></a></h1><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><center>前言</center></h1><p>之前一直打算写一篇解析，拖了一久就开始写了。</p>
+<p><a href="https://sm.ms/image/AvYBeWiOuR3talo" target="_blank"><img src="https://s2.loli.net/2022/03/16/AvYBeWiOuR3talo.png" ></a></p>
 <span id="more"></span>
 
-<h1 id="命令简介"><a href="#命令简介" class="headerlink" title="命令简介"></a>命令简介</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ nohup Command [ Arg … ] [ &amp; ]</span><br></pre></td></tr></table></figure>
+<h1 id="JAVA反射机制"><a href="#JAVA反射机制" class="headerlink" title="JAVA反射机制"></a><center>JAVA反射机制</center></h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>JAVA反射机制是在运行状态中，<strong>对于任意一个类，都能够知道这个类的所有属性和方法</strong>；<strong>对于任意一个对象，都能够调用它的任意一个方法和属性</strong>；这种<code>动态获取的信息</code>以及<code>动态调用对象</code>的方法的功能称为<code>java语言的反射机制</code>。<br>要想解剖一个类,必须先要获取到该类的字节码文件对象。而解剖使用的就是Class类中的方法.所以先要获取到每一个字节码文件对应的Class类型的对象.</p>
+<p><a href="https://sm.ms/image/gSvljhYbHELAnpt" target="_blank"><img src="https://s2.loli.net/2022/03/16/gSvljhYbHELAnpt.png" ></a></p>
+<ul>
+<li>Java中编译类型有两种：<ul>
+<li><strong>静态编译</strong>：在编译时确定类型，绑定对象即通过。</li>
+<li><strong>动态编译</strong>：运行时确定类型，绑定对象。动态编译最大限度地发挥了Java的灵活性，体现了多态的应用，可以减低类之间的耦合性。</li>
+</ul>
+</li>
+<li>实现Java反射机制的类都位于<code>java.lang.reflect</code>包中：<ol>
+<li>Class类：代表一个类</li>
+<li>Field类：代表类的成员变量（类的属性）</li>
+<li>Method类：代表类的方法</li>
+<li>Constructor类：代表类的构造方法</li>
+<li>Array类：提供了动态创建数组，以及访问数组的元素的静态方法</li>
+</ol>
+</li>
+</ul>
+<p><strong>一句话概括就是使用反射可以赋予jvm动态编译的能力，否则类的元数据信息只能用静态编译的方式实现，例如热加载，Tomcat的classloader等等都没法支持。</strong></p>
+<h1 id="EL表达式基础"><a href="#EL表达式基础" class="headerlink" title="EL表达式基础"></a><center>EL表达式基础</center></h1><p>EL表达式是为了转化为JSP代码的，简洁表达式形式，相比直接使用JSP，EL表达式拥有更好的可读性。</p>
+<p>EL 表达式语法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;EL表达式&#125;</span><br></pre></td></tr></table></figure>
 
-<p>该命令可以在你退出帐户&#x2F;关闭终端之后继续运行相应的进程。<code>nohup</code>就是不挂起的意思（<code>no hang up</code>）。</p>
-<p><code>nohup</code> 运行由 <code>Command</code> 和相关的 <code>Arg</code> 参数指定的命令，忽略所有挂断（<code>SIGHUP</code>）信号。要运行后台中的 <code>nohup</code> 命令，添加 <code>&amp;</code> （ 表示 <code>and</code> 的符号）到命令的尾部。</p>
-<p>如果使用 <code>nohup</code> 命令提交作业，那么在缺省情况下该作业的所有输出都被重定向到一个名为 nohup.out 的文件中，除非另外指定了输出文件。</p>
-<h1 id="使用举例"><a href="#使用举例" class="headerlink" title="使用举例"></a>使用举例</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ nohup java -jar adapter-minisite.jar /tomcat-1 /tomcat-2 &gt; logs.txt 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
 
-<p>在上面的例子中，运行命令 <code>java -jar adapter-minisite.jar</code> 输入参数 <code>/tomcat-1</code> 和 <code>/tomcat-2</code>，输出被重定向到 <code>logs.txt</code> 文件中。</p>
-<h1 id="退出任务"><a href="#退出任务" class="headerlink" title="退出任务"></a>退出任务</h1><p>如果运行的任务在当前 <code>shell</code> 终端，可以通过 <code>jobs</code> 命令查询相关信息，并且杀掉进程。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"># 查看当前 shell 终端的后台运行任务进程信息</span><br><span class="line">$ jobs</span><br><span class="line">[1]+ Running nohup java -jar adapter-minisite.jar /tomcat-1 /tomcat-2 &gt; logs.txt 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line"># 杀掉任务号</span><br><span class="line">$ kill %1</span><br><span class="line"></span><br><span class="line"># 或着找到 pid</span><br><span class="line">$ jobs -l</span><br><span class="line">[1]+ 11076 Running nohup java -jar adapter-minisite.jar /tomcat-1 /tomcat-2 &gt; logs.txt 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line">$ kill 11076</span><br><span class="line"></span><br><span class="line"># 或着</span><br><span class="line">$ fg %n # 置为前端运行</span><br><span class="line"></span><br><span class="line">Ctrl + c # 退出</span><br></pre></td></tr></table></figure>
+<p>EL 表达式语法以<code>$&#123;</code>开头，以<code>&#125;</code>结束，中间为合法的表达式。</p>
+<h1 id="EL表达式注入原理解析"><a href="#EL表达式注入原理解析" class="headerlink" title="EL表达式注入原理解析"></a><center>EL表达式注入原理解析</center></h1><p><code>pagecontext</code>域可操纵<code>request</code> <code>session</code> <code>application</code>，而这几个域里面均有setAttribute方法</p>
+<ul>
+<li><p>Attribute方法</p>
+<ul>
+<li>这个方法作用就是<strong>保存数据</strong>，然后还可以用<code>getAttribute</code>方法来取出。</li>
+</ul>
+</li>
+<li><p>反射中的Method类的invoke() 和getMethod()</p>
+<ul>
+<li>getMethod() → 获得对象所声明的公开方法  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">person.getClass().getMethod(<span class="string">&quot;Speak&quot;</span>, <span class="literal">null</span>);</span><br></pre></td></tr></table></figure>
+  获得person对象的Speak方法，因为Speak方法没有形参，所以parameterTypes为null</li>
+</ul>
+</li>
+<li><p>getRuntime()方法<br>  <code>java.lang.Runtime.getRuntime() </code>方法返回与当前Java应用程序相关的运行时对象。大多数Runtime类的方法是实例方法，必须相对于当前的运行时对象被调用。</p>
+</li>
+</ul>
+<p>invoke()方法</p>
+<ul>
+<li>getInputStream方法<ul>
+<li><code>getInputStream()方法</code>在java.lang包中可用。</li>
+<li><code>getInputStream()方法</code>用于获取流程和子流程的输入流。</li>
+<li><code>getInputStream()方法</code>是一个非静态方法，只能通过类对象访问，如果尝试使用类名称访问该方法，则会收到错误消息。</li>
+<li>返回输入流时，<code>getInputStream()方法</code>不会引发异常。</li>
+</ul>
+</li>
+</ul>
+<p>pagecontext域控制request.getSession()调用其中的getAttribute，getAttribute方法取出任意值a，<code>pageContext.request.getClass().forName(&#39;java.lang.Runtime&#39;)</code>吧<code>java.lang.Runtime</code>反射出来，调用<code>java.lang.Runtime</code> 中的方法<code>getMethod（）</code> ，获得相应对象的getRuntime()方法,得到相关的Method对象，<code>invoke(null,null)</code> 反射得到exec()方法，getInputStream()方法简而言之就是可以有回显。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;pageContext.request.getSession().setAttribute(<span class="string">&#x27;a&#x27;</span>,pageContext.request.getClass().forName(<span class="string">&#x27;java.lang.Runtime&#x27;</span>).getMethod(<span class="string">&#x27;getRuntime&#x27;</span>,<span class="literal">null</span>).invoke(<span class="literal">null</span>,<span class="literal">null</span>).exec(<span class="string">&#x27;calc&#x27;</span>).getInputStream())&#125;</span><br></pre></td></tr></table></figure>
 
-<p>如果非当前 <code>shell</code> 终端，可以通过 <code>ps auxf | grep adapter-minisite</code> 获取 <code>pid</code> 然后 <code>kill pid</code>。</p>
+
+
+
 
     </div>
 
@@ -298,21 +337,18 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+              <a href="/tags/SQLInject/" rel="tag"><i class="fa fa-tag"></i> SQLInject</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/%E7%9F%A5%E8%AF%86%E6%A0%91/JAVA/" rel="prev" title="JAVA知识点整理">
-                  <i class="fa fa-chevron-left"></i> JAVA知识点整理
+                <a href="/PWN/%E6%A0%88%E6%BA%A2%E5%87%BA/" rel="prev" title="栈溢出">
+                  <i class="fa fa-chevron-left"></i> 栈溢出
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/Linux/Linux%E5%91%BD%E4%BB%A4%E6%80%BB%E7%BB%93/" rel="next" title="Linux简单总结">
-                  Linux简单总结 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
@@ -365,7 +401,7 @@
 
 
   <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
-  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":false,"archive":false,"delay":true,"timeout":3000,"priority":true,"url":"https://nuxm.gitee.io/Linux/nohup%E5%91%BD%E4%BB%A4/"}</script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":false,"archive":false,"delay":true,"timeout":3000,"priority":true,"url":"https://nuxm.gitee.io/SQLInject/JAVA%20EL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5/"}</script>
   <script src="/js/third-party/quicklink.js"></script>
 
 </body>
