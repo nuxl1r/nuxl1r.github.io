@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
 
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -15,18 +15,18 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" integrity="sha256-jTIdiMuX/e3DGJUGwl3pKSxuc6YOuqtJYkM0bGQESA4=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/black/pace-theme-corner-indicator.css">
   <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"nuxm.gitee.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.10.0","exturl":true,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":true,"preload":true}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"nuxm.gitee.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.10.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-  <meta name="description" content="前言需要一定的js基础">
-<meta property="og:type" content="website">
+    <meta name="description" content="前言需要一定的js基础">
+<meta property="og:type" content="article">
 <meta property="og:title" content="原型链污染">
-<meta property="og:url" content="https://nuxm.gitee.io/SQLInject/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/index.html">
+<meta property="og:url" content="https://nuxm.gitee.io/JS/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/index.html">
 <meta property="og:site_name" content="This —&gt; 昊">
 <meta property="og:description" content="前言需要一定的js基础">
 <meta property="og:locale" content="zh_CN">
@@ -36,18 +36,18 @@
 <meta property="og:image" content="https://s2.loli.net/2022/03/15/L1e3BF6JDiXakdT.png">
 <meta property="og:image" content="https://s2.loli.net/2022/03/15/TVdf34HI1QRkGYo.png">
 <meta property="article:published_time" content="2022-03-15T05:04:56.579Z">
-<meta property="article:modified_time" content="2022-03-16T01:58:47.148Z">
+<meta property="article:modified_time" content="2022-03-26T04:57:44.511Z">
 <meta property="article:author" content="昊">
-<meta property="article:tag" content="SQLInject">
+<meta property="article:tag" content="contaminate">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s2.loli.net/2022/03/15/ZHNuSfXCDk4OEab.jpg">
 
 
-<link rel="canonical" href="https://nuxm.gitee.io/SQLInject/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/">
+<link rel="canonical" href="https://nuxm.gitee.io/JS/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/SQLInject/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/","path":"SQLInject/原型链污染/","title":"原型链污染"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/JS/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/","path":"JS/原型链污染/","title":"原型链污染"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>原型链污染 | This —> 昊</title>
@@ -96,12 +96,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
-        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -165,7 +160,7 @@
         <div class="site-overview-wrap sidebar-panel">
           <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="昊"
-      src="/images/2222.png">
+      src="/images/12.jpg">
   <p class="site-author-name" itemprop="name">昊</p>
   <div class="site-description" itemprop="description"></div>
 </div>
@@ -184,7 +179,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -206,7 +201,9 @@
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
-  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/NullMr?tab=repositories" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
 
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
@@ -224,16 +221,21 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://nuxm.gitee.io/SQLInject/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/">
+    <link itemprop="mainEntityOfPage" href="https://nuxm.gitee.io/JS/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/2222.png">
+      <meta itemprop="image" content="/images/12.jpg">
       <meta itemprop="name" content="昊">
-      <meta itemprop="description" content="">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="This —> 昊">
+      <meta itemprop="description" content="">
+    </span>
+    
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="原型链污染 | This —> 昊">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -255,7 +257,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-03-16 09:58:47" itemprop="dateModified" datetime="2022-03-16T09:58:47+08:00">2022-03-16</time>
+      <time title="修改时间：2022-03-26 12:57:44" itemprop="dateModified" datetime="2022-03-26T12:57:44+08:00">2022-03-26</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -278,7 +280,7 @@
     
     <div class="post-body" itemprop="articleBody">
         <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>需要一定的js基础</p>
-<p><a href="https://sm.ms/image/ZHNuSfXCDk4OEab" target="_blank"><img src="https://s2.loli.net/2022/03/15/ZHNuSfXCDk4OEab.jpg" ></a></p>
+<p><img src="https://s2.loli.net/2022/03/15/ZHNuSfXCDk4OEab.jpg"></p>
 <span id="more"></span>
 
 <h1 id="prototype和-proto"><a href="#prototype和-proto" class="headerlink" title="prototype和__proto__"></a><code>prototype</code>和<code>__proto__</code></h1><p>又称<code>原型链污染</code>。</p>
@@ -301,7 +303,7 @@
 <p>我们可以通过<code>Foo.prototype</code>来访问<code>Foo</code>类的原型，但<code>Foo</code>实例化出来的对象，是不能通过prototype访问原型的。这时候，就该<code>__proto__</code>登场了。</p>
 <p>一个Foo类实例化出来的foo对象，可以通过<code>foo.__proto__</code>属性来访问Foo类的原型，也就是说：</p>
 <p><code>foo.``**proto**`` == Foo.prototype</code></p>
-<p><a href="https://sm.ms/image/YAlLm68IaD2PVHR" target="_blank"><img src="https://s2.loli.net/2022/03/15/YAlLm68IaD2PVHR.png" ></a></p>
+<p><img src="https://s2.loli.net/2022/03/15/YAlLm68IaD2PVHR.png"></p>
 <p>所以，总结一下：</p>
 <ol>
 <li><code>prototype</code>是一个类的属性，所有类对象在实例化的时候将会拥有<code>prototype</code>中的属性和方法</li>
@@ -320,7 +322,7 @@
 <li>如果仍然找不到，则继续在<code>son.__proto__.__proto__</code>中寻找last_name</li>
 <li>依次寻找，直到找到<code>null</code>结束。比如，<code>Object.prototype</code>的<code>__proto__</code>就是<code>null</code></li>
 </ol>
-<p><a href="https://sm.ms/image/rv6q7AOwld9DJYV" target="_blank"><img src="https://s2.loli.net/2022/03/15/rv6q7AOwld9DJYV.png" ></a></p>
+<p><img src="https://s2.loli.net/2022/03/15/rv6q7AOwld9DJYV.png"></p>
 <p>JavaScript的这个查找的机制，被运用在面向对象的继承中，被称作<code>prototype继承链</code>。</p>
 <p>以上就是最基础的JavaScript面向对象编程，并不深入研究更细节的内容，只要牢记以下几点即可：</p>
 <ol>
@@ -333,12 +335,12 @@
 
 
 <p>最后，虽然zoo是一个<strong>空</strong>对象<code>&#123;&#125;</code>，但<code>zoo.bar</code>的结果居然是2：</p>
-<p><a href="https://sm.ms/image/L1e3BF6JDiXakdT" target="_blank"><img src="https://s2.loli.net/2022/03/15/L1e3BF6JDiXakdT.png" ></a></p>
+<p><img src="https://s2.loli.net/2022/03/15/L1e3BF6JDiXakdT.png"></p>
 <p>原因也显而易见：因为前面修改了foo的原型<code>foo.__proto__.bar = 2</code>，而foo是一个Object类的实例，所以实际上是修改了Object这个类，给这个类增加了一个属性bar，值为2。</p>
 <p>后来，我们又用Object类创建了一个zoo对象<code>let zoo = &#123;&#125;</code>，zoo对象自然也有一个bar属性了。</p>
 <p>那么，在一个应用中，如果攻击者控制并修改了一个对象的原型，那么将可以影响所有和这个对象来自同一个类、父祖类的对象。这种攻击方式就是<strong>原型链污染</strong>。</p>
 <p>js中有个json.prase的方法,json解析的时候,会把<code>__proto__</code>变成一个键名，可以理解为和a同级,而不是一个原型的属性了，变成一个普通的属性。</p>
-<p><a href="https://sm.ms/image/TVdf34HI1QRkGYo" target="_blank"><img src="https://s2.loli.net/2022/03/15/TVdf34HI1QRkGYo.png" ></a></p>
+<p><img src="https://s2.loli.net/2022/03/15/TVdf34HI1QRkGYo.png"></p>
 <p>常规Payload</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">e =&gt; &#123; <span class="keyword">for</span> (<span class="keyword">var</span> a <span class="keyword">in</span> &#123;&#125;) &#123; <span class="keyword">delete</span> <span class="title class_">Object</span>.<span class="property"><span class="keyword">prototype</span></span>[a]; &#125; <span class="keyword">return</span> <span class="variable language_">global</span>.<span class="property">process</span>.<span class="property">mainModule</span>.<span class="property">constructor</span>.<span class="title function_">_load</span>(<span class="string">&#x27;child_process&#x27;</span>).<span class="title function_">execSync</span>(<span class="string">&#x27;uname -a&#x27;</span>)&#125;&#125;</span><br></pre></td></tr></table></figure>
 
@@ -388,7 +390,7 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/SQLInject/" rel="tag"><i class="fa fa-tag"></i> SQLInject</a>
+              <a href="/tags/contaminate/" rel="tag"><i class="fa fa-tag"></i> contaminate</a>
           </div>
 
         
@@ -437,7 +439,7 @@
   <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
   
 <script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
@@ -454,9 +456,6 @@
 
 
 
-  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
-  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":false,"archive":false,"delay":true,"timeout":3000,"priority":true,"url":"https://nuxm.gitee.io/SQLInject/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/"}</script>
-  <script src="/js/third-party/quicklink.js"></script>
 
 </body>
 </html>

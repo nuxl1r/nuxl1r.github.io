@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>JAVA EL表达式注入</title>
-    <url>/SQLInject/JAVA%20EL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5/</url>
-    <content><![CDATA[<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><center>前言</center></h1><p>之前一直打算写一篇解析，拖了一久就开始写了。</p>
-<p><a href="https://sm.ms/image/AvYBeWiOuR3talo" target="_blank"><img src="https://s2.loli.net/2022/03/16/AvYBeWiOuR3talo.png" ></a></p>
+    <title>JavaEL表达式注入</title>
+    <url>/Inject/JAVA%20EL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><center>前言</center></h1><p>之前一直打算写一篇解析，拖了一久就开始写了。</p>
+<p><img src="https://s2.loli.net/2022/03/16/AvYBeWiOuR3talo.png"></p>
 <span id="more"></span>
 
 <h1 id="JAVA反射机制"><a href="#JAVA反射机制" class="headerlink" title="JAVA反射机制"></a><center>JAVA反射机制</center></h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>JAVA反射机制是在运行状态中，<strong>对于任意一个类，都能够知道这个类的所有属性和方法</strong>；<strong>对于任意一个对象，都能够调用它的任意一个方法和属性</strong>；这种<code>动态获取的信息</code>以及<code>动态调用对象</code>的方法的功能称为<code>java语言的反射机制</code>。<br>要想解剖一个类,必须先要获取到该类的字节码文件对象。而解剖使用的就是Class类中的方法.所以先要获取到每一个字节码文件对应的Class类型的对象.</p>
-<p><a href="https://sm.ms/image/gSvljhYbHELAnpt" target="_blank"><img src="https://s2.loli.net/2022/03/16/gSvljhYbHELAnpt.png" ></a></p>
+<p><img src="https://s2.loli.net/2022/03/16/gSvljhYbHELAnpt.png"></p>
 <ul>
 <li>Java中编译类型有两种：<ul>
 <li><strong>静态编译</strong>：在编译时确定类型，绑定对象即通过。</li>
@@ -68,18 +68,19 @@
         <category>Web安全</category>
       </categories>
       <tags>
-        <tag>SQLInject</tag>
+        <tag>JAVA</tag>
+        <tag>Inject</tag>
       </tags>
   </entry>
   <entry>
     <title>栈溢出</title>
     <url>/PWN/%E6%A0%88%E6%BA%A2%E5%87%BA/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>研究了一段时间，所以搞了下心得总结</p>
-<p><a href="https://sm.ms/image/oabOhk5WZ26NEXg" target="_blank"><img src="https://s2.loli.net/2022/03/01/oabOhk5WZ26NEXg.png" alt="91953835_p1.png"></a></p>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>研究了一段时间，做个总结。</p>
+<p><img src="https://s2.loli.net/2022/03/01/oabOhk5WZ26NEXg.png"></p>
 <span id="more"></span>
 
 <h1 id="栈（stack）"><a href="#栈（stack）" class="headerlink" title="栈（stack）"></a>栈（stack）</h1><p>栈是一种典型的后进先出 <code>(Last in First Out)</code> 的数据结构，其操作主要有<code>压栈 (push)</code> 与<code>出栈 (pop)</code> 两种操作，如下图所示。两种操作都操作栈顶，当然，它也有栈底。</p>
-<p><a href="https://sm.ms/image/P6wHiXuI2TCKBUj" target="_blank"><img src="https://s2.loli.net/2022/03/15/P6wHiXuI2TCKBUj.png" ></a></p>
+<p><img src="https://s2.loli.net/2022/03/15/P6wHiXuI2TCKBUj.png"></p>
 <p>高级语言在运行时都会被转换为汇编程序，在汇编程序运行过程中，充分利用了这一数据结构。每个程序在运行时都有虚拟地址空间，其中某一部分就是该程序对应的栈，用于保存函数调用信息和局部变量。此外，常见的操作也是压栈与出栈。需要注意的是，<strong>程序的栈是从进程地址空间的高地址向低地址增长的</strong>。</p>
 <p>需要注意的是，32 位和 64 位程序有以下简单的区别</p>
 <ul>
@@ -191,11 +192,11 @@
 <li>根据现实执行情况，覆盖特定的变量或地址的内容。</li>
 </ul>
 <p>之所以我们想要覆盖某个地址，是因为我们想通过覆盖地址的方法来<strong>直接或者间接地控制程序执行流程</strong>。</p>
-<p><a href="https://sm.ms/image/jBQdLcvCeyPfIi8" target="_blank"><img src="https://s2.loli.net/2022/03/15/jBQdLcvCeyPfIi8.png" ></a></p>
+<p><img src="https://s2.loli.net/2022/03/15/jBQdLcvCeyPfIi8.png"></p>
 <p>运行时程序的栈：<br>上面高地址处存放的是环境变量和main函数的信息<br>往下是主调函数的栈内存，包括临时变量和控制信息（控制信息包括返回地址和ebp等用来保存的寄存器的值）</p>
 <p>调用约定：<br>每个函数调用的时候都会自己平衡自己的堆栈。</p>
 <p>每个被调函数被调用的时候先push　ebp所以栈里面会有返回地址和ebp</p>
-<h2 id="两个表"><a href="#两个表" class="headerlink" title="两个表"></a><strong>两个表</strong></h2><p><a href="https://sm.ms/image/nbq1cslCgh27owZ" target="_blank"><img src="https://s2.loli.net/2022/03/15/nbq1cslCgh27owZ.png" ></a></p>
+<h2 id="两个表"><a href="#两个表" class="headerlink" title="两个表"></a><strong>两个表</strong></h2><p><img src="https://s2.loli.net/2022/03/15/nbq1cslCgh27owZ.png"></p>
 <ul>
 <li>全局偏移表<code>（GOT：Global Offset Table）</code>存放外部的函数地址</li>
 <li>程序链接表<code>（PLT：Procedure Link Table）</code>存放额外代码</li>
@@ -215,9 +216,9 @@
   </entry>
   <entry>
     <title>原型链污染</title>
-    <url>/SQLInject/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/</url>
+    <url>/JS/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>需要一定的js基础</p>
-<p><a href="https://sm.ms/image/ZHNuSfXCDk4OEab" target="_blank"><img src="https://s2.loli.net/2022/03/15/ZHNuSfXCDk4OEab.jpg" ></a></p>
+<p><img src="https://s2.loli.net/2022/03/15/ZHNuSfXCDk4OEab.jpg"></p>
 <span id="more"></span>
 
 <h1 id="prototype和-proto"><a href="#prototype和-proto" class="headerlink" title="prototype和__proto__"></a><code>prototype</code>和<code>__proto__</code></h1><p>又称<code>原型链污染</code>。</p>
@@ -240,7 +241,7 @@
 <p>我们可以通过<code>Foo.prototype</code>来访问<code>Foo</code>类的原型，但<code>Foo</code>实例化出来的对象，是不能通过prototype访问原型的。这时候，就该<code>__proto__</code>登场了。</p>
 <p>一个Foo类实例化出来的foo对象，可以通过<code>foo.__proto__</code>属性来访问Foo类的原型，也就是说：</p>
 <p><code>foo.``**proto**`` == Foo.prototype</code></p>
-<p><a href="https://sm.ms/image/YAlLm68IaD2PVHR" target="_blank"><img src="https://s2.loli.net/2022/03/15/YAlLm68IaD2PVHR.png" ></a></p>
+<p><img src="https://s2.loli.net/2022/03/15/YAlLm68IaD2PVHR.png"></p>
 <p>所以，总结一下：</p>
 <ol>
 <li><code>prototype</code>是一个类的属性，所有类对象在实例化的时候将会拥有<code>prototype</code>中的属性和方法</li>
@@ -259,7 +260,7 @@
 <li>如果仍然找不到，则继续在<code>son.__proto__.__proto__</code>中寻找last_name</li>
 <li>依次寻找，直到找到<code>null</code>结束。比如，<code>Object.prototype</code>的<code>__proto__</code>就是<code>null</code></li>
 </ol>
-<p><a href="https://sm.ms/image/rv6q7AOwld9DJYV" target="_blank"><img src="https://s2.loli.net/2022/03/15/rv6q7AOwld9DJYV.png" ></a></p>
+<p><img src="https://s2.loli.net/2022/03/15/rv6q7AOwld9DJYV.png"></p>
 <p>JavaScript的这个查找的机制，被运用在面向对象的继承中，被称作<code>prototype继承链</code>。</p>
 <p>以上就是最基础的JavaScript面向对象编程，并不深入研究更细节的内容，只要牢记以下几点即可：</p>
 <ol>
@@ -272,12 +273,12 @@
 
 
 <p>最后，虽然zoo是一个<strong>空</strong>对象<code>&#123;&#125;</code>，但<code>zoo.bar</code>的结果居然是2：</p>
-<p><a href="https://sm.ms/image/L1e3BF6JDiXakdT" target="_blank"><img src="https://s2.loli.net/2022/03/15/L1e3BF6JDiXakdT.png" ></a></p>
+<p><img src="https://s2.loli.net/2022/03/15/L1e3BF6JDiXakdT.png"></p>
 <p>原因也显而易见：因为前面修改了foo的原型<code>foo.__proto__.bar = 2</code>，而foo是一个Object类的实例，所以实际上是修改了Object这个类，给这个类增加了一个属性bar，值为2。</p>
 <p>后来，我们又用Object类创建了一个zoo对象<code>let zoo = &#123;&#125;</code>，zoo对象自然也有一个bar属性了。</p>
 <p>那么，在一个应用中，如果攻击者控制并修改了一个对象的原型，那么将可以影响所有和这个对象来自同一个类、父祖类的对象。这种攻击方式就是<strong>原型链污染</strong>。</p>
 <p>js中有个json.prase的方法,json解析的时候,会把<code>__proto__</code>变成一个键名，可以理解为和a同级,而不是一个原型的属性了，变成一个普通的属性。</p>
-<p><a href="https://sm.ms/image/TVdf34HI1QRkGYo" target="_blank"><img src="https://s2.loli.net/2022/03/15/TVdf34HI1QRkGYo.png" ></a></p>
+<p><img src="https://s2.loli.net/2022/03/15/TVdf34HI1QRkGYo.png"></p>
 <p>常规Payload</p>
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">e =&gt; &#123; <span class="keyword">for</span> (<span class="keyword">var</span> a <span class="keyword">in</span> &#123;&#125;) &#123; <span class="keyword">delete</span> <span class="title class_">Object</span>.<span class="property"><span class="keyword">prototype</span></span>[a]; &#125; <span class="keyword">return</span> <span class="variable language_">global</span>.<span class="property">process</span>.<span class="property">mainModule</span>.<span class="property">constructor</span>.<span class="title function_">_load</span>(<span class="string">&#x27;child_process&#x27;</span>).<span class="title function_">execSync</span>(<span class="string">&#x27;uname -a&#x27;</span>)&#125;&#125;</span><br></pre></td></tr></table></figure>
 
@@ -323,7 +324,7 @@
         <category>Web安全</category>
       </categories>
       <tags>
-        <tag>SQLInject</tag>
+        <tag>contaminate</tag>
       </tags>
   </entry>
   <entry>
@@ -332,12 +333,12 @@
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><center>前言</center></h1><blockquote>
 <p>之前写过一篇，但是愈发感觉到之前写的薄弱和乱，所以重构！</p>
 </blockquote>
-<p><a href="https://sm.ms/image/ecEnPtXKhJqdw1B" target="_blank"><img src="https://s2.loli.net/2022/02/24/ecEnPtXKhJqdw1B.jpg" ></a></p>
+<p><img src="https://s2.loli.net/2022/02/24/ecEnPtXKhJqdw1B.jpg"></p>
 <span id="more"></span>
 
 
 <h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a><center>正文</center></h1><p>实际上注入类漏洞最<font color="red"> 本质的原因就是</font> ，<code>混淆了代码和数据的边界</code>。</p>
-<p><a href="https://sm.ms/image/bP659ZCEGdpOSFm" target="_blank"><img src="https://s2.loli.net/2022/02/24/bP659ZCEGdpOSFm.png" ></a></p>
+<p><img src="https://s2.loli.net/2022/02/24/bP659ZCEGdpOSFm.png"></p>
 <ul>
 <li>注入的类型总的就只有3种：<ul>
 <li>联合注入<ul>
@@ -534,33 +535,50 @@
 </li>
 </ul>
 <p>用into outfile函数将一个可以用来上传的php文件写到网站的根目录下</p>
-<p><a href="https://sm.ms/image/unsKjTko6QxSAY3" target="_blank"><img src="https://s2.loli.net/2022/02/25/unsKjTko6QxSAY3.png" ></a></p>
+<p><img src="https://s2.loli.net/2022/02/25/unsKjTko6QxSAY3.png"></p>
 <p>也就是上传一个功能马</p>
 <h2 id="脚本编写"><a href="#脚本编写" class="headerlink" title="脚本编写"></a>脚本编写</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">##此处用法为：程序到env设置里查找python的安装路径，再调用对应路径下的解释器程序完成</span></span><br><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#多行注释符，此处为三个双引号，因为是其中也有单引号，并且该说明为一般文档说明，故用三个双引号</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">Copyright (c) 2006-2020 sqlmap developers (http://sqlmap.org/)</span></span><br><span class="line"><span class="string">See the file &#x27;LICENSE&#x27; for copying permission</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> re   <span class="comment">#导入python中的re 字符替换包，方便下面的字符替换</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> lib.core.data <span class="keyword">import</span> kb <span class="comment">#导入sqlmap中lib\core\data中的kb函数，测试 SQL 注入的过程中，使用的配置文件事先全部被加载到了 conf 和 kb</span></span><br><span class="line"><span class="keyword">from</span> lib.core.enums <span class="keyword">import</span> PRIORITY  <span class="comment">#导入sqlmap中lib\core\enums中的PRIORITY函数， LOWEST = -100，LOWER = -50，. 详细见enums.py</span></span><br><span class="line"></span><br><span class="line">__priority__ = PRIORITY.NORMAL <span class="comment">#定义优先级，此处为级别为【一般】</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dependencies</span>():  <span class="comment">#定义dependencies():此处是为了和整体脚本的结构保持一致。</span></span><br><span class="line">    <span class="keyword">pass</span>   <span class="comment">#pass 不做任何事情，一般用做占位语句。为了保持程序结构的完整性。</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">tamper</span>(<span class="params">payload, **kwargs</span>):  <span class="comment">#定义tamper脚本，payload, **kwargs 为定义的参数，其中**kwargs为字典存储，类似于 &#123;&#x27;a&#x27;: 1, &#x27;c&#x27;: 3, &#x27;b&#x27;: 2&#125; </span></span><br><span class="line">    <span class="keyword">return</span> payload.replace(<span class="string">&quot; &quot;</span>, <span class="string">&quot;%0a&quot;</span>).replace(<span class="string">&#x27;=&#x27;</span>, <span class="string">&#x27;like&#x27;</span>)</span><br></pre></td></tr></table></figure>
 
 <h2 id="增加新的Payload"><a href="#增加新的Payload" class="headerlink" title="增加新的Payload"></a>增加新的Payload</h2><p>目录在<code>./data/xml/payload</code></p>
 <p>可以看到6个xml文件</p>
-<p><a href="https://sm.ms/image/cjM2FqdQuzpoN9C" target="_blank"><img src="https://s2.loli.net/2022/02/25/cjM2FqdQuzpoN9C.png" ></a></p>
+<p><img src="https://s2.loli.net/2022/02/25/cjM2FqdQuzpoN9C.png"></p>
 <p>拿<code>boolean_blind.xml文件</code>里面的一部分来分析</p>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">test</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">title</span>&gt;</span>SAP MaxDB boolean-based blind - Stacked queries<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">stype</span>&gt;</span>1<span class="tag">&lt;/<span class="name">stype</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">level</span>&gt;</span>5<span class="tag">&lt;/<span class="name">level</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">risk</span>&gt;</span>1<span class="tag">&lt;/<span class="name">risk</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">clause</span>&gt;</span>1-8<span class="tag">&lt;/<span class="name">clause</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">where</span>&gt;</span>1<span class="tag">&lt;/<span class="name">where</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">vector</span>&gt;</span>;SELECT CASE WHEN [INFERENCE] THEN 1 ELSE NULL END<span class="tag">&lt;/<span class="name">vector</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">request</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">payload</span>&gt;</span>;SELECT CASE WHEN [RANDNUM]=[RANDNUM] THEN 1 ELSE NULL END<span class="tag">&lt;/<span class="name">payload</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">comment</span>&gt;</span>--<span class="tag">&lt;/<span class="name">comment</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">request</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">response</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">comparison</span>&gt;</span>;SELECT CASE WHEN [RANDNUM]=[RANDNUM1] THEN 1 ELSE NULL END<span class="tag">&lt;/<span class="name">comparison</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">response</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">details</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">dbms</span>&gt;</span>SAP MaxDB<span class="tag">&lt;/<span class="name">dbms</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">details</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">test</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 <ul>
-<li>title<br>  title属性为当前测试Payload的标题，通过标题就可以了解当前的注入手法与测试的数据库类型。</li>
-<li>stype<br>  查询类型。</li>
-<li>level<br>  风险等级(1-5,默认1)。</li>
-<li>risk<br>  危险等级(1-3,默认1)。</li>
-<li>clause<br>  指定为每个payload使用的SQL查询从句。<br>  <a href="https://sm.ms/image/7Ftj9qHuXD1zeUV" target="_blank"><img src="https://s2.loli.net/2022/02/25/7Ftj9qHuXD1zeUV.png" ></a></li>
-<li>where<br>  与上图一致。</li>
-<li>vector<br>  指定将使用的注入模版。</li>
-<li>payload<br>  测试使用的payload ,[RANDNUM]，[DELIMITER_START]，[DELIMITER_STOP]分别代表着随机数值与字符。当SQLMap扫描时会把对应的随机数替换掉,然后再与boundary的前缀与后缀拼接起来,最终成为测试的Payload。</li>
-<li>common<br>  payload 之后，boundary 拼接的后缀suffix之前。</li>
-<li>char<br>  在union 查询中爆破列时所用的字符。</li>
-<li>columns<br>  联合查询测试的列数范围。</li>
-<li>response<br>  根据回显辨别这次注入的payload是否成功。</li>
-<li>comparison<br>  使用字符串作为payload执行请求，将响应和负载响应进行对比，在基于布尔值的盲注中有效。</li>
-<li>grep<br>  使用正则表达式去批结响应，判断时候注入成功，在基于错误的注入中有用。</li>
-<li>time<br>  在基于time的注入中等待结果返回的所需要的时间</li>
-<li>detail<br>  下设三个子节点</li>
+<li><p>title<br>  title属性为当前测试Payload的标题，通过标题就可以了解当前的注入手法与测试的数据库类型。</p>
+</li>
+<li><p>stype<br>  查询类型。</p>
+</li>
+<li><p>level<br>  风险等级(1-5,默认1)。</p>
+</li>
+<li><p>risk<br>  危险等级(1-3,默认1)。</p>
+</li>
+<li><p>clause<br>  指定为每个payload使用的SQL查询从句。</p>
+<p>  <img src="https://s2.loli.net/2022/02/25/7Ftj9qHuXD1zeUV.png"></p>
+</li>
+<li><p>where<br>  与上图一致。</p>
+</li>
+<li><p>vector<br>  指定将使用的注入模版。</p>
+</li>
+<li><p>payload<br>  测试使用的payload ,[RANDNUM]，[DELIMITER_START]，[DELIMITER_STOP]分别代表着随机数值与字符。当SQLMap扫描时会把对应的随机数替换掉,然后再与boundary的前缀与后缀拼接起来,最终成为测试的Payload。</p>
+</li>
+<li><p>common<br>  payload 之后，boundary 拼接的后缀suffix之前。</p>
+</li>
+<li><p>char<br>  在union 查询中爆破列时所用的字符。</p>
+</li>
+<li><p>columns<br>  联合查询测试的列数范围。</p>
+</li>
+<li><p>response<br>  根据回显辨别这次注入的payload是否成功。</p>
+</li>
+<li><p>comparison<br>  使用字符串作为payload执行请求，将响应和负载响应进行对比，在基于布尔值的盲注中有效。</p>
+</li>
+<li><p>grep<br>  使用正则表达式去批结响应，判断时候注入成功，在基于错误的注入中有用。</p>
+</li>
+<li><p>time<br>  在基于time的注入中等待结果返回的所需要的时间</p>
+</li>
+<li><p>detail<br>  下设三个子节点</p>
+</li>
 </ul>
 <p>最终的payload为：</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">where</span> <span class="operator">+</span> boundary.prefix<span class="operator">+</span>test.payload <span class="operator">+</span> test.common <span class="operator">+</span> <span class="operator">+</span>boundary.suffix</span><br></pre></td></tr></table></figure>]]></content>
@@ -575,7 +593,7 @@
     <title>多进程、进程池、异步大总结</title>
     <url>/%E7%9F%A5%E8%AF%86%E6%A0%91/%E5%A4%9A%E8%BF%9B%E7%A8%8B%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%BC%82%E6%AD%A5/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><center>前言</center></h1><p>经常写脚本与工具，越发感觉到速度的重要性！本文从基础开始，基于Python讲解，适合小白阅读，但需要一定代码功底。</p>
-<p><a href="https://sm.ms/image/rxesbPFqSN2uTp3" target="_blank"><img src="https://s2.loli.net/2022/02/25/rxesbPFqSN2uTp3.jpg" ></a></p>
+<p><img src="https://s2.loli.net/2022/02/25/rxesbPFqSN2uTp3.jpg"></p>
 <span id="more"></span>
 
 <h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a><center>正文</center></h1><p>在正式进入学习之前，先要了解一定的基础知识。</p>
@@ -773,7 +791,7 @@
     <title>Oracle注入</title>
     <url>/SQLInject/Oracle/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>打JAVA站一般数据库都是Oracle，有一些特点的原因，所以特别记录一下</p>
-<p><a href="https://sm.ms/image/WynZ1puLEAxdOHl" target="_blank"><img src="https://s2.loli.net/2022/02/24/WynZ1puLEAxdOHl.png" ></a></p>
+<p><img src="https://s2.loli.net/2022/02/24/WynZ1puLEAxdOHl.png"></p>
 <span id="more"></span>
 
 <h1 id="Oracle"><a href="#Oracle" class="headerlink" title="Oracle"></a>Oracle</h1><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">+</span><span class="keyword">UNION</span><span class="operator">+</span><span class="keyword">SELECT</span><span class="operator">+</span><span class="string">&#x27;abc&#x27;</span>,<span class="string">&#x27;def&#x27;</span><span class="comment">--</span></span><br></pre></td></tr></table></figure>
@@ -1037,7 +1055,6 @@
     <title>nohup命令</title>
     <url>/Linux/nohup%E5%91%BD%E4%BB%A4/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>如果你正在运行一个进程，而且你觉得在退出帐户时该进程还不会结束，那么可以使用 nohup 命令。</p>
-<p><a href="https://sm.ms/image/y64tCrmuJcsxA98" target="_blank"><img src="https://s2.loli.net/2022/02/24/y64tCrmuJcsxA98.png" ></a></p>
 <span id="more"></span>
 
 <h1 id="命令简介"><a href="#命令简介" class="headerlink" title="命令简介"></a>命令简介</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ nohup Command [ Arg … ] [ &amp; ]</span><br></pre></td></tr></table></figure>
@@ -1074,24 +1091,22 @@
 <li>main    –&gt;主方法</li>
 <li>class    –&gt;表示定义一个类</li>
 </ul>
-<p>简单程序示例<br><a href="https://imgchr.com/i/sL8zdA"><img src="https://s3.ax1x.com/2021/01/25/sL8zdA.png" alt="sL8zdA.png" border="0" /></a></p>
+<p>简单程序示例</p>
+<p><img src="https://s3.ax1x.com/2021/01/25/sL8zdA.png"></p>
 <ol>
 <li>一个JAVA源文件可以定义多个class</li>
 <li>一个JAVA源文件当中的public的class不是必须定义的<mark>public定义的class名字必须与类名一致，所有一个包中的一个公开的类只能有一个</mark></li>
 <li>一个class会定义，或者产生一个xxx.class字节码文件（储存代码片段）</li>
 </ol>
-<p><a href="https://imgchr.com/i/sLGYw9"><img src="https://s3.ax1x.com/2021/01/25/sLGYw9.png" alt="sLGYw9.png" border="0" /></a></p>
+<p><img src="https://s3.ax1x.com/2021/01/25/sLGYw9.png"></p>
 <p>命名法<br>类名，接口名：首字母大写，其余小写<br>变量名，方法名：首字母小写，其余大写<br>常量名：全部大写<br>要见名知意，遵守驼峰命名法<br>驼峰命名法：当命名要用2个及其以上单词时，用下划线或者首字母大写分开<br>写代码要符合规范，加空格的位置要注意加</p>
 <ol>
 <li>小容量转换成大容量，称为自动类型转换机制</li>
 <li>long2&#x3D;123486453486L加L是说明是8字节<br>大容量转换成小容量加强制转换类型符，但是会损失精度 –&gt;int y &#x3D; (int) x</li>
 </ol>
-<p>注释<br>与C一样，但是如<br>&#x2F;*</p>
-<ul>
-<li>比较专业的注释方法，该注释信息会被javacloc.exe工具解析</li>
-<li>提取并生成帮助文档(即说明书)</li>
-</ul>
-<p> *&#x2F;</p>
+<p>注释<br>与C一样，但是如</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 比较专业的注释方法，该注释信息会被javacloc.exe工具解析</span></span><br><span class="line"><span class="comment"> * 提取并生成帮助文档(即说明书)</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+
 <p>占用空间</p>
 <ol>
 <li>byte————  2 [-128~127]</li>
@@ -1118,12 +1133,13 @@
 <li>堆内存</li>
 </ol>
 <p>1，方法片段属于class字节码文件的一部分，字节码文件在类加载的时候，将其存放在方法区中。所以JVM中的三块主要内存中方法区内存最先有数据。存放了代码片段。<br>2，代码片段虽然在方法区内存当中存有片段只有一份，但是可以被重复调用。每一次调用这个方法的时候，需要给该方法分配独立的活动场所，在栈内存中分配。<br>3，方法在调用的瞬间，会给该方法分配内存空间，会在栈中发生压栈动作，方法结束后給该方法分配内存空间收回，方法结束压栈。</p>
-<p><a href="https://imgchr.com/i/sLJnne"><img src="https://s3.ax1x.com/2021/01/25/sLJnne.png" alt="sLJnne.png" border="0" /></a><br>压栈：给该方法分配内存空间<br>弹栈：释放该方法内存空间<br>栈帧：永远指向栈顶元素<br>  栈顶元素处于活跃状态，其他元素静止<br>栈数据结构，存储数据结构特点<br>遵守：先进后出，后进先出</p>
+<p><img src="https://s3.ax1x.com/2021/01/25/sLJnne.png"></p>
+<p>压栈：给该方法分配内存空间<br>弹栈：释放该方法内存空间<br>栈帧：永远指向栈顶元素<br>  栈顶元素处于活跃状态，其他元素静止<br>栈数据结构，存储数据结构特点<br>遵守：先进后出，后进先出</p>
 <p>方法重载<br>功能相似，尽可能让方法名相同<br>只和方法名+参数列表有关系<br>方法名可以相同，但是其内的参数类型要不同</p>
 <p>方法的递归调用<br>1，方法自身调用自身<br>2，递归必须有结束条件，没有结束条件一定会发生，栈内存溢出错误<br>3，即使有结束条件，也有可能发生栈内存溢出错误，因为递归太深了</p>
-<p><a href="https://imgchr.com/i/sLNQAJ"><img src="https://s3.ax1x.com/2021/01/25/sLNQAJ.png" alt="sLNQAJ.png" border="0" /></a></p>
+<p><img src="https://s3.ax1x.com/2021/01/25/sLNQAJ.png"></p>
 <p>弹栈时逐级相加</p>
-<p><a href="https://imgchr.com/i/sLYwrD"><img src="https://s3.ax1x.com/2021/01/25/sLYwrD.png" alt="sLYwrD.png" border="0" /></a></p>
+<p><img src="https://s3.ax1x.com/2021/01/25/sLYwrD.png"></p>
 <h1 id="面向对象"><a href="#面向对象" class="headerlink" title="面向对象"></a>面向对象</h1><p><mark>优点：耦合度低，扩展力强。更容易解决现实世界中更复杂的业务逻辑</p>
 <p>缺点：前期投入成本高，需要进行独立体的抽取，大量系统分析与设计</p>
 <p>关注点是对象（独立体）能完成那些的功能</p>
@@ -1137,7 +1153,7 @@
 <p><mark>注意<br>状态和动作特征当具体到某一个对象后，发现最终结果可能不一样。<br>对象和对象之间有共同的特征，但是具体到对象以后有数据差异</mark></p>
 <p>类的定义<br>[修饰符列表]class 类名{<br>属性;<br>方法;<br>}<br>属性通常采用一个变量的形式来定义</p>
 <p>JAVA语言中所有class都属于引用数据类型<br>类体 &#x3D; 属性 + 方法<br>实例变量：不能通过类直接访问<br>对象又被称为实例，实例变量又被称为对象变量（对象级别变量）<br>实例化对象的语法：new 类名（）<br>new运算符的作用是创建对象，在JVM堆内存当中开辟新内存空间<br>堆内存：new的对象在堆内存中的存储</p>
-<p><a href="https://imgchr.com/i/sLtuFA"><img src="https://s3.ax1x.com/2021/01/25/sLtuFA.png" alt="sLtuFA.png" border="0" /></a></p>
+<p><img src="https://s3.ax1x.com/2021/01/25/sLtuFA.png"></p>
 <p>在对象中分边定义两个引用，分边指向两个对象，则知其也知其二</p>
 <p>局部变量：方法体中声明<br>成员变量：方法体外声明<br>实例变量：前边修饰符无static<br>静态变量：前边修饰符有sta</p>
 <p>三块内存当中变化最频繁的是栈内存，最先有数据的是方法去内存，垃圾回收器主要针对的是堆内存。</p>
@@ -1234,8 +1250,8 @@
 <p>子类继承父类的所有属性和方法，但是不能直接访问private</p>
 <h2 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h2><p>java语言中的多态语法机制<br>1.ABC三个类之间的关系：<br>B类继承A类<br>C类继承A类<br>B，C之间没有任何继承关系</p>
 <p>2.关于多态中涉及到的几个概念</p>
-<p>*向上转型（upcasting）                             B b2 &#x3D; new A<br>子类型 –&gt;父类型<br>又被称为：自动类型转换</p>
-<p>*向下转型（downcasting）<br>父类型–&gt;子类型<br>又被称为：强制类型转换【需要加强制类型转换符】</p>
+<p>向上转型（upcasting）                             B b2 &#x3D; new A<br>子类型 –&gt;父类型<br>又被称为：自动类型转换</p>
+<p>向下转型（downcasting）<br>父类型–&gt;子类型<br>又被称为：强制类型转换【需要加强制类型转换符】</p>
 <p><mark>无论是向上转型还是向下转型，两种类型之间必须要用继承关系。<br>没有继承关系，程序是无法编译通过的</mark></p>
 <ol>
 <li>Java程序永远都分为编译阶段和运行阶段</li>
@@ -1375,9 +1391,9 @@ String.format(&quot;abc&quot; )
 <li>回顾一下Hexo发布到gitee（Pages）的流程：</li>
 <li>本地计算机用Hexo构建静态文件public</li>
 <li>关键一步就是git上传github或gitee</li>
-<li>发布Pages将仓库目录<span class="exturl" data-url="aHR0cHM6Ly9naXRlZS5jb20vY3VuZ3VkYWZhL2N1bmd1ZGFmYS9pbmRleC5odG1sJUU2JThCJTg5JUU1JThGJTk2JUU1JTg4JUIwaHR0cHM6Ly9jdW5ndWRhZmEuZ2l0ZWUuaW8vaW5kZXguaHRtbA==">https://gitee.com/cungudafa/cungudafa/index.html拉取到https://cungudafa.gitee.io/index.html<i class="fa fa-external-link-alt"></i></span></li>
+<li>发布Pages将仓库目录<a href="https://gitee.com/cungudafa/cungudafa/index.html%E6%8B%89%E5%8F%96%E5%88%B0https://cungudafa.gitee.io/index.html">https://gitee.com/cungudafa/cungudafa/index.html拉取到https://cungudafa.gitee.io/index.html</a></li>
 </ul>
-<p><a href="https://imgchr.com/i/DXOrtg"><img src="https://s3.ax1x.com/2020/12/06/DXOrtg.png" alt="DXOrtg.png" border="0" /></a><br>当然我们需要上传的是public文件夹；每次xftp手动上传肯定是不现实且麻烦的，所以我们接下来要在服务器安装git。</p>
+<p><img src="https://s3.ax1x.com/2020/12/06/DXOrtg.png"><br>当然我们需要上传的是public文件夹；每次xftp手动上传肯定是不现实且麻烦的，所以我们接下来要在服务器安装git。</p>
 <h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><h3 id="服务器创建服务器创建git用户"><a href="#服务器创建服务器创建git用户" class="headerlink" title="服务器创建服务器创建git用户"></a>服务器创建服务器创建git用户</h3><h4 id="创建一个git用户，用来运行git服务。（root不安全）"><a href="#创建一个git用户，用来运行git服务。（root不安全）" class="headerlink" title="创建一个git用户，用来运行git服务。（root不安全）"></a>创建一个git用户，用来运行git服务。（root不安全）</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo useradd git -m</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>注意：Ubantu下必须加上-m，才会自动新建用户目录&#x2F;home&#x2F;git&#x2F;（后面配置和博客文件都放在这里）<br>在&#x2F;home&#x2F;git&#x2F;非常重要，如果出错，可以删除sudo userdel -r git用户，重新之前的步骤。</p>
@@ -1390,7 +1406,7 @@ String.format(&quot;abc&quot; )
 <p>保存退出后改回权限：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">chmod 400 /etc/sudoers</span><br></pre></td></tr></table></figure>
 
-<h3 id="服务器打开RSA认证"><a href="#服务器打开RSA认证" class="headerlink" title="服务器打开RSA认证"></a>服务器打开RSA认证</h3><p>RSA用公钥加密，私钥解密，成为加密通信。<br>用私钥加密，公钥解密，就是认证。（这样就能证明消息是你发出的。）<br>因为：公钥大家都有，私钥就只有一个，在你自己手里。<br><a href="https://imgchr.com/i/DXzRTP"><img src="https://s3.ax1x.com/2020/12/06/DXzRTP.png" alt="DXzRTP.png" border="0" /></a></p>
+<h3 id="服务器打开RSA认证"><a href="#服务器打开RSA认证" class="headerlink" title="服务器打开RSA认证"></a>服务器打开RSA认证</h3><p>RSA用公钥加密，私钥解密，成为加密通信。<br>用私钥加密，公钥解密，就是认证。（这样就能证明消息是你发出的。）<br>因为：公钥大家都有，私钥就只有一个，在你自己手里。<br><img src="https://s3.ax1x.com/2020/12/06/DXzRTP.png"></p>
 <h4 id="开启认证配置"><a href="#开启认证配置" class="headerlink" title="开启认证配置"></a>开启认证配置</h4><h5 id="服务器端："><a href="#服务器端：" class="headerlink" title="服务器端："></a>服务器端：</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
 <p>在sshd_config中开启以下几项：(前两项yes，后一项修改为如下)</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">RSAAuthentication yes</span><br><span class="line">PubkeyAuthentication yes</span><br><span class="line">AuthorizedKeysFile  .ssh/authorized_keys</span><br></pre></td></tr></table></figure>
@@ -1398,39 +1414,48 @@ String.format(&quot;abc&quot; )
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">systemctl stop sshd.service</span><br><span class="line">systemctl start sshd.service</span><br></pre></td></tr></table></figure>
 <h4 id="建立ssh信任关系"><a href="#建立ssh信任关系" class="headerlink" title="建立ssh信任关系"></a>建立ssh信任关系</h4><p>本地电脑生成秘钥对-&gt;发送公钥到服务器-&gt;本地可免密连接服务器</p>
 <h5 id="在本地电脑-生成密钥对"><a href="#在本地电脑-生成密钥对" class="headerlink" title="在本地电脑:生成密钥对"></a>在本地电脑:生成密钥对</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C &quot;邮箱&quot; </span><br></pre></td></tr></table></figure>
-<p><a href="https://imgchr.com/i/DjSY9S"><img src="https://s3.ax1x.com/2020/12/06/DjSY9S.png" alt="DjSY9S.png" border="0" /></a><br>成功后，会在c盘用户下新建秘钥对：<br><a href="https://imgchr.com/i/DjSrNV"><img src="https://s3.ax1x.com/2020/12/06/DjSrNV.png" alt="DjSrNV.png" border="0" /></a></p>
+
+<p><img src="https://s3.ax1x.com/2020/12/06/DjSY9S.png"><br>成功后，会在c盘用户下新建秘钥对：</p>
+<p><img src="https://s3.ax1x.com/2020/12/06/DjSrNV.png"></p>
 <h5 id="在服务器-切换至git用户，创建-x2F-ssh-文件夹"><a href="#在服务器-切换至git用户，创建-x2F-ssh-文件夹" class="headerlink" title="在服务器:切换至git用户，创建 ~&#x2F;.ssh 文件夹"></a>在服务器:切换至git用户，创建 ~&#x2F;.ssh 文件夹</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">su git</span><br><span class="line">mkdir ~/.ssh</span><br></pre></td></tr></table></figure>
 <p>或者root用户直接创建：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /home/git/</span><br><span class="line">mkdir .ssh</span><br></pre></td></tr></table></figure>
 
 <h5 id="在本地电脑-发送公钥-id-rsa-pub-到-x2F-home-x2F-git-x2F-ssh-x2F-authorzied-keys"><a href="#在本地电脑-发送公钥-id-rsa-pub-到-x2F-home-x2F-git-x2F-ssh-x2F-authorzied-keys" class="headerlink" title="在本地电脑:发送公钥 id_rsa.pub 到 &#x2F;home&#x2F;git&#x2F;.ssh&#x2F;authorzied_keys"></a>在本地电脑:发送公钥 id_rsa.pub 到 &#x2F;home&#x2F;git&#x2F;.ssh&#x2F;authorzied_keys</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-copy-id -i C:/Users/CUNGU/.ssh/id_rsa.pub git@47.93.50.90 //把公钥发送给服务器</span><br><span class="line">ssh git@47.93.50.90 // 测试能否登录</span><br></pre></td></tr></table></figure>
-<p>服务器文件夹也有了公钥：<br><a href="https://imgchr.com/i/DjpPgg"><img src="https://s3.ax1x.com/2020/12/06/DjpPgg.png" alt="DjpPgg.png" border="0" /></a></p>
+<p>服务器文件夹也有了公钥：</p>
+<p><img src="https://s3.ax1x.com/2020/12/06/DjpPgg.png"></p>
 <h5 id="文件夹权限调整：authorzied-keys权限为600时才生效"><a href="#文件夹权限调整：authorzied-keys权限为600时才生效" class="headerlink" title="文件夹权限调整：authorzied_keys权限为600时才生效"></a>文件夹权限调整：authorzied_keys权限为600时才生效</h5><p>git用户：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">su git</span><br><span class="line">chmod 700 ~/.ssh</span><br><span class="line">chmod 600 ~/.ssh/authorzied_keys</span><br></pre></td></tr></table></figure>
-<p>第二步没有成功，说我没有权限（Permission denied）；emmm，root设置好了<br><a href="https://imgchr.com/i/DjpK8U"><img src="https://s3.ax1x.com/2020/12/06/DjpK8U.png" alt="DjpK8U.png" border="0" /></a><br>root设置第二步：(注意在.ssh目录下)</p>
+<p>第二步没有成功，说我没有权限（Permission denied）；emmm，root设置好了</p>
+<p><img src="https://s3.ax1x.com/2020/12/06/DjpK8U.png"><br>root设置第二步：(注意在.ssh目录下)</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">exit // 退出到 root 登录</span><br><span class="line">sudo chmod 600 authorized_keys</span><br></pre></td></tr></table></figure>
-<p><a href="https://imgchr.com/i/Djp2Pf"><img src="https://s3.ax1x.com/2020/12/06/Djp2Pf.png" alt="Djp2Pf.png" border="0" /></a><br>现在就搭建好git桥梁，为后面实现hexo d部署时，可以自动上传啦！</p>
+
+<p><img src="https://s3.ax1x.com/2020/12/06/Djp2Pf.png"><br>现在就搭建好git桥梁，为后面实现hexo d部署时，可以自动上传啦！</p>
 <h3 id="创建blog-git空仓库"><a href="#创建blog-git空仓库" class="headerlink" title="创建blog.git空仓库"></a>创建blog.git空仓库</h3><h4 id="切换到git用户，接下来都是在git用户权限下进行操作："><a href="#切换到git用户，接下来都是在git用户权限下进行操作：" class="headerlink" title="切换到git用户，接下来都是在git用户权限下进行操作："></a>切换到git用户，接下来都是在git用户权限下进行操作：</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">su git                //切换git用户</span><br><span class="line">cd /home/git/</span><br><span class="line">mkdir -p projects/blog  //创建你的博客目录</span><br><span class="line">mkdir repos &amp;&amp; cd repos</span><br><span class="line">git init --bare blog.git  //创建一个空仓库</span><br><span class="line">cd blog.git/hooks</span><br><span class="line">vi post-receive  //创建hook钩子函数，输入以下内容</span><br><span class="line">git --work-tree=/home/git/projects/blog --git-dir=/home/git/repos/blog.git checkout -f</span><br><span class="line">chmod +x post-receive  // 修改钩子函数权限</span><br></pre></td></tr></table></figure>
-<p><a href="https://imgchr.com/i/Dj98SS"><img src="https://s3.ax1x.com/2020/12/06/Dj98SS.png" alt="Dj98SS.png" border="0" /></a></p>
+
+<p><img src="https://s3.ax1x.com/2020/12/06/Dj98SS.png"></p>
 <h4 id="改变-hexo-git-目录的拥有者为git用户："><a href="#改变-hexo-git-目录的拥有者为git用户：" class="headerlink" title="改变 hexo.git 目录的拥有者为git用户："></a>改变 hexo.git 目录的拥有者为git用户：</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo chown -R git:git blog.git</span><br></pre></td></tr></table></figure>
-<p><a href="https://imgchr.com/i/Dj9BWT"><img src="https://s3.ax1x.com/2020/12/06/Dj9BWT.png" alt="Dj9BWT.png" border="0" /></a></p>
+
+<p><img src="https://s3.ax1x.com/2020/12/06/Dj9BWT.png"></p>
 <h5 id="添加备份目录"><a href="#添加备份目录" class="headerlink" title="添加备份目录"></a>添加备份目录</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /home/git/projects/</span><br><span class="line">mkdir -p tmp/blog</span><br></pre></td></tr></table></figure>
 <p>修改钩子的内容：（重点是git clone 克隆到主目录home&#x2F;git&#x2F;projects&#x2F;blog主目录要配置到nginx中去的）</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">GIT_REPO=/home/git/repos/blog.git    # git仓库</span><br><span class="line">TMP_GIT_CLONE=/home/git/projects/tmp/blog</span><br><span class="line">PUBLIC_WWW=/home/git/projects/blog  # 网站目录</span><br><span class="line">rm -rf $&#123;TMP_GIT_CLONE&#125;</span><br><span class="line">git clone $GIT_REPO $TMP_GIT_CLONE</span><br><span class="line">rm -rf $&#123;PUBLIC_WWW&#125;/*</span><br><span class="line">cp -rf $&#123;TMP_GIT_CLONE&#125;/* $&#123;PUBLIC_WWW&#125;</span><br><span class="line">chmod +x post-receive          # 赋予脚本的执行权限</span><br></pre></td></tr></table></figure>
 <p>git用户赋权：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">su git</span><br><span class="line">chmod +x post-receive</span><br><span class="line">exit // 退出到 root 登录</span><br><span class="line">chown -R git:git /home/git/repos/blog.git // 添加权限</span><br><span class="line">sudo chown git:git -R /home/git/projects/</span><br></pre></td></tr></table></figure>
-<p><a href="https://imgchr.com/i/DjCPmj"><img src="https://s3.ax1x.com/2020/12/06/DjCPmj.png" alt="DjCPmj.png" border="0" /></a></p>
-<p>蓝色为更新后的上传机制：<br><a href="https://imgchr.com/i/DjCncF"><img src="https://s3.ax1x.com/2020/12/06/DjCncF.png" alt="DjCncF.png" border="0" /></a></p>
+
+<p><img src="https://s3.ax1x.com/2020/12/06/DjCPmj.png"></p>
+<p>蓝色为更新后的上传机制：</p>
+<p><img src="https://s3.ax1x.com/2020/12/06/DjCncF.png"></p>
 <p>为了安全起见，我们需要关闭git账号登录shell的权限</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim /etc/passwd</span><br></pre></td></tr></table></figure>
 <p>找到git账号(一般在最后面)添加：&#x2F;usr&#x2F;bin&#x2F;git-shell</p>
-<p><a href="https://imgchr.com/i/DjCl7R"><img src="https://s3.ax1x.com/2020/12/06/DjCl7R.png" alt="DjCl7R.png" border="0" /></a></p>
+<p><img src="https://s3.ax1x.com/2020/12/06/DjCl7R.png"></p>
 <p>加上git就只能git clone，如需shell操作，撤销&#x2F;usr&#x2F;bin&#x2F;git-shell即可。</p>
 <p>####在本地任意一空目录，测试git仓库是否可用（测试步骤，稍后可清除）</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone git@48.53.57.50:/home/git/repos/blog.git</span><br></pre></td></tr></table></figure>
 
 <p>实际拉下来的是你的&#x2F;home&#x2F;git&#x2F;projects&#x2F;blog，哈哈哈还是空的~</p>
-<p><a href="https://imgchr.com/i/DjC3A1"><img src="https://s3.ax1x.com/2020/12/06/DjC3A1.png" alt="DjC3A1.png" border="0" /></a></p>
+<p><img src="https://s3.ax1x.com/2020/12/06/DjC3A1.png"></p>
 <h3 id="hexo配置"><a href="#hexo配置" class="headerlink" title="hexo配置"></a>hexo配置</h3><p>修改博客根目录配置_config.yml，部署部分，增添repo</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  message: update</span><br><span class="line">  gitee: https://gitee.com/cungudafa/cungudafa.git</span><br><span class="line">  repo: git@48.53.57.50:/home/git/repos/blog.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
 <blockquote>
@@ -1441,10 +1466,11 @@ String.format(&quot;abc&quot; )
 <li>这里我选择的是sudo apt install nginx的方式安装<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt install nginx</span><br></pre></td></tr></table></figure></li>
 </ul>
 <h4 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim /etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
-<p>修改用户为root用户<br><a href="https://imgchr.com/i/Dji6Og"><img src="https://s3.ax1x.com/2020/12/06/Dji6Og.png" alt="Dji6Og.png" border="0" /></a></p>
+<p>修改用户为root用户</p>
+<p><img src="https://s3.ax1x.com/2020/12/06/Dji6Og.png"></p>
 <p>1.端口号（阿里云控制台安全组规则要打开端口哦）<br>2.修改域名<br>3.修改根目录位置</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim /etc/nginx/sites-available/default</span><br></pre></td></tr></table></figure>
-<p><a href="https://imgchr.com/i/DjFPne"><img src="https://s3.ax1x.com/2020/12/06/DjFPne.png" alt="DjFPne.png" border="0" /></a></p>
+<p><img src="https://s3.ax1x.com/2020/12/06/DjFPne.png"></p>
 <blockquote>
 <p>到这里只要重启nginx就可以了，但是我没发现sbin文件，就从进程重启了</p>
 </blockquote>
@@ -1452,7 +1478,7 @@ String.format(&quot;abc&quot; )
 
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kill -HUP 进程号</span><br></pre></td></tr></table></figure>
 
-<p><a href="https://imgchr.com/i/DjF69x"><img src="https://s3.ax1x.com/2020/12/06/DjF69x.png" alt="DjF69x.png" border="0" /></a></p>
+<p><img src="https://s3.ax1x.com/2020/12/06/DjF69x.png"></p>
 <p>接下来就可以用域名或者公网IP访问了</p>
 ]]></content>
       <categories>
