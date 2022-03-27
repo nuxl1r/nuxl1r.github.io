@@ -26,24 +26,24 @@
     <meta name="description" content="前言打JAVA站一般数据库都是Oracle，有一些特点的原因，所以特别记录一下">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Oracle注入">
-<meta property="og:url" content="https://nuxm.gitee.io/SQLInject/Oracle/index.html">
+<meta property="og:url" content="https://nuxm.gitee.io/-SQLInject/Oracle/index.html">
 <meta property="og:site_name" content="This —&gt; 昊">
 <meta property="og:description" content="前言打JAVA站一般数据库都是Oracle，有一些特点的原因，所以特别记录一下">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownWynZ1puLEAxdOHl.png">
 <meta property="article:published_time" content="2022-02-24T04:47:01.918Z">
-<meta property="article:modified_time" content="2022-03-27T04:17:52.614Z">
+<meta property="article:modified_time" content="2022-03-27T13:46:51.482Z">
 <meta property="article:author" content="昊">
 <meta property="article:tag" content="SQLInject">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownWynZ1puLEAxdOHl.png">
 
 
-<link rel="canonical" href="https://nuxm.gitee.io/SQLInject/Oracle/">
+<link rel="canonical" href="https://nuxm.gitee.io/-SQLInject/Oracle/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/SQLInject/Oracle/","path":"SQLInject/Oracle/","title":"Oracle注入"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/-SQLInject/Oracle/","path":"-SQLInject/Oracle/","title":"Oracle注入"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>Oracle注入 | This —> 昊</title>
@@ -149,7 +149,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Oracle"><span class="nav-number">2.</span> <span class="nav-text">Oracle</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Oracle%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">3.</span> <span class="nav-text">Oracle数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E4%BB%8B%E7%BB%8D"><span class="nav-number">3.1.</span> <span class="nav-text">1、介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81oracle%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9D%83%E9%99%90%E5%88%86%E4%B8%BA2%E7%B1%BB"><span class="nav-number">3.2.</span> <span class="nav-text">2、oracle数据库权限分为2类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E3%80%81dual%E8%A1%A8"><span class="nav-number">3.2.1.</span> <span class="nav-text">2.1 、dual表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3%E3%80%81%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E4%B8%BAoracle%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">3.3.</span> <span class="nav-text">3、判断是否为oracle数据库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4%E3%80%81dual%E8%A1%A8%E5%AE%9E%E7%8E%B0%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5"><span class="nav-number">3.4.</span> <span class="nav-text">4、dual表实现联合注入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1%E3%80%81%E6%9F%A5%E5%BA%93"><span class="nav-number">3.4.1.</span> <span class="nav-text">4.1、查库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2%E3%80%81%E6%9F%A5%E8%A1%A8"><span class="nav-number">3.4.2.</span> <span class="nav-text">4.2、查表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3%E3%80%81%E5%AD%97%E6%AE%B5"><span class="nav-number">3.4.3.</span> <span class="nav-text">4.3、字段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5%E3%80%81dual%E8%A1%A8%E5%AE%9E%E7%8E%B0%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="nav-number">3.5.</span> <span class="nav-text">5、dual表实现报错注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6%E3%80%81%E5%81%87%E5%A6%82Oracle%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E6%B2%A1%E6%9C%89dual%E8%A1%A8%E4%B9%9F%E6%97%A0%E6%B3%95%E8%BF%9B%E8%A1%8C%E6%81%A2%E5%A4%8D%E7%9A%84%E6%83%85%E5%86%B5%E4%B8%8B%E7%94%A8"><span class="nav-number">3.6.</span> <span class="nav-text">6、假如Oracle数据库中没有dual表也无法进行恢复的情况下用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7%E3%80%81%E5%85%B6%E4%BB%96payload%E6%80%BB%E7%BB%93"><span class="nav-number">3.7.</span> <span class="nav-text">7、其他payload总结</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Oracle"><span class="nav-number">2.</span> <span class="nav-text">Oracle</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Oracle%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">3.</span> <span class="nav-text">Oracle数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E4%BB%8B%E7%BB%8D"><span class="nav-number">3.1.</span> <span class="nav-text">1、介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81oracle%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9D%83%E9%99%90%E5%88%86%E4%B8%BA2%E7%B1%BB"><span class="nav-number">3.2.</span> <span class="nav-text">2、oracle数据库权限分为2类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E3%80%81dual%E8%A1%A8"><span class="nav-number">3.2.1.</span> <span class="nav-text">2.1 、dual表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3%E3%80%81%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E4%B8%BAoracle%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">3.3.</span> <span class="nav-text">3、判断是否为oracle数据库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4%E3%80%81dual%E8%A1%A8%E5%AE%9E%E7%8E%B0%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5"><span class="nav-number">3.4.</span> <span class="nav-text">4、dual表实现联合注入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1%E3%80%81%E6%9F%A5%E5%BA%93"><span class="nav-number">3.4.1.</span> <span class="nav-text">4.1、查库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2%E3%80%81%E6%9F%A5%E8%A1%A8"><span class="nav-number">3.4.2.</span> <span class="nav-text">4.2、查表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3%E3%80%81%E5%AD%97%E6%AE%B5"><span class="nav-number">3.4.3.</span> <span class="nav-text">4.3、字段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5%E3%80%81dual%E8%A1%A8%E5%AE%9E%E7%8E%B0%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="nav-number">3.5.</span> <span class="nav-text">5、dual表实现报错注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6%E3%80%81%E5%81%87%E5%A6%82Oracle%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E6%B2%A1%E6%9C%89dual%E8%A1%A8%E4%B9%9F%E6%97%A0%E6%B3%95%E8%BF%9B%E8%A1%8C%E6%81%A2%E5%A4%8D%E7%9A%84%E6%83%85%E5%86%B5%E4%B8%8B%E7%94%A8"><span class="nav-number">3.6.</span> <span class="nav-text">6、假如Oracle数据库中没有dual表也无法进行恢复的情况下用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7%E3%80%81%E5%85%B6%E4%BB%96payload%E6%80%BB%E7%BB%93"><span class="nav-number">3.7.</span> <span class="nav-text">7、其他payload总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JAVA%E4%B8%AD%E7%9A%84%E6%B3%A8%E5%85%A5"><span class="nav-number">4.</span> <span class="nav-text">JAVA中的注入</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -217,7 +217,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://nuxm.gitee.io/SQLInject/Oracle/">
+    <link itemprop="mainEntityOfPage" href="https://nuxm.gitee.io/-SQLInject/Oracle/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/12.jpg">
@@ -253,7 +253,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-03-27 12:17:52" itemprop="dateModified" datetime="2022-03-27T12:17:52+08:00">2022-03-27</time>
+      <time title="修改时间：2022-03-27 21:46:51" itemprop="dateModified" datetime="2022-03-27T21:46:51+08:00">2022-03-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -473,11 +473,71 @@
 
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> column_name <span class="keyword">FROM</span> all_tab_columns <span class="keyword">WHERE</span> table_name <span class="operator">=</span> ‘blah’</span><br><span class="line"><span class="keyword">SELECT</span> column_name <span class="keyword">FROM</span> all_tab_columns <span class="keyword">WHERE</span> table_name <span class="operator">=</span> ‘blah’ <span class="keyword">and</span> owner <span class="operator">=</span> ‘foo’</span><br></pre></td></tr></table></figure>
 
-
-
-
-
-
+<h1 id="JAVA中的注入"><a href="#JAVA中的注入" class="headerlink" title="JAVA中的注入"></a>JAVA中的注入</h1><p>伪代码方便白盒挖掘，当然黑盒也可以拿来判断一下。</p>
+<table>
+<thead>
+<tr>
+<th>种类</th>
+<th>解释</th>
+<th>伪代码</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>String Source</td>
+<td>输入点是字符串类型</td>
+<td><code>one(@RequestParam(value = &quot;username&quot;) String username)</code></td>
+</tr>
+<tr>
+<td>List<Long></td>
+<td>输入点是Long泛型(用来测试误报)</td>
+<td><code>longin(@RequestBody List&lt;Long&gt; user_list)</code></td>
+</tr>
+<tr>
+<td>Optional<String></td>
+<td>新特性</td>
+<td><code>optionalLike(@RequestParam(value = &quot;username&quot;) Optional&lt;String&gt; optinal_username)</code></td>
+</tr>
+<tr>
+<td>List<String> Source</td>
+<td>输入点是String泛型</td>
+<td><code>in(@RequestBody List&lt;String&gt; user_list)</code></td>
+</tr>
+<tr>
+<td>Object Source</td>
+<td>对象类型</td>
+<td><code>objectParam(@RequestBody Student user)</code></td>
+</tr>
+<tr>
+<td>MyBatis注入</td>
+<td>XML分离SQL检测</td>
+<td><code>myBatis(@RequestParam(value = &quot;name&quot;) String name)</code></td>
+</tr>
+<tr>
+<td>In类型注入</td>
+<td>In类型注入</td>
+<td>参照代码</td>
+</tr>
+<tr>
+<td>Like类型</td>
+<td>Like类型注入</td>
+<td>参照代码</td>
+</tr>
+<tr>
+<td>Lombok</td>
+<td>Lombok对注入漏洞的影响</td>
+<td>参照代码</td>
+</tr>
+<tr>
+<td>MyBatis注解方式注入</td>
+<td>MyBatis注解方式注入</td>
+<td>参照代码</td>
+</tr>
+<tr>
+<td>Spring Data JPA</td>
+<td>JPA 方式</td>
+<td>参照代码</td>
+</tr>
+</tbody></table>
 
     </div>
 
