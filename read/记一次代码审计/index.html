@@ -23,23 +23,39 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"nuxm.gitee.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.10.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta property="og:type" content="website">
-<meta property="og:title" content="Nuxl1r">
-<meta property="og:url" content="https://nuxm.gitee.io/tags/BCEL/index.html">
+    <meta name="description" content="前言某个博客框架的最新版">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记某次代码审计">
+<meta property="og:url" content="https://nuxm.gitee.io/read/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/index.html">
 <meta property="og:site_name" content="Nuxl1r">
+<meta property="og:description" content="前言某个博客框架的最新版">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_Q4KCHYHMR9.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage__utB-_B7hI.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_AZePoqLEO8.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_Q1D3dnAZpY.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_lV8PsVFEq5.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_M2IXbbl6Iv.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_NK059U6L02.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_i6HyBtdKL5.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_QdZKgnQGsQ.png">
+<meta property="article:published_time" content="2022-05-27T02:26:42.560Z">
+<meta property="article:modified_time" content="2022-05-27T02:35:28.130Z">
 <meta property="article:author" content="Nuxl1r">
+<meta property="article:tag" content="PHP">
+<meta property="article:tag" content="代审">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_Q4KCHYHMR9.png">
 
 
-<link rel="canonical" href="https://nuxm.gitee.io/tags/BCEL/">
+<link rel="canonical" href="https://nuxm.gitee.io/read/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"tags/BCEL/index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/read/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/","path":"read/记一次代码审计/","title":"记某次代码审计"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>标签: BCEL | Nuxl1r</title>
+<title>记某次代码审计 | Nuxl1r</title>
   
 
 
@@ -129,7 +145,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -142,6 +158,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">调用链分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E9%93%BE"><span class="nav-number">3.</span> <span class="nav-text">调用链</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -206,50 +223,138 @@
 </noscript>
 
 
-    <div class="main-inner tag posts-collapse">
+    <div class="main-inner post posts-expand">
 
 
   
+
+
+<div class="post-block">
   
   
-  <div class="post-block">
-    <div class="post-content">
-      <div class="collection-title">
-        <h1 class="collection-header">BCEL
-          <small>标签</small>
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://nuxm.gitee.io/read/%E8%AE%B0%E4%B8%80%E6%AC%A1%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/12.jpg">
+      <meta itemprop="name" content="Nuxl1r">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Nuxl1r">
+      <meta itemprop="description" content="">
+    </span>
+    
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="记某次代码审计 | Nuxl1r">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          记某次代码审计
         </h1>
-      </div>
 
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
       
-    <div class="collection-year">
-      <span class="collection-header">2022</span>
+
+      <time title="创建时间：2022-05-27 10:26:42 / 修改时间：10:35:28" itemprop="dateCreated datePublished" datetime="2022-05-27T10:26:42+08:00">2022-05-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Web%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">Web安全</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>某个博客框架的最新版</p>
+<span id="more"></span>
+
+<h1 id="调用链分析"><a href="#调用链分析" class="headerlink" title="调用链分析"></a>调用链分析</h1><ul>
+<li>于 <code>include.lib.function.base.php</code> 处发现一个<code>file_get_contents</code> 函数：</li>
+</ul>
+<p>   <img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_Q4KCHYHMR9.png"></p>
+<ul>
+<li><p>回调<code>imageCropAndResize</code> 方法看<code>src_image</code> 参数是否可控</p>
+<p>又于该文件夹中发现<code>resizeImage</code> 方法调用了<code>imageCropAndResize</code> 方法</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage__utB-_B7hI.png"></p>
+</li>
+<li><p>回调</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_AZePoqLEO8.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_Q1D3dnAZpY.png"></p>
+<p>由上图可见tmpFile可控</p>
+</li>
+<li><p>回调，得到过滤规则</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_lV8PsVFEq5.png"></p>
+</li>
+<li><p>回调</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_M2IXbbl6Iv.png"></p>
+<p>头像上传处的功能点的tmpFile参数</p>
+</li>
+<li><p>回调，即可发现最开始调用的位置。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_NK059U6L02.png"></p>
+</li>
+</ul>
+<h1 id="调用链"><a href="#调用链" class="headerlink" title="调用链"></a>调用链</h1><p><code>include.lib.[function.base.php]</code> &lt;-<code>imageCropAndResize </code> &lt;-<code>resizeImage</code>&lt;-<code>upload</code> &lt;-<code>upload2local</code> &lt;-<code>uploadCropImg</code> &lt;- <code>admin.blogger.php</code>;</p>
+<ul>
+<li><p>调试可知<code>tmpFile</code>参数为临时文件名</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_i6HyBtdKL5.png"></p>
+<p>可以通过POST的方式上传文件，对<code>$_FILES</code>数组产生影响，进而影响tmp_name，导致任意文件读取。</p>
+</li>
+</ul>
+<p>验证</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_QdZKgnQGsQ.png"></p>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2022-05-04T11:27:18+08:00"
-              content="2022-05-04">
-          05-04
-        </time>
-      </div>
+    
+    
+    
 
-      <div class="post-title">
-          <a class="post-title-link" href="/JAVA%E5%AE%89%E5%85%A8/BCEL%20FastJson%E6%94%BB%E5%87%BB%E9%93%BE%E5%88%86%E6%9E%90/" itemprop="url">
-            <span itemprop="name">BCEL FastJson攻击链分析</span>
-          </a>
-      </div>
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/PHP/" rel="tag"><i class="fa fa-tag"></i> PHP</a>
+              <a href="/tags/%E4%BB%A3%E5%AE%A1/" rel="tag"><i class="fa fa-tag"></i> 代审</a>
+          </div>
 
-      
-    </header>
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JAVA%E5%AE%89%E5%85%A8/BCEL%20FastJson%E6%94%BB%E5%87%BB%E9%93%BE%E5%88%86%E6%9E%90/" rel="prev" title="BCEL FastJson攻击链分析">
+                  <i class="fa fa-chevron-left"></i> BCEL FastJson攻击链分析
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
   </article>
+</div>
 
-    </div>
-  </div>
-  
-  
-  
+
+
+
+
 
 </div>
   </main>
