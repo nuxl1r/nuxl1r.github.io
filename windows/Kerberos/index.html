@@ -23,12 +23,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"nuxm.gitee.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.10.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="前言打算吧自己了解的windos认证机制整理一下放到博客来">
+    <meta name="description" content="前言又水一篇文，不愧是我🤣">
 <meta property="og:type" content="article">
-<meta property="og:title" content="记某次代码审计">
+<meta property="og:title" content="Kerberos详解">
 <meta property="og:url" content="https://nuxm.gitee.io/windows/Kerberos/index.html">
 <meta property="og:site_name" content="Nuxl1r">
-<meta property="og:description" content="前言打算吧自己了解的windos认证机制整理一下放到博客来">
+<meta property="og:description" content="前言又水一篇文，不愧是我🤣">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_vEQeoGFNDQ.png">
 <meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_ovs2R1tk4p.png">
@@ -37,9 +37,9 @@
 <meta property="og:image" content="https://p5.ssl.qhimg.com/t017ed9b1c7d455c5d2.png">
 <meta property="og:image" content="https://p5.ssl.qhimg.com/t01ae3c1d04ccc46dfc.png">
 <meta property="article:published_time" content="2022-05-31T08:59:27.553Z">
-<meta property="article:modified_time" content="2022-05-31T09:06:33.638Z">
+<meta property="article:modified_time" content="2022-05-31T09:10:50.110Z">
 <meta property="article:author" content="Nuxl1r">
-<meta property="article:tag" content="Kerberos详解 - Kerberos">
+<meta property="article:tag" content="Kerberos">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_vEQeoGFNDQ.png">
 
@@ -48,10 +48,10 @@
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/windows/Kerberos/","path":"windows/Kerberos/","title":"记某次代码审计"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/windows/Kerberos/","path":"windows/Kerberos/","title":"Kerberos详解"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>记某次代码审计 | Nuxl1r</title>
+<title>Kerberos详解 | Nuxl1r</title>
   
 
 
@@ -243,12 +243,12 @@
     </span>
     
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="记某次代码审计 | Nuxl1r">
+      <meta itemprop="name" content="Kerberos详解 | Nuxl1r">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          记某次代码审计
+          Kerberos详解
         </h1>
 
         <div class="post-meta-container">
@@ -260,7 +260,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2022-05-31 16:59:27 / 修改时间：17:06:33" itemprop="dateCreated datePublished" datetime="2022-05-31T16:59:27+08:00">2022-05-31</time>
+      <time title="创建时间：2022-05-31 16:59:27 / 修改时间：17:10:50" itemprop="dateCreated datePublished" datetime="2022-05-31T16:59:27+08:00">2022-05-31</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -282,7 +282,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>打算吧自己了解的<code>windos认证机制</code>整理一下放到博客来</p>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>又水一篇文，不愧是我🤣</p>
 <span id="more"></span>
 
 <h1 id="kerberos-协议概述"><a href="#kerberos-协议概述" class="headerlink" title="kerberos 协议概述"></a>kerberos 协议概述</h1><p><code>Kerberos</code>是一种由MIT（麻省理工大学）提出的一种<strong>网络身份验证协议</strong>。它旨在通过使用密钥加密技术为<code>客户端</code>&#x2F;<code>服务器应用程序</code>提供<strong>强身份验证</strong>。</p>
@@ -389,7 +389,7 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Kerberos%E8%AF%A6%E8%A7%A3-Kerberos/" rel="tag"><i class="fa fa-tag"></i> Kerberos详解 - Kerberos</a>
+              <a href="/tags/Kerberos/" rel="tag"><i class="fa fa-tag"></i> Kerberos</a>
           </div>
 
         
