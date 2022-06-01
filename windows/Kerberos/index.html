@@ -37,7 +37,7 @@
 <meta property="og:image" content="https://p5.ssl.qhimg.com/t017ed9b1c7d455c5d2.png">
 <meta property="og:image" content="https://p5.ssl.qhimg.com/t01ae3c1d04ccc46dfc.png">
 <meta property="article:published_time" content="2022-05-31T08:59:27.553Z">
-<meta property="article:modified_time" content="2022-05-31T09:10:50.110Z">
+<meta property="article:modified_time" content="2022-06-01T01:48:45.305Z">
 <meta property="article:author" content="Nuxl1r">
 <meta property="article:tag" content="Kerberos">
 <meta name="twitter:card" content="summary">
@@ -154,7 +154,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#kerberos-%E5%8D%8F%E8%AE%AE%E6%A6%82%E8%BF%B0"><span class="nav-number">2.</span> <span class="nav-text">kerberos 协议概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AS-REQ"><span class="nav-number">3.</span> <span class="nav-text">AS_REQ</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#pvno"><span class="nav-number">3.1.</span> <span class="nav-text">pvno</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#msg-type"><span class="nav-number">3.2.</span> <span class="nav-text">msg-type</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PA-DATA"><span class="nav-number">3.3.</span> <span class="nav-text">PA_DATA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#REQ-BODY"><span class="nav-number">3.4.</span> <span class="nav-text">REQ_BODY</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%BB%84%E9%87%91%E7%A5%A8%E4%BB%B7"><span class="nav-number">4.</span> <span class="nav-text">黄金票价</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#mimikatz"><span class="nav-number">4.1.</span> <span class="nav-text">mimikatz</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#kerberos-%E5%8D%8F%E8%AE%AE%E6%A6%82%E8%BF%B0"><span class="nav-number">2.</span> <span class="nav-text">kerberos 协议概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AS-REQ"><span class="nav-number">3.</span> <span class="nav-text">AS_REQ</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#pvno"><span class="nav-number">3.1.</span> <span class="nav-text">pvno</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#msg-type"><span class="nav-number">3.2.</span> <span class="nav-text">msg-type</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PA-DATA"><span class="nav-number">3.3.</span> <span class="nav-text">PA_DATA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#REQ-BODY"><span class="nav-number">3.4.</span> <span class="nav-text">REQ_BODY</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%BB%84%E9%87%91%E7%A5%A8%E6%8D%AE"><span class="nav-number">4.</span> <span class="nav-text">黄金票据</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#mimikatz"><span class="nav-number">4.1.</span> <span class="nav-text">mimikatz</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -258,9 +258,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-05-31 16:59:27 / 修改时间：17:10:50" itemprop="dateCreated datePublished" datetime="2022-05-31T16:59:27+08:00">2022-05-31</time>
+      <time title="创建时间：2022-05-31 16:59:27" itemprop="dateCreated datePublished" datetime="2022-05-31T16:59:27+08:00">2022-05-31</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-06-01 09:48:45" itemprop="dateModified" datetime="2022-06-01T09:48:45+08:00">2022-06-01</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -370,7 +376,7 @@
 
 <p>这个地方要注意的是如果在配置里面选择用hash(不是plaintext)的话，hash的加密类型，要跟etype一样。因为KDC是按照etype类型选择用户对应加密方式的hash，如果是选择明文(plaintext)，那么client 会按照etype里面的加密方式将明文加密成hash。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_gDOZ_LL2q7.png"></p>
-<h1 id="黄金票价"><a href="#黄金票价" class="headerlink" title="黄金票价"></a>黄金票价</h1><p>在AS_REP里面的ticket的encpart是使用krbtgt的hash进行加密的，如果我们拥有krbtgt的hash，就可以给我们自己签发任意用户的TGT票据，这个票据也被称为黄金票据。</p>
+<h1 id="黄金票据"><a href="#黄金票据" class="headerlink" title="黄金票据"></a>黄金票据</h1><p>在AS_REP里面的ticket的encpart是使用krbtgt的hash进行加密的，如果我们拥有krbtgt的hash，就可以给我们自己签发任意用户的TGT票据，这个票据也被称为黄金票据。</p>
 <h2 id="mimikatz"><a href="#mimikatz" class="headerlink" title="mimikatz"></a>mimikatz</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kerberos::golden</span><br></pre></td></tr></table></figure>
 
 <p><code>mimikatz</code>的<code>kerberos::golden</code>模块可以用于制作黄金票据,票据格式是<code>.kirbi</code></p>
