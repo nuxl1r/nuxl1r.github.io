@@ -979,12 +979,12 @@
 
 <p>其他皆可以此类推。</p>
 <h1 id="group-concat的使用"><a href="#group-concat的使用" class="headerlink" title="group_concat的使用"></a><center>group_concat的使用</center></h1><p><font color="red"> mysql版本&gt;5.0切使用了information_schema数据库  </font> </p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> group_concat(SCHEMA_NAME) <span class="keyword">from</span> (information_schema.schemata )</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> group_concat(SCHEMA_NAME) <span class="keyword">from</span> (information_schema.schemata )</span><br></pre></td></tr></table></figure>
 
 
 
 
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> group_concat(table_name)<span class="keyword">from</span>(information_schema.tables)<span class="keyword">where</span> table_schema<span class="operator">=</span>database()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">select</span> group_concat(table_name)<span class="keyword">from</span>(information_schema.tables)<span class="keyword">where</span> table_schema<span class="operator">=</span>database()</span><br></pre></td></tr></table></figure>
 
 
 
