@@ -18,10 +18,10 @@
   --btn-default-hover-bg: #222;
   --btn-default-hover-color: #fff;
   --btn-default-hover-border-color: #222;
-  --highlight-background: #2b2b2b;
-  --highlight-foreground: #f8f8f2;
-  --highlight-gutter-background: #3f3f3e;
-  --highlight-gutter-foreground: #e3e3de;
+  --highlight-background: #000;
+  --highlight-foreground: #e0e0e0;
+  --highlight-gutter-background: #161616;
+  --highlight-gutter-foreground: #c9c9c9;
   color-scheme: light;
 }
 html {
@@ -362,13 +362,13 @@ td {
   top: -5px;
   transform: rotate(-45deg);
 }
-pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}/*!
-  Theme: a11y-dark
-  Author: @ericwbailey
-  Maintainer: @ericwbailey
-
-  Based on the Tomorrow Night Eighties theme: https://github.com/isagalaev/highlight.js/blob/master/src/styles/tomorrow-night-eighties.css
-*/.hljs{background:#2b2b2b;color:#f8f8f2}.hljs-comment,.hljs-quote{color:#d4d0ab}.hljs-deletion,.hljs-name,.hljs-regexp,.hljs-selector-class,.hljs-selector-id,.hljs-tag,.hljs-template-variable,.hljs-variable{color:#ffa07a}.hljs-built_in,.hljs-link,.hljs-literal,.hljs-meta,.hljs-number,.hljs-params,.hljs-type{color:#f5ab35}.hljs-attribute{color:gold}.hljs-addition,.hljs-bullet,.hljs-string,.hljs-symbol{color:#abe338}.hljs-section,.hljs-title{color:#00e0e0}.hljs-keyword,.hljs-selector-tag{color:#dcc6e0}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}@media screen and (-ms-high-contrast:active){.hljs-addition,.hljs-attribute,.hljs-built_in,.hljs-bullet,.hljs-comment,.hljs-link,.hljs-literal,.hljs-meta,.hljs-number,.hljs-params,.hljs-quote,.hljs-string,.hljs-symbol,.hljs-type{color:highlight}.hljs-keyword,.hljs-selector-tag{font-weight:700}}
+/*!
+  Theme: Bright
+  Author: Chris Kempson (http://chriskempson.com)
+  License: ~ MIT (or more permissive) [via base16-schemes-source]
+  Maintainer: @highlightjs/core-team
+  Version: 2021.09.0
+*/pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#e0e0e0;background:#000}.hljs ::selection,.hljs::selection{background-color:#505050;color:#e0e0e0}.hljs-comment{color:#b0b0b0}.hljs-tag{color:#d0d0d0}.hljs-operator,.hljs-punctuation,.hljs-subst{color:#e0e0e0}.hljs-operator{opacity:.7}.hljs-bullet,.hljs-deletion,.hljs-name,.hljs-selector-tag,.hljs-template-variable,.hljs-variable{color:#fb0120}.hljs-attr,.hljs-link,.hljs-literal,.hljs-number,.hljs-symbol,.hljs-variable.constant_{color:#fc6d24}.hljs-class .hljs-title,.hljs-title,.hljs-title.class_{color:#fda331}.hljs-strong{font-weight:700;color:#fda331}.hljs-addition,.hljs-code,.hljs-string,.hljs-title.class_.inherited__{color:#a1c659}.hljs-built_in,.hljs-doctag,.hljs-keyword.hljs-atrule,.hljs-quote,.hljs-regexp{color:#76c7b7}.hljs-attribute,.hljs-function .hljs-title,.hljs-section,.hljs-title.function_,.ruby .hljs-property{color:#6fb3d2}.diff .hljs-meta,.hljs-keyword,.hljs-template-tag,.hljs-type{color:#d381c3}.hljs-emphasis{color:#d381c3;font-style:italic}.hljs-meta,.hljs-meta .hljs-keyword,.hljs-meta .hljs-string{color:#be643c}.hljs-meta .hljs-keyword,.hljs-meta-keyword{font-weight:700}
 .highlight:hover .copy-btn,
 pre:hover .copy-btn {
   opacity: 1;
