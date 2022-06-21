@@ -7,7 +7,7 @@
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown90729456_p0.jpg"></p>
 <span id="more"></span>
 
-<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a><center>概述</center></h1><p>内存马是无文件Webshell，无文件的意思就是并没有写入文件，而是修改或者插入代码的方式来实现WebShell，<del>也可以这样理解通过服务实现的内存马的原理就像是MVC架构，即通过路由访问控制器</del>（该解释略有偏差），至于修改或者插入代码的位置可以是<code>TransformedMap</code>中，也可以是<code>Servlet</code>中，这要看注入内存马的位置于何处。</p>
+<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a><center>概述</center></h1><p>内存马是无文件Webshell，无文件的意思就是并没有写入文件，而是修改或者插入代码的方式来实现的WebShell，修改或者插入的代码也并不是永久存在于代码中，而是随着生命周期动态生成和删除的，<del>也可以这样理解通过服务实现的内存马的原理就像是MVC架构，即通过路由访问控制器</del>（该解释略有偏差），至于修改或者插入代码的位置可以是<code>TransformedMap</code>中，也可以是<code>Servlet</code>中，这要看注入内存马的位置于何处。</p>
 <h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a><center>前置知识</center></h1><p>Java web三大件</p>
 <p>详情可参考：<a href="https://blog.csdn.net/chenwiehuang/article/details/80811193" title="java web请求三大器——listener、filter、servlet">java web请求三大器——listener、filter、servlet</a></p>
 <p>启动的顺序为<code>listener</code>-&gt;<code>Filter</code>-&gt;<code>servlet</code>，但是执行顺序与其特性相关，下面简单讲一下三大件</p>
