@@ -306,7 +306,7 @@
 <p>试图做到tomcat下的通杀Webshell<br>具体文章讲的很清楚了</p>
 <h1 id="weblogic"><a href="#weblogic" class="headerlink" title="weblogic"></a>weblogic</h1><p>参考<a href="https://www.cnblogs.com/unicodeSec/p/13162792.html">weblogic 无文件webshell的技术研究</a></p>
 <p>类似于tomcat场景</p>
-<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a><center>结语</center></h1><p>看到这里的同学，如果以前打过AWD就会发现，内存马有点像PHP的不死马，虽然类型多，但主要目的就是，<font color="red"><strong>通过不同的方法将马写到map中</strong></font>，如果对map不太了解的同学可以看我<a href="https://nuxl1r.github.io/JAVA%E5%AE%89%E5%85%A8/CC6%E6%94%BB%E5%87%BB%E9%93%BE%E5%88%86%E6%9E%90%E4%B8%8E%E5%A4%8D%E7%8E%B0/">上篇文章</a>。</p>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a><center>结语</center></h1><p>看到这里的同学，如果以前打过AWD就会发现，内存马有点像PHP的不死马，虽然类型多，但主要目的就是，<font color="red"><strong>通过不同的方法将马写到map中</strong></font>（目前Spring内存马、shiro内存马、Agent内存马主流的实现方式，可以配合CC链子），如果对map不太了解的同学可以看我<a href="https://nuxl1r.github.io/JAVA%E5%AE%89%E5%85%A8/CC6%E6%94%BB%E5%87%BB%E9%93%BE%E5%88%86%E6%9E%90%E4%B8%8E%E5%A4%8D%E7%8E%B0/">上篇文章</a>。</p>
 ]]></content>
       <categories>
         <category>Web安全</category>
