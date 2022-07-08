@@ -131,12 +131,30 @@
 <p>Java agent是一种特殊的Java程序（Jar文件），它是<code>Instrumentation</code>的客户端。与普通Java程序通过main方法启动不同，agent并不是一个可以单独启动的程序，而必须依附在一个Java应用程序（JVM）上，与它运行在同一个进程中，通过Instrumentation API与虚拟机交互</p>
 <p>在注入内存马的过程中，我们可以利用java Instrumentation机制，动态的修改已加载到内存中的类里的方法，进而注入恶意的代码</p>
 <p>所以想详细的了解内存马之前得先了解：Java 反射、Java字节码、Java Web、Tomcat</p>
+<h1 id="Filter和Servlet的总结"><a href="#Filter和Servlet的总结" class="headerlink" title="Filter和Servlet的总结"></a>Filter和Servlet的总结</h1><p>对于基于<code>Filter</code>和<code>Servlet</code>实现的简单架构项目，代码审计的重心集中于找出所有的<code>Filter</code>分析其过滤规则，找出是否有做全局的安全过滤、敏感的URL地址是否有做权限校验并尝试绕过Filter过滤。第二点则是找出所有的<code>Servlet</code>，分析<code>Servlet</code>的业务是否存在安全问题,如果存在安全问题是否可以利用？是否有权限访问？利用时是否被<code>Filter</code>过滤等问题，切勿看到<code>Servlet</code>、JSP中的漏洞点就妄下定论，不要忘了<code>Servlet</code>前面很有可能存在一个全局安全过滤的<code>Filter</code>。</p>
+<ul>
+<li><p><code>Filter</code>和<code>Servlet</code>都是Java Web提供的API，简单的总结了下有如下共同点。</p>
+<ol>
+<li><p><font color="red"><strong>Filter和Servlet都需要在web.xml或注解(@WebFilter、@WebServlet)中配置，而且配置方式是非常的相似的。</strong></font></p>
+</li>
+<li><p><font color="green"><strong>Filter和Servlet都可以处理来自Http请求的请求，两者都有request、response对象。</strong></font></p>
+</li>
+<li><p><font color="purple"><strong>Filter和Servlet基础概念不一样，Servlet定义是容器端小程序，用于直接处理后端业务逻辑，而Filter的思想则是实现对Java Web请求资源的拦截过滤。</strong></font></p>
+</li>
+<li><p><font color="silver"><strong>Filter和Servlet虽然概念上不太一样，但都可以处理Http请求，都可以用来实现MVC控制器(Struts2和Spring框架分别基于Filter和Servlet技术实现的)。</strong></font></p>
+</li>
+<li><p><font color="blue"><strong>一般来说Filter通常配置在MVC、Servlet和JSP请求前面，常用于后端权限控制、统一的Http请求参数过滤(统一的XSS、SQL注入、Struts2命令执行等攻击检测处理)处理，其核心主要体现在请求过滤上，而Servlet更多的是用来处理后端业务请求上。</strong></font></p>
+</li>
+</ol>
+</li>
+</ul>
 <h1 id="内存马的发展历史"><a href="#内存马的发展历史" class="headerlink" title="内存马的发展历史"></a>内存马的发展历史</h1><p>内存马早在17年n1nty师傅的<a href="https://mp.weixin.qq.com/s/x4pxmeqC1DvRi9AdxZ-0Lw">Tomcat 源代码调试笔记 - 看不见的 Shell</a>中已初见端倪,因为利用困难，一直不温不火。</p>
 <p>18年经过rebeyong师傅使用agent技术加持后，拓展了内存马的使用场景—— <a href="https://www.cnblogs.com/rebeyond/p/9686213.html">利用进程注入”实现无文件不死webshell</a>，然终停留在奇技淫巧上</p>
 <p>在各类HW洗礼之后，文件shell明显气数已尽。内存马以救命稻草的身份重回大众视野。20年，LandGrey师傅构造了Spring controller内存马——<a href="https://landgrey.me/blog/12/#top">基于内存 Webshell 的无文件攻击技术研究</a>可以算是一波热潮起</p>
-<h1 id="内存马的类型"><a href="#内存马的类型" class="headerlink" title="内存马的类型"></a>内存马的类型</h1><p><code>Servlet-API类型</code>：filter型、servlet型、listener型<br>大概原理：通过命令执行等方式动态注册一个新的listener、filter或者servlet，从而实现命令执行等功能。特定框架、容器的内存马原理与此类似，如spring的controller内存马，tomcat的valve内存马</p>
-<p><code>spring类型</code>interceptor型、controller型</p>
+<h1 id="内存马的类型"><a href="#内存马的类型" class="headerlink" title="内存马的类型"></a>内存马的类型</h1><p><code>Servlet-API类型</code>：filter型、servlet型、listener型 （使用 servlet-api 的具体实现）<br>大概原理：通过命令执行等方式动态注册一个新的listener、filter或者servlet，从而实现命令执行等功能。特定框架、容器的内存马原理与此类似，如spring的controller内存马，tomcat的valve内存马</p>
+<p><code>spring类型</code>interceptor型、controller型 （使用框架如 spring&#x2F;struts2）</p>
 <p><code>字节码增强型</code><br>大概原理：通过java的instrumentation动态修改已有代码，进而实现命令执行等功能</p>
+<p>是通过动态注册的方式实现，动态注册使用职责链设计模式的中间件、框架的实现（例如 Tomcat 的 Pipeline &amp; Valve，Grizzly 的 FilterChain &amp; Filter 等等）</p>
 <h1 id="Servlet-API"><a href="#Servlet-API" class="headerlink" title="Servlet-API"></a>Servlet-API</h1><h2 id="Servlet-1"><a href="#Servlet-1" class="headerlink" title="Servlet"></a>Servlet</h2><ul>
 <li>实现过程：<ol>
 <li>创建一个恶意的<code>servlet</code></li>
@@ -306,7 +324,7 @@
 <p>试图做到tomcat下的通杀Webshell<br>具体文章讲的很清楚了</p>
 <h1 id="weblogic"><a href="#weblogic" class="headerlink" title="weblogic"></a>weblogic</h1><p>参考<a href="https://www.cnblogs.com/unicodeSec/p/13162792.html">weblogic 无文件webshell的技术研究</a></p>
 <p>类似于tomcat场景</p>
-<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a><center>结语</center></h1><p>看到这里的同学，如果以前打过AWD就会发现，内存马有点像PHP的不死马，虽然类型多，但主要目的就是，<font color="red"><strong>通过不同的方法将马写到map中</strong></font>（目前Spring内存马、shiro内存马、Agent内存马主流的实现方式，可以配合CC链子），如果对map不太了解的同学可以看我<a href="https://nuxl1r.github.io/JAVA%E5%AE%89%E5%85%A8/CC6%E6%94%BB%E5%87%BB%E9%93%BE%E5%88%86%E6%9E%90%E4%B8%8E%E5%A4%8D%E7%8E%B0/">上篇文章</a>。</p>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a><center>结语</center></h1><p>看到这里的同学，如果以前打过AWD就会发现，内存马有点像PHP的不死马，虽然类型多，但主要目的就是，<font color="red"><strong>通过不同的方法将马写到了一个有生命周期的东西中</strong></font>（目前Spring内存马、shiro内存马、Agent内存马主流的实现方式，可以配合CC链子），如果对map不太了解的同学可以看我<a href="https://nuxl1r.github.io/JAVA%E5%AE%89%E5%85%A8/CC6%E6%94%BB%E5%87%BB%E9%93%BE%E5%88%86%E6%9E%90%E4%B8%8E%E5%A4%8D%E7%8E%B0/">上篇文章</a>。</p>
 ]]></content>
       <categories>
         <category>Web安全</category>
@@ -419,8 +437,8 @@
         <category>Web安全</category>
       </categories>
       <tags>
-        <tag>CC6</tag>
         <tag>JAVA</tag>
+        <tag>CC6</tag>
       </tags>
   </entry>
   <entry>
@@ -615,8 +633,8 @@
         <category>Web安全</category>
       </categories>
       <tags>
-        <tag>JAVA</tag>
         <tag>BCEL</tag>
+        <tag>JAVA</tag>
       </tags>
   </entry>
   <entry>
