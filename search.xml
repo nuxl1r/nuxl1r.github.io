@@ -4,7 +4,7 @@
     <title>CommonsCollections 系列反序列化</title>
     <url>/gadgets/CommonsCollections%20%E7%B3%BB%E5%88%97%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</url>
     <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>想真正入门 Java 安全，CommonsCollections 系列反序列化利用链是一个非常好的学习资源，个人感觉看完后收获颇丰，我把比较关键的一些点都记录下来了，并把这些零散的内容整理成了一份表格放在这篇文章最后，如果不关心背后的原理，直接看最后的总结即可。文中提到的那些 K1 ~ K4 可以从这里直接下载使用：<a href="https://github.com/nuxl1r/JNDI-NU">https://github.com/nuxl1r/JNDI-NU</a></p>
-<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown96074895_p9.jpg"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown99417685_p0.jpg"></p>
 <span id="more"></span>
 
 <h1 id="CommonsCollections1"><a href="#CommonsCollections1" class="headerlink" title="CommonsCollections1"></a>CommonsCollections1</h1><h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><ul>
