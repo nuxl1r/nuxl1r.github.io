@@ -520,8 +520,8 @@
 <p>关键代码</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    vmObj = VirtualMachine.attach(args[<span class="number">0</span>]);</span><br><span class="line">    <span class="type">String</span> <span class="variable">agentpath</span> <span class="operator">=</span> ZhouYu.class.getProtectionDomain().getCodeSource().getLocation().getFile();</span><br><span class="line">    <span class="keyword">if</span> (vmObj != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (args.length &gt; <span class="number">1</span>) &#123;</span><br><span class="line">            vmObj.loadAgent(agentpath, args[<span class="number">1</span>]);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            vmObj.loadAgent(agentpath);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">null</span> != vmObj) &#123;</span><br><span class="line">        vmObj.detach();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a><center>结语</center></h1><p>关于内存马的攻防，还一直在不停迭代当中，就目前而言，还并没有行之有效的对内存马查杀方法，就目前的查杀方法都有其弊端。</p>
-<p>内存马可以配合JNDI注入，命令执行，普通马改为内存马等，配合使用。</p>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a><center>结语</center></h1><p>关于内存马的攻防，还一直在不停迭代当中，就目前而言，还并没有行之有效的对内存马查杀方法，因为当前的查杀方法都有其弊端。</p>
+<p>内存马可以配合JNDI注入，命令执行，普通马改为内存马等，配合使用。目前红队内网站稳脚跟的首选。</p>
 ]]></content>
       <categories>
         <category>Web安全</category>
