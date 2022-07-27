@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/black/pace-theme-corner-indicator.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"nuxm.gitee.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.12.2","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":true}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="前言闲着也是闲着，所以整理一篇，让自己的知识形成体系，后面还会出2篇。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="windows认证机制">
+<meta property="og:url" content="https://nuxm.gitee.io/windows/Windows%E8%AE%A4%E7%9F%A5%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:site_name" content="nu1rの沉思录">
+<meta property="og:description" content="前言闲着也是闲着，所以整理一篇，让自己的知识形成体系，后面还会出2篇。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown96074895_p9.jpg">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01176eab7c7a39d1d9.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownkerberos_environment.webp">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt015f25c3d61e10068e.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ee3217094e548c8c.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt010aad636f2c02d394.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt019ac8c55225707d89.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01161830d0444fbe4c.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt015d346eac5679f85c.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt016a35794986fb33b0.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01af29156e1e95022b.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt014c57716ba42b44cd.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01c7363c4bf243acc6.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0110bca08bfd34bb90.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e34aa2625bcdaa3a.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt014ca76343bf5ba087.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e43059e3547c0770.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01618262dcc542af40.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt014bb1a809f8f463e8.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0175eb56f168c260d3.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f304484b8f118bcf.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt010c490cf19cc4d632.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b376d2fbbc9bcb60.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01281791daf1a7a7b0.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d64b24a81966e52a.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0179e377e91abeb5d3.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f6d5b5f04caafa0f.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt019d7954d5dd545bb1.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d8b0c1457d2a779d.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt017d2483b993b81c82.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01697b8e91c05bcddf.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b95246c0159fce6e.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e3d6ff82445cf443.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0103e479df6f95c9ab.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt017ed9b1c7d455c5d2.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ae3c1d04ccc46dfc.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0111d61a08ff02f41d.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt018884748fa98a8512.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ecc0dcdbc1334e4a.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt013a3af94337ac907b.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01aafe4f5fb6d5a487.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0172367c2cad98b35e.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01754019b5586d0dca.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0112df2cb72419b653.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt010446cb7008acd427.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01c767928bb11720ed.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt018bbc64e0a98a1624.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage004.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt017817a54b237402ca.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0165110651aba6ba8e.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f0d5a317d69bf6b1.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d417ae1cd342e030.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01dccc1d4515448533.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01290857d9ece54e8b.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt012f37c48fb6f44ee3.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0149b8fc062b39e8eb.png">
+<meta property="og:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage006.png">
+<meta property="article:published_time" content="2022-07-27T08:16:31.130Z">
+<meta property="article:modified_time" content="2022-07-27T10:40:56.275Z">
+<meta property="article:author" content="nu1r">
+<meta property="article:tag" content="后渗透">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown96074895_p9.jpg">
+
+
+<link rel="canonical" href="https://nuxm.gitee.io/windows/Windows%E8%AE%A4%E7%9F%A5%E6%9C%BA%E5%88%B6/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://nuxm.gitee.io/windows/Windows%E8%AE%A4%E7%9F%A5%E6%9C%BA%E5%88%B6/","path":"windows/Windows认知机制/","title":"windows认证机制"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>windows认证机制 | nu1rの沉思录</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">nu1rの沉思录</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">某超科学Web安全研究员</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Kerberos-%E7%AF%87"><span class="nav-number">2.</span> <span class="nav-text">Kerberos 篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#AS-REQ-amp-AS-REP"><span class="nav-number">2.1.</span> <span class="nav-text">AS_REQ &amp; AS_REP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80-1"><span class="nav-number">2.1.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kerberos-%E5%8D%8F%E8%AE%AE%E6%A6%82%E8%BF%B0"><span class="nav-number">2.1.2.</span> <span class="nav-text">kerberos 协议概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kerberos-%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7"><span class="nav-number">2.1.3.</span> <span class="nav-text">kerberos 测试工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AS-REQ"><span class="nav-number">2.1.4.</span> <span class="nav-text">AS_REQ</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#pvno"><span class="nav-number">2.1.4.1.</span> <span class="nav-text">pvno</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#msg-type"><span class="nav-number">2.1.4.2.</span> <span class="nav-text">msg-type</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PA-DATA"><span class="nav-number">2.1.4.3.</span> <span class="nav-text">PA_DATA</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#REQ-BODY"><span class="nav-number">2.1.4.4.</span> <span class="nav-text">REQ_BODY</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AS-REP"><span class="nav-number">2.1.5.</span> <span class="nav-text">AS_REP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#msg-type-1"><span class="nav-number">2.1.5.1.</span> <span class="nav-text">msg-type</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#crealm"><span class="nav-number">2.1.5.2.</span> <span class="nav-text">crealm</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cname"><span class="nav-number">2.1.5.3.</span> <span class="nav-text">cname</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ticket"><span class="nav-number">2.1.5.4.</span> <span class="nav-text">ticket</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#enc-part"><span class="nav-number">2.1.5.5.</span> <span class="nav-text">enc_part</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BC%E5%87%BA%E7%9A%84%E7%A5%A8%E6%8D%AE"><span class="nav-number">2.1.6.</span> <span class="nav-text">导出的票据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E7%9A%84%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98"><span class="nav-number">2.1.7.</span> <span class="nav-text">相关的安全问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#pass-the-hash-%E5%92%8C-pass-the-key"><span class="nav-number">2.1.7.1.</span> <span class="nav-text">pass the hash 和 pass the key</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#p1"><span class="nav-number">2.1.7.2.</span> <span class="nav-text">用户名枚举</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Password-Spraying"><span class="nav-number">2.1.7.3.</span> <span class="nav-text">Password Spraying</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AS-REPRoasting"><span class="nav-number">2.1.7.4.</span> <span class="nav-text">AS-REPRoasting</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#p2"><span class="nav-number">2.1.7.5.</span> <span class="nav-text">黄金票据</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E5%88%86%E7%9B%B8%E5%85%B3%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="nav-number">2.1.8.</span> <span class="nav-text">部分相关的工具</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Rubeus"><span class="nav-number">2.1.8.1.</span> <span class="nav-text">Rubeus</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#impacket"><span class="nav-number">2.1.8.2.</span> <span class="nav-text">impacket</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mimikatz"><span class="nav-number">2.1.8.3.</span> <span class="nav-text">mimikatz</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nmap-NSE%E8%84%9A%E6%9C%AC"><span class="nav-number">2.1.8.4.</span> <span class="nav-text">nmap NSE脚本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DomainPasswordSpray"><span class="nav-number">2.1.8.5.</span> <span class="nav-text">DomainPasswordSpray</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TGS-REQ-amp-TGS-REP"><span class="nav-number">2.2.</span> <span class="nav-text">TGS_REQ &amp; TGS_REP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TGS-REQ"><span class="nav-number">2.2.1.</span> <span class="nav-text">TGS_REQ</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#msg-type-2"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">msg-type</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PA-DATA-1"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">PA-DATA</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#REQ-BODY-1"><span class="nav-number">2.2.1.3.</span> <span class="nav-text">REQ_BODY</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TGS-REP"><span class="nav-number">2.2.2.</span> <span class="nav-text">TGS_REP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#msg-type-3"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">msg-type</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ticket-1"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">ticket</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#enc-part-1"><span class="nav-number">2.2.2.3.</span> <span class="nav-text">enc_part</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#S4U2SELF"><span class="nav-number">2.2.3.</span> <span class="nav-text">S4U2SELF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#S4U2PROXY"><span class="nav-number">2.2.4.</span> <span class="nav-text">S4U2PROXY</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="nu1r"
+      src="/images/12.jpg">
+  <p class="site-author-name" itemprop="name">nu1r</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/nuxl1r" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;nuxl1r" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:nuxm771@163.com" title="E-Mail → mailto:nuxm771@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/nuxl1r" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://nuxm.gitee.io/windows/Windows%E8%AE%A4%E7%9F%A5%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/12.jpg">
+      <meta itemprop="name" content="nu1r">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="nu1rの沉思录">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="windows认证机制 | nu1rの沉思录">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          windows认证机制
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-07-27 16:16:31 / 修改时间：18:40:56" itemprop="dateCreated datePublished" datetime="2022-07-27T16:16:31+08:00">2022-07-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%90%8E%E6%B8%97%E9%80%8F%E7%90%86%E8%AE%BA%E7%AF%87/" itemprop="url" rel="index"><span itemprop="name">后渗透理论篇</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>闲着也是闲着，所以整理一篇，让自己的知识形成体系，后面还会出2篇。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown96074895_p9.jpg"></p>
+<span id="more"></span>
+
+<p>特此声明，文中部分描述来自wiki。</p>
+<h1 id="Kerberos-篇"><a href="#Kerberos-篇" class="headerlink" title="Kerberos 篇"></a>Kerberos 篇</h1><h2 id="AS-REQ-amp-AS-REP"><a href="#AS-REQ-amp-AS-REP" class="headerlink" title="AS_REQ &amp; AS_REP"></a>AS_REQ &amp; AS_REP</h2><h3 id="前言-1"><a href="#前言-1" class="headerlink" title="前言"></a>前言</h3><p>体量太大，所以每一个大章一个前言。</p>
+<p>熟悉内网渗透的应该都对IPC，黄金票据，白银票据，ntlm relay，Ptt,Ptk 这些词汇再熟悉不够了，对其利用工具也了如指掌，但是有些人对里面使用的原理还不太了解，知其然不知其所以然，本系列文章将针对内网渗透的常见协议(如kerbeos,ntlm,smb,ldap等)进行协议分析，相关漏洞分析以及漏洞工具分析利用。</p>
+<p>kerberos 篇将从四个方面来阐述kerberos协议，分别是kerberos的两个基础认证模块AS_REQ &amp; AS_REP,TGS_REQ &amp; TGS_REP。以及微软扩展的两个认证模块S4U和PAC。这篇文章是 kerberos 篇的第一篇文章 <code>AS_REQ</code> &amp; <code>AS_REP</code> 。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01176eab7c7a39d1d9.png"></p>
+<h3 id="kerberos-协议概述"><a href="#kerberos-协议概述" class="headerlink" title="kerberos 协议概述"></a>kerberos 协议概述</h3><p>Kerberos是一种由MIT（麻省理工大学）提出的一种网络身份验证协议。它旨在通过使用密钥加密技术为客户端 &#x2F; 服务器应用程序提供强身份验证。</p>
+<p>在Kerberos协议中主要是有三个角色的存在：</p>
+<ol>
+<li>访问服务的<code>Client</code>(以下表述为Client 或者用户)</li>
+<li>提供服务的<code>Server</code>(以下表述为服务)</li>
+<li><code>KDC</code>（Key Distribution Center）密钥分发中心 kerberos 测试工具介绍</li>
+</ol>
+<p>其中KDC服务默认会安装在一个域的域控中，而Client和Server为域内的用户或者是服务，如HTTP服务，SQL服务。在Kerberos中Client是否有权限访问Server端的服务由KDC发放的票据来决定。</p>
+<p>kerberos的简化认证认证过程如下图</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownkerberos_environment.webp"></p>
+<ol>
+<li><code>AS_REQ</code>: Client向KDC发起AS_REQ,请求凭据是Client hash加密的时间戳</li>
+<li><code>AS_REP</code>: KDC使用Client hash进行解密，如果结果正确就返回用krbtgt hash加密的TGT票据，TGT里面包含PAC,PAC包含Client的sid，Client所在的组。</li>
+<li><code>TGS_REQ</code>: Client凭借TGT票据向KDC发起针对特定服务的TGS_REQ请求</li>
+<li><code>TGS_REP</code>: KDC使用krbtgt hash进行解密，如果结果正确，就返回用服务hash 加密的TGS票据(这一步不管用户有没有访问服务的权限，只要TGT正确，就返回TGS票据)</li>
+<li><code>AP_REQ</code>: Client拿着TGS票据去请求服务</li>
+<li><code>AP_REP</code>: 服务使用自己的hash解密TGS票据。如果解密正确，就拿着PAC去KDC那边问Client有没有访问权限，域控解密PAC。获取Client的sid，以及所在的组，再根据该服务的ACL，判断Client是否有访问服务的权限。</li>
+</ol>
+<h3 id="kerberos-测试工具"><a href="#kerberos-测试工具" class="headerlink" title="kerberos 测试工具"></a>kerberos 测试工具</h3><p>在学习 kerberos 协议的过程中，一直以来都是利用工具发包，然后再通过 wireshark 抓包分析，这让用惯了Burp的我很不习惯，burp的repeater模块可以很方便的改包，发包，查看响应包。为了更方便得学习kerberos，简单得写了个测试工具，用于 kerbreos 协议的研究，实验环境为虚拟机内的win7系统中。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt015f25c3d61e10068e.png"></p>
+<p>点击修改配置，支持明文密码以及hash</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ee3217094e548c8c.png"></p>
+<p>协议的各个字段将在本篇文章以及接下来的几篇文章里面详细阐述，配合此工具理解kerberos 字段，效果更佳。</p>
+<h3 id="AS-REQ"><a href="#AS-REQ" class="headerlink" title="AS_REQ"></a>AS_REQ</h3><p>用户向KDC发起AS_REQ,请求凭据是用户 hash加密的时间戳。请求凭据放在PA_DATA里面。详情见以下每个字段的详细介绍。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt010aad636f2c02d394.png"></p>
+<h4 id="pvno"><a href="#pvno" class="headerlink" title="pvno"></a>pvno</h4><p>kerberos 版本号</p>
+<h4 id="msg-type"><a href="#msg-type" class="headerlink" title="msg-type"></a>msg-type</h4><p>类型，AS_REQ对应的就是KRB_AS_REQ(0x0a)</p>
+<h4 id="PA-DATA"><a href="#PA-DATA" class="headerlink" title="PA_DATA"></a>PA_DATA</h4><p>主要是一些认证信息。一个列表，包含若干个认证消息用于认证，我们也可以Authenticator。每个认证消息有type和value。</p>
+<p>type主要有以下一些：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">            NONE = <span class="number">0</span>,</span><br><span class="line">​            TGS_REQ = <span class="number">1</span>,</span><br><span class="line">​            AP_REQ = <span class="number">1</span>,</span><br><span class="line">​            ENC_TIMESTAMP = <span class="number">2</span>,</span><br><span class="line">​            PW_SALT = <span class="number">3</span>,</span><br><span class="line">​            ENC_UNIX_TIME = <span class="number">5</span>,</span><br><span class="line">​            SANDIA_SECUREID = <span class="number">6</span>,</span><br><span class="line">​            SESAME = <span class="number">7</span>,</span><br><span class="line">​            OSF_DCE = <span class="number">8</span>,</span><br><span class="line">​            CYBERSAFE_SECUREID = <span class="number">9</span>,</span><br><span class="line">​            AFS3_SALT = <span class="number">10</span>,</span><br><span class="line">​            ETYPE_INFO = <span class="number">11</span>,</span><br><span class="line">​            SAM_CHALLENGE = <span class="number">12</span>,</span><br><span class="line">​            SAM_RESPONSE = <span class="number">13</span>,</span><br><span class="line">​            PK_AS_REQ_19 = <span class="number">14</span>,</span><br><span class="line">​            PK_AS_REP_19 = <span class="number">15</span>,</span><br><span class="line">​            PK_AS_REQ_WIN = <span class="number">15</span>,</span><br><span class="line">​            PK_AS_REQ = <span class="number">16</span>,</span><br><span class="line">​            PK_AS_REP = <span class="number">17</span>,</span><br><span class="line">​            PA_PK_OCSP_RESPONSE = <span class="number">18</span>,</span><br><span class="line">​            ETYPE_INFO2 = <span class="number">19</span>,</span><br><span class="line">​            USE_SPECIFIED_KVNO = <span class="number">20</span>,</span><br><span class="line">​            SVR_REFERRAL_INFO = <span class="number">20</span>,</span><br><span class="line">​            SAM_REDIRECT = <span class="number">21</span>,</span><br><span class="line">​            GET_FROM_TYPED_DATA = <span class="number">22</span>,</span><br><span class="line">​            SAM_ETYPE_INFO = <span class="number">23</span>,</span><br><span class="line">​            SERVER_REFERRAL = <span class="number">25</span>,</span><br><span class="line">​            TD_KRB_PRINCIPAL = <span class="number">102</span>,</span><br><span class="line">​            PK_TD_TRUSTED_CERTIFIERS = <span class="number">104</span>,</span><br><span class="line">​            PK_TD_CERTIFICATE_INDEX = <span class="number">105</span>,</span><br><span class="line">​            TD_APP_DEFINED_ERROR = <span class="number">106</span>,</span><br><span class="line">​            TD_REQ_NONCE = <span class="number">107</span>,</span><br><span class="line">​            TD_REQ_SEQ = <span class="number">108</span>,</span><br><span class="line">​            PA_PAC_REQUEST = <span class="number">128</span>,</span><br><span class="line">​            S4U2SELF = <span class="number">129</span>,</span><br><span class="line">​            PA_PAC_OPTIONS = <span class="number">167</span>,</span><br><span class="line">​            PK_AS_09_BINDING = <span class="number">132</span>,</span><br><span class="line">​            CLIENT_CANONICALIZED = <span class="number">133</span></span><br></pre></td></tr></table></figure>
+
+<p>在AS_REQ阶段主要用到的有两个</p>
+<ol>
+<li><p><code>ENC_TIMESTAMP</code><br>这个是预认证，就是用用户hash加密时间戳，作为value 发送给AS服务器。然后AS服务器那边有用户hash，使用用户hash进行解密，获得时间戳，如果能解密，且时间戳在一定的范围内，则证明认证通过</p>
+</li>
+<li><p><code>PA_PAC_REQUEST</code><br>这个是启用PAC支持的扩展。PAC（Privilege Attribute Certificate）并不在原生的 kerberos 里面，是微软引进的扩展。详细的内容之后会详细介绍PAC。PAC包含在AS_REQ的响应 body(AS_REP) 。这里的 value 对应的是 include&#x3D;true 或者 include&#x3D;false (KDC根据include的值来判断返回的票据中是否携带PAC)。</p>
+</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt019ac8c55225707d89.png"></p>
+<h4 id="REQ-BODY"><a href="#REQ-BODY" class="headerlink" title="REQ_BODY"></a>REQ_BODY</h4><p>kdc-options 一些flag 字段</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">            VALIDATE = <span class="number">0x00000001</span>,</span><br><span class="line">​              RENEW = <span class="number">0x00000002</span>,</span><br><span class="line">​              UNUSED29 = <span class="number">0x00000004</span>,</span><br><span class="line">​              ENCTKTINSKEY = <span class="number">0x00000008</span>,</span><br><span class="line">​              RENEWABLEOK = <span class="number">0x00000010</span>,</span><br><span class="line">​              DISABLETRANSITEDCHECK = <span class="number">0x00000020</span>,</span><br><span class="line">​              UNUSED16 = <span class="number">0x0000FFC0</span>,</span><br><span class="line">​              CANONICALIZE = <span class="number">0x00010000</span>,</span><br><span class="line">​              CNAMEINADDLTKT = <span class="number">0x00020000</span>,</span><br><span class="line">​              OK_AS_DELEGATE = <span class="number">0x00040000</span>,</span><br><span class="line">​              UNUSED12 = <span class="number">0x00080000</span>,</span><br><span class="line">​              OPTHARDWAREAUTH = <span class="number">0x00100000</span>,</span><br><span class="line">​              PREAUTHENT = <span class="number">0x00200000</span>,</span><br><span class="line">​              INITIAL = <span class="number">0x00400000</span>,</span><br><span class="line">​              RENEWABLE = <span class="number">0x00800000</span>,</span><br><span class="line">​              UNUSED7 = <span class="number">0x01000000</span>,</span><br><span class="line">​              POSTDATED = <span class="number">0x02000000</span>,</span><br><span class="line">​              ALLOWPOSTDATE = <span class="number">0x04000000</span>,</span><br><span class="line">​              PROXY = <span class="number">0x08000000</span>,</span><br><span class="line">​              PROXIABLE = <span class="number">0x10000000</span>,</span><br><span class="line">​              FORWARDED = <span class="number">0x20000000</span>,</span><br><span class="line">​              FORWARDABLE = <span class="number">0x40000000</span>,</span><br><span class="line">​              RESERVED = <span class="number">0x80000000</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>cname<br>PrincipalName 类型。PrincipalName包含type和value。</p>
+<ul>
+<li>KRB_NT_PRINCIPAL &#x3D; 1 means just the name of the principal 如dailker</li>
+<li>KRB_NT_SRV_INST &#x3D; 2 service and other unique instance (krbtgt) 如krbtgt，cifs</li>
+<li>KRB_NT_ENTERPRISE_PRINCIPAL &#x3D; 10 如 <a href="mailto:&#117;&#115;&#101;&#114;&#x40;&#100;&#x6f;&#x6d;&#97;&#105;&#110;&#46;&#x63;&#111;&#109;">&#117;&#115;&#101;&#114;&#x40;&#100;&#x6f;&#x6d;&#97;&#105;&#110;&#46;&#x63;&#111;&#109;</a><br>在AS_REQ里面cname 是请求的用户,这个用户名存在和不存在，返回的包有差异，可以用于枚举域内用户名。详情见<a href='#p1'>相关的安全问题&gt;用户名枚举</a></li>
+</ul>
+</li>
+<li><p>sname<br>PrincipalName 类型<br>在AS_REQ里面sname是krbtgt，类型是KRB_NT_SRV_INST</p>
+</li>
+<li><p>realm<br>域名</p>
+</li>
+<li><p>from<br>发送时间</p>
+</li>
+<li><p>till<br>到期时间，rubeus和kekeo都是20370913024805Z，这个可以作为特征来检测工具。</p>
+</li>
+<li><p>nonce<br>随机生成的一个数kekeo&#x2F;mimikatz nonce是12381973，rubeus nonce是1818848256，这个也可以用来作为特征检测工具。</p>
+</li>
+<li><p>etype<br>加密类型，有</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">             des_cbc_crc = <span class="number">1</span>,</span><br><span class="line">​             des_cbc_md4 = <span class="number">2</span>,</span><br><span class="line">​             des_cbc_md5 = <span class="number">3</span>,</span><br><span class="line">​             des3_cbc_md5 = <span class="number">5</span>,</span><br><span class="line">​             des3_cbc_sha1 = <span class="number">7</span>,</span><br><span class="line">​             dsaWithSHA1_CmsOID = <span class="number">9</span>,</span><br><span class="line">​             md5WithRSAEncryption_CmsOID = <span class="number">10</span>,</span><br><span class="line">​             sha1WithRSAEncryption_CmsOID = <span class="number">11</span>,</span><br><span class="line">​             rc2CBC_EnvOID = <span class="number">12</span>,</span><br><span class="line">​             rsaEncryption_EnvOID = <span class="number">13</span>,</span><br><span class="line">​             rsaES_OAEP_ENV_OID = <span class="number">14</span>,</span><br><span class="line">​             des_ede3_cbc_Env_OID = <span class="number">15</span>,</span><br><span class="line">​             des3_cbc_sha1_kd = <span class="number">16</span>,</span><br><span class="line">​             aes128_cts_hmac_sha1 = <span class="number">17</span>,</span><br><span class="line">​             aes256_cts_hmac_sha1 = <span class="number">18</span>,</span><br><span class="line">​             rc4_hmac = <span class="number">23</span>,</span><br><span class="line">​             rc4_hmac_exp = <span class="number">24</span>,</span><br><span class="line">​             subkey_keymaterial = <span class="number">65</span></span><br></pre></td></tr></table></figure>
+
+<p>这个地方要注意的是如果在配置里面选择用hash(不是plaintext)的话，hash的加密类型，要跟etype一样。因为KDC是按照etype类型选择用户对应加密方式的hash，如果是选择明文(plaintext)，那么client 会按照etype里面的加密方式将明文加密成hash。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01161830d0444fbe4c.png"></p>
+<h3 id="AS-REP"><a href="#AS-REP" class="headerlink" title="AS_REP"></a>AS_REP</h3><p>KDC使用用户 hash进行解密，如果结果正确返回用krbtgt hash加密的TGT票据，TGT里面包含PAC,PAC包含用户的sid，用户所在的组。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt015d346eac5679f85c.png"></p>
+<p>KDC使用用户 hash进行解密，如果结果正确返回用krbtgt hash加密的TGT票据，TGT里面包含PAC,PAC包含用户的sid，用户所在的组。</p>
+<h4 id="msg-type-1"><a href="#msg-type-1" class="headerlink" title="msg-type"></a>msg-type</h4><p>AS_REQ的响应body对应的就是KRB_AS_REP(0x0b)</p>
+<h4 id="crealm"><a href="#crealm" class="headerlink" title="crealm"></a>crealm</h4><p>域名</p>
+<h4 id="cname"><a href="#cname" class="headerlink" title="cname"></a>cname</h4><p>用户名</p>
+<h4 id="ticket"><a href="#ticket" class="headerlink" title="ticket"></a>ticket</h4><p>这个ticket用于TGS_REQ的认证。是加密的，用户不可读取里面的内容。在AS_REQ请求里面是，是使用krbtgt的hash进行加密的，因此如果我们拥有krbtgt的hash就可以自己制作一个ticket，既黄金票据。详情见<a href='#p2'>相关的安全问题&gt;黄金票据</a>。</p>
+<h4 id="enc-part"><a href="#enc-part" class="headerlink" title="enc_part"></a>enc_part</h4><p>这部分是可以解密的，key是用户hash，解密后得到Encryptionkey，Encryptionkey里面最重要的字段是session key，作为下阶段的认证密钥。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt016a35794986fb33b0.png"></p>
+<h3 id="导出的票据"><a href="#导出的票据" class="headerlink" title="导出的票据"></a>导出的票据</h3><p>凭据里面最核心的东西是 session-key 和加密的 ticket 。</p>
+<p>正常我们用工具生成的凭据是.ccache和.kirbi后缀的，用 mimikatz，kekeo，rubeus 生成的凭据是以.kirbi后缀的。impacket 生成的凭据的后缀是.ccache。两种票据主要包含的都是 session-key 和加密的 ticket ，因此可以相互转化。</p>
+<p>以kirbi为例介绍下该结构体。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> KRB-CRED::= [APPLICATION <span class="number">22</span>] SEQUENCE &#123;</span><br><span class="line">   pvno[<span class="number">0</span>] INTEGER(<span class="number">5</span>),</span><br><span class="line">   msg-type[<span class="number">1</span>] INTEGER(<span class="number">22</span>),</span><br><span class="line">   tickets[<span class="number">2</span>] SEQUENCE OF Ticket,</span><br><span class="line">   enc-part[<span class="number">3</span>] EncryptedData -- EncKrbCredPart</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中ticket来自于KRB_AS_REP部分的ticket</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">EncKrbCredPart  ::= [APPLICATION <span class="number">29</span>] SEQUENCE &#123;</span><br><span class="line">   ticket-info     [<span class="number">0</span>] SEQUENCE OF KrbCredInfo,  <span class="comment">//这里就只用到这个</span></span><br><span class="line">   nonce           [<span class="number">1</span>] UInt32 OPTIONAL,</span><br><span class="line">   timestamp       [<span class="number">2</span>] KerberosTime OPTIONAL,</span><br><span class="line">   usec            [<span class="number">3</span>] Microseconds OPTIONAL,</span><br><span class="line">   s-address       [<span class="number">4</span>] HostAddress OPTIONAL,</span><br><span class="line">   r-address       [<span class="number">5</span>] HostAddress OPTIONAL</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ticket-info部分的主要内容是session-key，来自于用户hash解密enc_part的部分</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">KrbCredInfo     ::= SEQUENCE &#123;</span><br><span class="line">  key             [<span class="number">0</span>] EncryptionKey,      sessionKey</span><br><span class="line">  prealm          [<span class="number">1</span>] Realm OPTIONAL,  <span class="comment">//对应的是realm</span></span><br><span class="line">  pname           [<span class="number">2</span>] PrincipalName OPTIONAL, <span class="comment">// 对应的是cname</span></span><br><span class="line">  flags           [<span class="number">3</span>] TicketFlags OPTIONAL, </span><br><span class="line">  authtime        [<span class="number">4</span>] KerberosTime OPTIONAL, <span class="comment">//not require</span></span><br><span class="line">  starttime       [<span class="number">5</span>] KerberosTime OPTIONAL, <span class="comment">// </span></span><br><span class="line">  endtime         [<span class="number">6</span>] KerberosTime OPTIONAL,</span><br><span class="line">  renew-till      [<span class="number">7</span>] KerberosTime OPTIONAL,</span><br><span class="line">  srealm          [<span class="number">8</span>] Realm OPTIONAL, <span class="comment">//对应的是realm</span></span><br><span class="line">  sname           [<span class="number">9</span>] PrincipalName OPTIONAL, <span class="comment">// 对应的是sname</span></span><br><span class="line">  caddr           [<span class="number">10</span>] HostAddresses OPTIONAL</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="相关的安全问题"><a href="#相关的安全问题" class="headerlink" title="相关的安全问题"></a>相关的安全问题</h3><h4 id="pass-the-hash-和-pass-the-key"><a href="#pass-the-hash-和-pass-the-key" class="headerlink" title="pass the hash 和 pass the key"></a>pass the hash 和 pass the key</h4><p>在连接配置的时候允许使用hash进行认证，而不是只有账号密码才能认证。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01af29156e1e95022b.png"></p>
+<p>就是由于在进行认证的时候，是用用户hash加密时间戳，即使在使用密码进行登录的情况下，也是先把密码加密成hash，再进行认证。因此在只有用户hash，没有明文密码的情况下也是可以进行认证的。不管是rubeus还是impacket里面的相关脚本都是支持直接使用hash进行认证。其中，如果hash的ntlm hash，然后加密方式是rc4，这种就算做是pass the hash，如果是hash是aes key(使用sekurlsa::ekeys导出来)，就算是pass the key。在很多地方，不支持rc4加密方式的时候，使用pass the key不失为一种好方法。</p>
+<h4 id='p1'>用户名枚举</h4>
+看以下几种情况
+
+<p>用户名存在，密码错误的情况下</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt014c57716ba42b44cd.png"></p>
+<p>用户名不存在的情况下</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01c7363c4bf243acc6.png"></p>
+<p>通过这个比较就可以写脚本改变 cname 的值进行用户名枚举。在域内没有域账号的情况下进行用户名枚举，在有账号的情况的下通过 LDAP 查询就行。如果有域内机器的 system 权限，那那台机器也是个域账户，账户名是机器名$.</p>
+<h4 id="Password-Spraying"><a href="#Password-Spraying" class="headerlink" title="Password Spraying"></a>Password Spraying</h4><p>在已有用户名的时候，可以尝试爆破密码。<br>密码正确的情况下:</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0110bca08bfd34bb90.png"></p>
+<p>密码错误的情况下:</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e34aa2625bcdaa3a.png"></p>
+<p>这个时候就可以进行密码爆破了，但是在实践中，许多渗透测试人员和攻击者通常都会使用一种被称为“密码喷洒（Password Spraying）”的技术来进行测试和攻击。对密码进行喷洒式的攻击，这个叫法很形象，因为它属于自动化密码猜测的一种。这种针对所有用户的自动密码猜测通常是为了避免帐户被锁定，因为针对同一个用户的连续密码猜测会导致帐户被锁定。所以只有对所有用户同时执行特定的密码登录尝试，才能增加破解的概率，消除帐户被锁定的概率。普通的爆破就是用户名固定，爆破密码，但是密码喷洒，是用固定的密码去跑用户名。</p>
+<h4 id="AS-REPRoasting"><a href="#AS-REPRoasting" class="headerlink" title="AS-REPRoasting"></a>AS-REPRoasting</h4><p>对于域用户，如果设置了选项 <code>Do not require Kerberos preauthentication</code>，此时向域控制器的88端口发送AS_REQ请求，对收到的AS_REP内容(enc-part底下的ciper，因为这部分是使用用户hash加密session-key，我们通过进行离线爆破就可以获得用户hash)重新组合，能够拼接成<code>Kerberos 5 AS-REP etype 23</code>(18200)的格式，接下来可以使用hashcat对其破解，最终获得该用户的明文口令</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt014ca76343bf5ba087.png"></p>
+<p>我们没有用户hash，PA-DATA选择PA_PAC_REQUEST就行</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e43059e3547c0770.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01618262dcc542af40.png"></p>
+<p>点击鼠标右键获取AS_REP里面enc-part部分里面的ciper，然后组装成前面32位16进制字符+$+后面的16进制字符得到repHash,然后<code>format(&quot;$krb5asrep$23$&#123;0&#125;@&#123;1&#125;:&#123;2&#125;&quot;, userName, domain, repHash)</code>得到字符串，交给hashcat 破解就行</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt014bb1a809f8f463e8.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0175eb56f168c260d3.png"></p>
+<p>这里面只做漏洞原理演示。</p>
+<h4 id='p2'>黄金票据</h4>
+
+<p>在AS_REP里面的ticket的encpart是使用krbtgt的hash进行加密的，如果我们拥有krbtgt的hash，就可以给我们自己签发任意用户的TGT票据，这个票据也被称为黄金票据。</p>
+<h3 id="部分相关的工具"><a href="#部分相关的工具" class="headerlink" title="部分相关的工具"></a>部分相关的工具</h3><h4 id="Rubeus"><a href="#Rubeus" class="headerlink" title="Rubeus"></a>Rubeus</h4><p>Rubeus跟AS_REQ有关的功能主要有两个。</p>
+<ul>
+<li>asktgt</li>
+</ul>
+<p>这个功能用于发送tgt请求包，并将凭据以base64打印出来。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f304484b8f118bcf.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt010c490cf19cc4d632.png"></p>
+<p>可以通过powershell 解密base64并写入文件(注意回车换行)</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b376d2fbbc9bcb60.png"></p>
+<ul>
+<li>As-repoasting</li>
+</ul>
+<p>这个功能会通过LDAP查询域内用户设置了选项”Do not require Kerberos preauthentication”，然后发AS_REQ的包，直接生成hash或者john可破解的格式</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01281791daf1a7a7b0.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d64b24a81966e52a.png"></p>
+<h4 id="impacket"><a href="#impacket" class="headerlink" title="impacket"></a>impacket</h4><p>Impact 里面跟AS_REQ相关的脚本主要有两个。</p>
+<ul>
+<li>getTGT</li>
+</ul>
+<p>给定密码，哈希或aesKey，此脚本将请求TGT并将其保存为ccache。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0179e377e91abeb5d3.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f6d5b5f04caafa0f.png"></p>
+<p>这里面需要注意的是用mimikatz，kekeo，rubeus生成的凭据是以<code>.kirbi</code>后缀的。impacket 生成的凭据的后缀是<code>.ccache</code>。</p>
+<p>可以通过<a target="_blank" rel="noopener" href="https://github.com/rvazarkar/KrbCredExport.git">工具</a>里面的脚本转化为kirbi</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt019d7954d5dd545bb1.png"></p>
+<ul>
+<li>GetNPUsers</li>
+</ul>
+<p>此示例将尝试为那些设置了属性“不需要Kerberos预身份验证”（UF_DONT_REQUIRE_PREAUTH）的用户列出并获取TGT。输出与JtR兼容。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d8b0c1457d2a779d.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt017d2483b993b81c82.png"></p>
+<ul>
+<li>ticketer</li>
+</ul>
+<p>该脚本将从零开始或基于模板（从KDC合法请求）创建Golden &#x2F; Silver票据，允许您自定义PAC_LOGON_INFO结构中设置的一些参数，特别是组，ExtraSids，持续时间等，票据格式是ccache.</p>
+<p>首先获取krbtgt的hash:</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01697b8e91c05bcddf.png"></p>
+<p>获取域的sid</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b95246c0159fce6e.png"></p>
+<p>制作黄金票据</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e3d6ff82445cf443.png"></p>
+<h4 id="mimikatz"><a href="#mimikatz" class="headerlink" title="mimikatz"></a>mimikatz</h4><ul>
+<li>kerberos::golden</li>
+</ul>
+<p>mimikatz的kerberos::golden模块可以用于制作黄金票据,票据格式是.kirbi<br>首先获取krbtgt的hash</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0103e479df6f95c9ab.png"></p>
+<p>获取域的sid</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt017ed9b1c7d455c5d2.png"></p>
+<p>制作黄金票据</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ae3c1d04ccc46dfc.png"></p>
+<h4 id="nmap-NSE脚本"><a href="#nmap-NSE脚本" class="headerlink" title="nmap NSE脚本"></a>nmap NSE脚本</h4><p>krb5-enum-users<br>nmap 里面的这个脚本可以用来枚举域内用户</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0111d61a08ff02f41d.png"></p>
+<h4 id="DomainPasswordSpray"><a href="#DomainPasswordSpray" class="headerlink" title="DomainPasswordSpray"></a>DomainPasswordSpray</h4><p>DomainPasswordSpray是用PowerShell编写的工具，用于对域用户执行密码喷洒攻击。默认情况下，它将利用LDAP从域中导出用户列表，然后扣掉被锁定的用户，再用固定密码进行密码喷洒。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt018884748fa98a8512.png"></p>
+<h2 id="TGS-REQ-amp-TGS-REP"><a href="#TGS-REQ-amp-TGS-REP" class="headerlink" title="TGS_REQ &amp; TGS_REP"></a>TGS_REQ &amp; TGS_REP</h2><p>这篇文章是主讲TGS_REQ&amp; TGS_REP。在TGS_REQ &amp; TGS_REP阶段，用户通过AS_REP拿到的TGT票据，去向KDC申请特定服务的访问权限，KDC校验TGT票据，如果校验通过的话，会向用户发送一个TGS票据，之后用户再拿着TGS去访问特定的服务。这一阶段，微软引进了两个扩展S4U2SELF和S4U2PROXY。考虑到这两个扩展是TGS的子协议，把S4U归纳到这篇文章里面一起讲。</p>
+<p>TGS_REQ这个阶段不需要账号密码，需要AS_REP获取到的TGT凭据。这里面工具需要指定域控的地址。连接配置里面的其他信息都在凭据里面，这里可以不用指定。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ecc0dcdbc1334e4a.png"></p>
+<h3 id="TGS-REQ"><a href="#TGS-REQ" class="headerlink" title="TGS_REQ"></a>TGS_REQ</h3><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt013a3af94337ac907b.png"></p>
+<p>这里面标注的字段是跟AS_REQ里面不一样的，在AS_REQ文档有标注，一样的内容就不再标注了。</p>
+<h4 id="msg-type-2"><a href="#msg-type-2" class="headerlink" title="msg-type"></a>msg-type</h4><p>类型，TGS_REQ对应的就是KRB_TGS_REQ(0x0c)</p>
+<h4 id="PA-DATA-1"><a href="#PA-DATA-1" class="headerlink" title="PA-DATA"></a>PA-DATA</h4><p>正常的TGS_REQ的请求需要用到有</p>
+<ul>
+<li>AP_REQ</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01aafe4f5fb6d5a487.png"></p>
+<p>这个是TGS_REQ必须携带的部分，这部分会携带AS_REP里面获取到的TGT票据，就放在这个结构体里面。</p>
+<p>KDC校验TGT票据，如果票据正确，就返回TGS票据。</p>
+<ul>
+<li>PA_FOR_USER</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0172367c2cad98b35e.png"></p>
+<p>类型是S4U2SELF</p>
+<p>值是一个唯一的标识符，该标识符指示用户的身份。该唯一标识符由用户名和域名组成。</p>
+<p>S4U2proxy 必须扩展PA_FOR_USER结构，指定服务代表某个用户(图片里面是administrator)去请求针对服务自身的kerberos服务票据。</p>
+<ul>
+<li>PA_PAC_OPTIONS</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01754019b5586d0dca.png"></p>
+<p>类型是 PA_PAC_OPTIONS</p>
+<p>值是以下flag的组合</p>
+<p>– Claims(0)<br>– Branch Aware(1)<br>– Forward to Full DC(2)<br>– Resource-based Constrained Delegation (3)</p>
+<p>微软的<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-sfu/aeecfd82-a5e4-474c-92ab-8df9022cf955">MS-SFU 2.2.5</a>， S4U2proxy 必须扩展PA-PAC-OPTIONS结构。</p>
+<p>如果是基于资源的约束委派，就需要指定Resource-based Constrained Delegation位。</p>
+<h4 id="REQ-BODY-1"><a href="#REQ-BODY-1" class="headerlink" title="REQ_BODY"></a>REQ_BODY</h4><ul>
+<li>sname</li>
+</ul>
+<p>这个是要请求的服务，TGS_REP获得的ticket是用该服务用户的hash进行加密的。有个比较有意思的特性是，如果指定的服务是krbtgt，那么拿到的TGS票据是可以当做TGT票据用的。</p>
+<ul>
+<li>AddtionTicket</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0112df2cb72419b653.png"><br>附加票据，在S4U2proxy请求里面，既需要正常的TGT，也需要S4U2self阶段获取到的TGS，那么这个TGS就添加到AddtionTicket里面。</p>
+<h3 id="TGS-REP"><a href="#TGS-REP" class="headerlink" title="TGS_REP"></a>TGS_REP</h3><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt010446cb7008acd427.png"></p>
+<h4 id="msg-type-3"><a href="#msg-type-3" class="headerlink" title="msg-type"></a>msg-type</h4><p>AS_REQ的响应body对应的就是KRB_TGS_REQ(0x0d)</p>
+<h4 id="ticket-1"><a href="#ticket-1" class="headerlink" title="ticket"></a>ticket</h4><p>这个ticket用于AP_REQ的认证。其中里面的enc_part是加密的，用户不可读取里面的内容。在AS_REQ请求里面是，是使用krbtgt的hash进行加密的，而在TGS_REQ里面是使用要请求的服务的hash加密的。因此如果我们拥有服务的hash就可以自己制作一个ticket，既白银票据。详情见相关的安全问题&gt;白银票据.正因为是使用要请求的服务的hash加密的，所以我们可以通过爆破enc_part获得该服务的hash,详情见相关的安全问题&gt;kerberoasting。</p>
+<h4 id="enc-part-1"><a href="#enc-part-1" class="headerlink" title="enc_part"></a>enc_part</h4><p>注意，这个enc_part不是ticket里面的enc_part，</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01c767928bb11720ed.png"></p>
+<p>这部分是可以解密的，key是上一轮AS_REP里面返回的session_key,也就是导入凭据里面的 session_key，解密后得到encryptionkey，encryptionkey这个结构里面最重要的字段也是session_key(但是这个session_key 不同于上一轮里面的session_key)，用来作为作为下阶段的认证密钥。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt018bbc64e0a98a1624.png"></p>
+<h3 id="S4U2SELF"><a href="#S4U2SELF" class="headerlink" title="S4U2SELF"></a>S4U2SELF</h3><p>S4U2self 使得服务可以代表用户获得针对服务自身的kerberos服务票据。这使得服务可以获得用户的授权( 可转发 的用户TGS票据)，然后将其用于后期的认证(主要是后期的s4u2proxy)，这是为了在用户以不使用 Kerberos 的方式对服务进行身份验证的情况下使用。<strong>这里面很重要的一点是服务代表用户获得针对服务自身的kerberos票据这个过程，服务是不需要用户的凭据的。</strong></p>
+<p>s4u2self的过程如下图所示</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage004.png"></p>
+<p>前提条件是服务已经有通过KDC验证的TGT，如图，需要有TGT。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt017817a54b237402ca.png"></p>
+<p>在步骤1中, 服务(<code>JACKSON-PC$</code>)使用S4U2self扩展名代表用户(<code>administrator</code>)获得针对服务本身(<code>JACKSON-PC$</code>)的服务票证。该服务将填写<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/MS-SFU/aceb70de-40f0-4409-87fa-df00ca145f5a">PA_FOR_USER</a> 数据结构,类型为<code>S4U2SELF</code>，并将KRB_TGS_REQ消息发送到TGS。 如下图，由于服务<code>JACKSON-PC$</code>代表用户向服务本身(也是<code>JACKSON-PC$</code>)发起请求，因此这里面cname是<code>JACKSON-PC$</code>,sname也是<code>JACKSON-PC$</code></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0165110651aba6ba8e.png"></p>
+<p>假定TGS支持PA_FOR_USER扩展，则TGS在步骤2中通过KRB_TGS_REP消息返回用户的服务票证。如果服务请求了可转发选项，并且TGS的本地策略允许，则TGS检验通过后必须将票证标志 字段设置为可转发，既只要满足即可。</p>
+<ol>
+<li>TGT是可以转发的</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f0d5a317d69bf6b1.png"></p>
+<ol start="2">
+<li>服务配置了约束委派</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d417ae1cd342e030.png"></p>
+<ol start="3">
+<li>服务请求了可转发选项</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01dccc1d4515448533.png"></p>
+<p>则TGS必须将票证标志 字段设置为可转发</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01290857d9ece54e8b.png"></p>
+<p>需要注意的是，如果用户的UserAccountControl字段中设置了USER_NOT_DELEGATED位,那么返回的TGS是永远也没法转发的。如图，当Administrator配置了敏感账户，不能被委派，返回的TGS的flag字段没有forwardable。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt012f37c48fb6f44ee3.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0149b8fc062b39e8eb.png"></p>
+<h3 id="S4U2PROXY"><a href="#S4U2PROXY" class="headerlink" title="S4U2PROXY"></a>S4U2PROXY</h3><p>s4u2proxy 使得服务1可以使用来自用户的授权( 在S4U2SELF阶段获得)，然后用该TGS(放在AddtionTicket里面)向KDC请求访问服务2的TGS，并且代表用户访问服务2，而且只能访问服务2。</p>
+<p>s4u2proxy的过程如下图所示:</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownimage006.png"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%90%8E%E6%B8%97%E9%80%8F/" rel="tag"><i class="fa fa-tag"></i> 后渗透</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/gadgets/CommonsCollections%20%E7%B3%BB%E5%88%97%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="prev" title="CommonsCollections 系列反序列化">
+                  <i class="fa fa-chevron-left"></i> CommonsCollections 系列反序列化
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">nu1r</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+  <script src="/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.0/katex.min.css" integrity="sha256-uik/hNqHWZldXh/0K35nqOSCff9F61/ZOFReqNOBgB0=" crossorigin="anonymous">
+  <script class="next-config" data-name="katex" type="application/json">{"copy_tex_js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.0/contrib/copy-tex.min.js","integrity":"sha256-Us54+rSGDSTvIhKKUs4kygE2ipA0RXpWWh0/zLqw3bs="}}</script>
+  <script src="/js/third-party/math/katex.js"></script>
+
+
+
+</body>
+</html>
