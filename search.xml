@@ -3,7 +3,7 @@
   <entry>
     <title>windows认证机制</title>
     <url>/windows/Windows%E8%AE%A4%E7%9F%A5%E6%9C%BA%E5%88%B6/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>闲着也是闲着，所以整理一篇，让自己的知识形成体系，后面还会出2篇。</p>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>闲着也是闲着，所以整理一篇，让自己的知识形成体系，部分地方加锚点，让知识之间串联起来，防止大兄弟看完觉得乱乱的。哈哈。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown96074895_p9.jpg"></p>
 <span id="more"></span>
 
@@ -59,7 +59,7 @@
 <ul>
 <li>KRB_NT_PRINCIPAL &#x3D; 1 means just the name of the principal 如dailker</li>
 <li>KRB_NT_SRV_INST &#x3D; 2 service and other unique instance (krbtgt) 如krbtgt，cifs</li>
-<li>KRB_NT_ENTERPRISE_PRINCIPAL &#x3D; 10 如 <a href="mailto:&#x75;&#x73;&#x65;&#114;&#x40;&#x64;&#x6f;&#x6d;&#97;&#x69;&#x6e;&#x2e;&#99;&#111;&#x6d;">&#x75;&#x73;&#x65;&#114;&#x40;&#x64;&#x6f;&#x6d;&#97;&#x69;&#x6e;&#x2e;&#99;&#111;&#x6d;</a><br>在AS_REQ里面cname 是请求的用户,这个用户名存在和不存在，返回的包有差异，可以用于枚举域内用户名。详情见<a href='#p1'>相关的安全问题&gt;用户名枚举</a></li>
+<li>KRB_NT_ENTERPRISE_PRINCIPAL &#x3D; 10 如 <a href="mailto:&#x75;&#115;&#x65;&#114;&#64;&#x64;&#111;&#x6d;&#97;&#105;&#x6e;&#46;&#x63;&#111;&#x6d;">&#x75;&#115;&#x65;&#114;&#64;&#x64;&#111;&#x6d;&#97;&#105;&#x6e;&#46;&#x63;&#111;&#x6d;</a><br>在AS_REQ里面cname 是请求的用户,这个用户名存在和不存在，返回的包有差异，可以用于枚举域内用户名。详情见<a href='#p1'>相关的安全问题&gt;用户名枚举</a></li>
 </ul>
 </li>
 <li><p>sname<br>PrincipalName 类型<br>在AS_REQ里面sname是krbtgt，类型是KRB_NT_SRV_INST</p>
@@ -756,7 +756,6 @@
 <p>其余三篇文章的内容全部都是讲<code>ntlm_relay</code>,这个安全问题是ntlm篇的重点内容。</p>
 <p>第2篇文章主要讲触发windows向攻击者发起ntlm请求的一些方式,比如大家耳熟能详的打印机漏洞。</p>
 <p>第3篇文章主要讲的是攻击者接收到ntlm请求之后做的事，如爆破<code>Net-ntlm</code>，又或者relay到SMB,HTTP,Exchange,LDAP等。</p>
-<p>第4篇文章主要回顾一下从上世纪<code>ntlm_relay</code>被提出来，微软从08年开始为<code>ntlm_relay</code>陆陆续续推出的一些补丁以及绕过,如<code>ms08068</code>，<code>MS16-075</code>，<code>CVE-2015-0005</code>，<code>CVE-2018-8581</code>，<code>CVE-2019-1040</code>,<code>CVE2019-1384</code>。以及ntlm relay的一些缓解措施。</p>
 <h3 id="LM-Hash-amp-NTLM-Hash"><a href="#LM-Hash-amp-NTLM-Hash" class="headerlink" title="LM Hash &amp; NTLM Hash"></a>LM Hash &amp; NTLM Hash</h3><p>windows内部是不保存明文密码的，只保存密码的hash。</p>
 <p>其中本机用户的密码hash是放在 本地的SAM文件 里面，域内用户的密码hash是存在域控的NTDS.DIT文件 里面。那hash的格式是怎么样的呢?</p>
 <p>在Windows系统导出密码的时候，经常看到这样的密码格式</p>
@@ -1272,7 +1271,227 @@
 <p>如下图，使用printerbug.py对172.16.100.5发起请求，172.16.100.5就会向172.16.100.1发起ntlm 请求。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0194265565e1e16f3a.png"></p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b973a1501589a825.png"></p>
-]]></content>
+<h2 id="Net-NTLM-利用"><a href="#Net-NTLM-利用" class="headerlink" title="Net- NTLM 利用"></a>Net- NTLM 利用</h2><h3 id="前言-6"><a href="#前言-6" class="headerlink" title="前言"></a>前言</h3><p>在上一章节中,讲了12种发起NTLM请求的方式。这篇文章接着上文，主要讲解拿到NTLM 请求之后的进一步利用。有Net-NTLM Hash的破解(v1 和 v2)以及Relay到支持NTLM SSP的协议，事实上，只要是支持NTLM SSP的协议，都可以Relay过去，本文主要讲的是几种比较常遇到，且能达到命令执行效果的，SMB,EWS,LDAP。</p>
+<h3 id="Relay"><a href="#Relay" class="headerlink" title="Relay"></a>Relay</h3><h4 id="Relay2SMB"><a href="#Relay2SMB" class="headerlink" title="Relay2SMB"></a>Relay2SMB</h4><p>能直接relay到smb服务器，是最直接最有效的方法。可以直接控制该服务器(包括但不限于在远程服务器上执行命令，上传exe到远程命令上执行，dump 服务器的用户hash等等等等)。</p>
+<p>主要有两种场景</p>
+<ol>
+<li><p>工作组环境<br>这个实用性比较差。在工作组环境里面，工作组中的机器之间相互没有信任关系，每台机器的账号密码Hash只是保存在自己的SAM文件中，这个时候Relay到别的机器，除非两台机器的账号密码一样(如果账号密码一样，我为啥不直接pth呢)，不然没有别的意义了，这个时候的攻击手段就是将机器reflect回机子本身。因此微软在ms08-068中对smb reflect到smb 做了限制。这个补丁在CVE-2019-1384(Ghost Potato)被绕过。将在下篇文章里面详细讲。</p>
+</li>
+<li><p>域环境<br>域环境底下域用户的账号密码Hash保存在域控的 ntds.dit里面。如下没有限制域用户登录到某台机子，那就可以将该域用户Relay到别人的机子，或者是拿到域控的请求，将域控Relay到普通的机子，比如域管运维所在的机子。(为啥不Relay到其他域控，因为域内就域控默认开启smb签名)</p>
+</li>
+</ol>
+<p>下面演示使用几款工具在域环境底下，从域控relay到普通机器执行命令</p>
+<p>impacket 的底下的smbrelayx.py</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt016aa0e38af8b20d9d.png"></p>
+<p>impacket 的底下的ntlmrelayx.py</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01691f75c13d572006.png"></p>
+<p>Responder底下的MultiRelay.py</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01cfb45589a4ab815f.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01504ad4e6a29d3c92.png"></p>
+<h4 id="Relay2EWS"><a href="#Relay2EWS" class="headerlink" title="Relay2EWS"></a>Relay2EWS</h4><p> Exchange的认证也是支持NTLM SSP的。我们可以relay的Exchange，从而收发邮件，代理等等。在使用outlook的情况下还可以通过homepage或者下发规则达到命令执行的效果。而且这种Relay还有一种好处，将Exchange开放在外网的公司并不在少数，我们可以在外网发起relay，而不需要在内网，这是最刺激的。<br>​<br>下面演示通过<a href="https://github.com/Arno0x/NtlmRelayToEWS">NtlmRelayToEWS</a>(事实上，工具挺多的。其他的大家可以上github自己找)来实现</p>
+<p>Relay2ews</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt010d550875927b8f5e.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt011afceb68b79372ca.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d5e80035e172d3c5.png"></p>
+<p>配合homepage 能够实现命令执行的效果</p>
+<p>homepage的简易demo代码如下</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;Content-Language&quot;</span> <span class="attr">content</span>=<span class="string">&quot;en-us&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;Content-Type&quot;</span> <span class="attr">content</span>=<span class="string">&quot;text/html; charset=windows-1252&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>Outlook<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">id</span>=<span class="string">clientEventHandlersVBS</span> <span class="attr">language</span>=<span class="string">vbscript</span>&gt;</span><span class="language-handlebars"><span class="language-xml"></span></span></span><br><span class="line"><span class="language-xml"><span class="language-handlebars"><span class="comment">&lt;!--</span></span></span></span><br><span class="line"><span class="comment"><span class="language-xml"><span class="language-handlebars"> Sub window_onload()</span></span></span></span><br><span class="line"><span class="comment"><span class="language-xml"><span class="language-handlebars">     Set Application = ViewCtl1.OutlookApplication</span></span></span></span><br><span class="line"><span class="comment"><span class="language-xml"><span class="language-handlebars">     Set cmd = Application.CreateObject(&quot;Wscript.Shell&quot;)</span></span></span></span><br><span class="line"><span class="comment"><span class="language-xml"><span class="language-handlebars">     cmd.Run(&quot;calc&quot;)</span></span></span></span><br><span class="line"><span class="comment"><span class="language-xml"><span class="language-handlebars"> End Sub</span></span></span></span><br><span class="line"><span class="comment"><span class="language-xml"><span class="language-handlebars">--&gt;</span></span></span></span><br><span class="line"><span class="language-xml"><span class="language-handlebars"></span></span></span><br><span class="line"><span class="language-xml"><span class="language-handlebars"></span></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">object</span> <span class="attr">classid</span>=<span class="string">&quot;clsid:0006F063-0000-0000-C000-000000000046&quot;</span> <span class="attr">id</span>=<span class="string">&quot;ViewCtl1&quot;</span> <span class="attr">data</span>=<span class="string">&quot;&quot;</span> <span class="attr">width</span>=<span class="string">&quot;100%&quot;</span> <span class="attr">height</span>=<span class="string">&quot;100%&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">object</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>放置于web服务器。在<a href="https://github.com/Arno0x/NtlmRelayToEWS">NtlmRelayToEWS</a> 里面通过-u 参数指定。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt016a591f9a50f67365.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt016a591f9a50f67365.png"></p>
+<h4 id="Relay2LDAP"><a href="#Relay2LDAP" class="headerlink" title="Relay2LDAP"></a>Relay2LDAP</h4><p>不管是杀伤力巨大的8581还是1040。Relay到ldap都在里面发挥着巨大的作用。<br>relay 到ldap的话，能干嘛呢<br>这里着重介绍三种通用性比较强的利用思路。这三种在impacket里面的ntlmrelayx都有实现。(这三种通用性比较强而已，实际中这个的利用比较灵活，需要通过 nTSecurityDescriptor分析用户在域内对哪些acl有权限，什么权限。关于acl怎么深入利用,这里不再展开，后面在ldap篇会详细说明)</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b31d966b33575140.png"></p>
+<ol>
+<li>高权限用户<br>如果NTLM发起用户在以下用户组</li>
+</ol>
+<ul>
+<li>Enterprise admins</li>
+<li>Domain admins</li>
+<li>Built-in Administrators</li>
+<li>Backup operators</li>
+<li>Account operators</li>
+</ul>
+<p>那么就可以将任意用户拉进该组，从而使该用户称为高权限用户，比如域管</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e4daef09128988f5.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01db1fea97b977fe39.png"></p>
+<ol start="2">
+<li>write-acl 权限</li>
+</ol>
+<p>如果发起者对DS-Replication-GetChanges(GUID: 1131f6aa-9c07-11d1-f79f-00c04fc2dcd2)和DS-Replication-Get-Changes-All(1131f6ad-9c07-11d1-f79f-00c04fc2dcd2)有write-acl 权限，那么就可以在该acl里面添加任意用户，从而使得该用户可以具备dcsync的权限</p>
+<p>这个案例的典型例子就是Exchange Windows Permissions组，我们将在下一篇介绍8581的 时候详细说下这个用户组的权限。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e584908a9750a6e0.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0183b05d5cce2a771d.png"></p>
+<ol start="3">
+<li>普通用户权限</li>
+</ol>
+<p>在server2012r2之后，如果没有以上两个权限。可以通过设置基于资源的约束委派。</p>
+<p>在NTLM发起者属性马上到！S-AllowedToActOnBehalfOfOtherIdentity里面添加一条ace,可以让任何机器用户和服务用户可以控制该用户(NTLM发起者)。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0162651181f81ddd6b.png"></p>
+<h1 id="LDAP-篇"><a href="#LDAP-篇" class="headerlink" title="LDAP 篇"></a>LDAP 篇</h1><h2 id="Active-Directory"><a href="#Active-Directory" class="headerlink" title="Active Directory"></a>Active Directory</h2><h3 id="前言-7"><a href="#前言-7" class="headerlink" title="前言"></a>前言</h3><p>这是LDAP篇的第一章节。在域渗透中，可能大家对Active Directory，LDAP，Naming Context这些概念既熟悉又模糊，比如Active Directory跟LDAP有啥关系等等。在LDAP篇，我们将系统地介绍跟Active Directory相关的方方面面。第一篇文章主要介绍一些基本概念，让大家对整个Active Directory有个基本印象。在之后的文章里面会陆续介绍Active Directory相关的方方面面。包括但不限于。</p>
+<ul>
+<li>域内用户介绍</li>
+<li>域内组介绍</li>
+<li>域内ACL介绍</li>
+<li>域信任关系介绍</li>
+<li>组策略介绍</li>
+</ul>
+<p>这篇文章对一些专业词汇统一保留英文</p>
+<h3 id="LDAP简介"><a href="#LDAP简介" class="headerlink" title="LDAP简介"></a>LDAP简介</h3><p>LDAP全称是Lightweight Directory Access Protocol，轻量目录访问协议。顾名思义，LDAP是设计用来访问目录数据库的一个协议。</p>
+<p>在这之前我们先介绍一下目录服务。目录数据库是由目录服务数据库和一套访问协议组成。</p>
+<p>目录服务数据库也是一种数据库，这种数据库相对于我们熟知的关系型数据库(比如MySQL,Oracle),主要有以下几个方面的特点。</p>
+<ol>
+<li>它成树状结构组织数据，类似文件目录一样。</li>
+<li>它是为查询、浏览和搜索而优化的数据库，也就是说LDAP的读性能特别强，但是写性能差，而且还不支持事务处理、回滚等复杂功能。</li>
+</ol>
+<p>为了能够访问目录数据库，必须设计一台能够访问目录服务数据库的协议，LDAP是其中一种实现协议。</p>
+<p>为了方便大家理解下面举个例子来介绍一些LDAP相关的东西。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01781f2de2d2707237.png"></p>
+<p>如上图所示是目录服务数据库，它成树状结构组织数据。下面介绍一些基本概念</p>
+<ol>
+<li>目录树：如上图所示，在一个目录服务系统中，整个目录信息集可以表示为一个目录信息树，树中的每个节点是一个条目。</li>
+<li>条目：每个条目就是一条记录，每个条目有自己的唯一可区别的名称（DN）。比如图中的每个圆圈都是一条记录。</li>
+<li>DN,RDN:比如说第一个叶子条目，他有一个唯一可区分的名称DN:uid&#x3D;bob,ou&#x3D;people,dc&#x3D;acme,dc&#x3D;org。类似于文件目录的相对路径绝对路径，他除了有个DN之外，还有个RDN，他与目录结构无关，比如之前咱们提过的uid&#x3D;bob,ou&#x3D;people,dc&#x3D;acme,dc&#x3D;org，他的RDN就是uid&#x3D;bob</li>
+<li>属性：描述条目具体信息。比如&#96;uid&#x3D;bill,ou&#x3D;people,dc&#x3D;acme,dc&#x3D;org，他有属性name 为bill，属性age为11，属性school 为xx。</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01900f7cd08682777d.png"></p>
+<h3 id="Active-Directory简介"><a href="#Active-Directory简介" class="headerlink" title="Active Directory简介"></a>Active Directory简介</h3><p>不同厂商对目录服务数据库的实现不一，常见的如下实现。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0178ac16e10816f3ea.png"></p>
+<p>可以看出Active Directory，是微软的对目录服务数据库的实现，而LDAP是设计用来对目录服务数据库(在这里的实现就是微软的Active Directory)的访问的协议。Active Directory存储着整个域内所有的计算机，用户等的所有信息。</p>
+<p>如果我们想访问域内的Active Directory，有两种办法</p>
+<ol>
+<li>域内的每一台域控都有一份完整的本域的Active Directory，可以通过连接域控的389&#x2F;636端口(636端口是LDAPS)来进行连接查看修改。</li>
+<li>如果用户知道某个对象处于哪个域，也知道对象的标识名，那么通过上面第一种方式搜索对象就非常容易。但是考虑到这种情况，不知道对象所处的域，我们不得不去域林中的每个域搜索。为了解决这个问题，微软提出全局编录服务器(GC，Global Catalog)，  全局编录服务器中除了保存本域中所有对象的所有属性外，还保存林中其它域所有对象的部分属性，这样就允许用户通过全局编录信息搜索林中所有域中对象的信息。也就是说如果需要在整个林中进行搜索，而不单单是在具体的某个域进行搜索的时候，可以连接域控的3268&#x2F;3269端口。</li>
+</ol>
+<h3 id="Naming-Context和Application-Partitions"><a href="#Naming-Context和Application-Partitions" class="headerlink" title="Naming Context和Application Partitions"></a>Naming Context和Application Partitions</h3><p>之前的内容都是在讲Active Directory的基本概念，接下来我们来具体的探究下Active Directory具体有啥东西。</p>
+<h4 id="Naming-Context"><a href="#Naming-Context" class="headerlink" title="Naming Context"></a>Naming Context</h4><p>首先有一点得明确，Active Directory具有分布式特性，一个林中有若干个域，每个域内有若干台域控，每台域控有一个独立的Active Directory。这个时候就有必要将数据隔离到多个分区中，如果不隔离的话，则每个域控制器都必须复制林中的所有数据。若隔离为若干个分区之后，就可以有选择性的复制某几个分区。微软将Active Directory划分为若干个分区(这个分区我们称为Naming Context，简称NC)，每个Naming Context都有其自己的安全边界。</p>
+<p>Active Directory预定义了三个Naming Context</p>
+<ul>
+<li>Configuration NC(Configuration NC)</li>
+<li>Schema NC(Schema NC)</li>
+<li>Domain NC(DomainName NC)</li>
+</ul>
+<p>我们使用ADExplorer连接进来就可以看到这三个(后面两个是引用程序分区，后面会讲)</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0194ff78d4143b1a5f.png"></p>
+<p>我们来简单的介绍下这三个Naming Context</p>
+<ul>
+<li>Configuration NC(Configuration NC)</li>
+</ul>
+<p>配置NC,林配置信息的主要存储库，包含有关站点，服务，分区和Active DirectorySchema 的信息，并被复制到林中的每个域控制器。配置NC的根位于配置容器中，该容器是林根域的子容器。例如，test.local林将为CN&#x3D;Configuration,DC&#x3D;test,DC&#x3D;local</p>
+<p>下面我们来看看这个Naming Context的顶级容器有哪些。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f33589dc918ac407.png"></p>
+<table>
+<thead>
+<tr>
+<th align="center">RDN</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CN&#x3D;DisplaySpecifiers</td>
+<td align="center">定义了Active Directory管理单元的各种显示格式</td>
+</tr>
+<tr>
+<td align="center">CN&#x3D;Extended-Rights</td>
+<td align="center">扩展权限对象的容器，我们将在域内ACL那篇文章里面详解</td>
+</tr>
+<tr>
+<td align="center">CN&#x3D;ForestUpdates</td>
+<td align="center">包含用于表示森林状态和与域功能级别更改的对象</td>
+</tr>
+<tr>
+<td align="center">CN&#x3D;Partitions</td>
+<td align="center">包含每个Naming Context，Application Partitions以及外部LDAP目录引用的对象</td>
+</tr>
+<tr>
+<td align="center">CN&#x3D;Physical Locations</td>
+<td align="center">包含位置对象，可以将其与其他对象关联 以表示该对象的位置。</td>
+</tr>
+<tr>
+<td align="center">CN&#x3D;Physical Locations</td>
+<td align="center">包含位置对象，可以将其与其他对象关联 以表示该对象的位置。</td>
+</tr>
+<tr>
+<td align="center">CN&#x3D;Services</td>
+<td align="center">存储有关服务的配置信息，比如文件复制服务</td>
+</tr>
+<tr>
+<td align="center">CN&#x3D;Sites</td>
+<td align="center">包含所有站点拓扑和复制对象</td>
+</tr>
+<tr>
+<td align="center">CN&#x3D;WellKnown Security Principals</td>
+<td align="center">包含常用的外部安全性主题的对象，比如Anonymous，Authenticated Users，Everyone等等</td>
+</tr>
+</tbody></table>
+<ul>
+<li>Schema NC(Schema NC)</li>
+</ul>
+<p>包含Schema 信息，该Schema 信息定义Active Directory中使用的类，对象和属性。与域NC和配置 NC 不同，模式 NC 不维护容器或组织单位的层次结构。相反，它是具有 classSchema ，attributeSchema 和 subSchema 对象的单个容器。关于这个Naming Context的详细内容我们将在下一节里面详细讲。</p>
+<ul>
+<li>Domain NC(DomainName NC)</li>
+</ul>
+<p>每个域都有一个域Naming Context，不同的域内有不同的域Naming Context，其中包含特定于域的数据。这个域Naming Context(的根由域的专有名称(DN)表示，比如corp.test.local域的DN将为dc&#x3D;corp,dc&#x3D;test,dc&#x3D;local。之前我们说过，域内的所有计算机，所有用户的具体信息都存在Active Directory底下，具体来说，就是在Active Directory的这个Naming Context里面。我们用工具查看的默认Naming Context选的也是这个Naming Context。后面对域内很多东西的查看都在这个Naming Context里面。下面我们来看看这个Naming Context的顶级容器有哪些。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01c20608fa29d15b74.png"></p>
+<table>
+<thead>
+<tr>
+<th align="center">RDN</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CN&#x3D;Builtin</td>
+<td align="center">内置本地安全组的容器，包括管理员，域用户和账号操作员等等</td>
+</tr>
+<tr>
+<td align="center">CN&#x3D;Computers</td>
+<td align="center">机器用户的容器，包括加入域的所有机器</td>
+</tr>
+<tr>
+<td align="center">OU&#x3D;Domain Controllers</td>
+<td align="center">域控制器的容器，包括域内所有域控</td>
+</tr>
+<tr>
+<td align="center">CN&#x3D;ForeignSecurityPrincipals</td>
+<td align="center">代表域中来自森林外部域的组中的成员</td>
+</tr>
+<tr>
+<td align="center">CN&#x3D;Keys</td>
+<td align="center">Server 2016之后才有，关键凭证对象的默认容器</td>
+</tr>
+<tr>
+<td align="center">CN&#x3D;Managed Service Accounts</td>
+<td align="center">托管服务帐户的容器。</td>
+</tr>
+<tr>
+<td align="center">CN&#x3D;System</td>
+<td align="center">各种预配置对象的容器。包括信任对象，DNS对象和组策略对象</td>
+</tr>
+<tr>
+<td align="center">CN&#x3D;TPM Devices</td>
+<td align="center">可信平台模块(TPM)密钥的恢复信息的容器。</td>
+</tr>
+<tr>
+<td align="center">CN&#x3D;Users</td>
+<td align="center">用户和组对象的默认容器</td>
+</tr>
+</tbody></table>
+<h4 id="Application-Partitions"><a href="#Application-Partitions" class="headerlink" title="Application Partitions"></a>Application Partitions</h4><p>从 Windows Server 2003 开始，微软允许用户自定义分区来扩展Naming Context的概念。Application Partitions其实就是Naming Context的一个扩展，它本质上还是属于Naming Context。管理员可以创建分区(这个分区我们称为区域)，以将数据存储在他们选择的特定域控制器上，Application Partitions主要有以下特点:</p>
+<ol>
+<li>Naming Context是微软预定义的，用户不可以定义自己的Naming Context。而如果用户想要定义一个分区，可以通过Application Partitions。虽然微软也预置了两个Application Partitions，但是Application Partitions的设计更多是为了让用户可以自定义自己的数据。设计Application Partitions最大的用途就是，让用户自己来定义分区。</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01a2bb466807c53a51.png"></p>
+<ol start="2">
+<li>Application Partitions可以存储动态对象。动态对象是具有生存时间(TTL) 值的对象，该值确定它们在被Active Directory自动删除之前将存在多长时间。也就说Application Partitions可以给数据设置个TTL，时间一到，Active Directory就删除该数据。</li>
+</ol>
+<p>下面演示通过ntdsutil创建Application Partitions:</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01955f3c83d44008e6.png"></p>
+<p>创建成功</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt010567075683bbcec1.png"></p>
+<p>我们可以通过查看rootDSE查看域内的所有Naming Context以及Application Partitions，在属性namingContexts里面。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt016f6df9329dd8e4f5.png"></p>
+<h3 id="Schema-NC"><a href="#Schema-NC" class="headerlink" title="Schema NC"></a>Schema NC</h3>]]></content>
       <categories>
         <category>后渗透理论篇</category>
       </categories>
