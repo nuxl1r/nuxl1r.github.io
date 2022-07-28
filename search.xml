@@ -2,15 +2,15 @@
 <search>
   <entry>
     <title>windows认证机制</title>
-    <url>/windows/Windows%E8%AE%A4%E7%9F%A5%E6%9C%BA%E5%88%B6/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>闲着也是闲着，所以整理一篇，让自己的知识形成体系，部分地方加锚点，让知识之间串联起来，防止大兄弟看完觉得乱乱的。哈哈。</p>
+    <url>/windows/Windows%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>闲着也是闲着，所以整理一篇，让自己的知识形成体系，部分地方加锚点，让知识之间串联起来，防止看完觉得乱乱的。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdown96074895_p9.jpg"></p>
 <span id="more"></span>
 
 <p>特此声明，文中部分描述来自wiki。</p>
 <h1 id="Kerberos-篇"><a href="#Kerberos-篇" class="headerlink" title="Kerberos 篇"></a>Kerberos 篇</h1><h2 id="AS-REQ-amp-AS-REP"><a href="#AS-REQ-amp-AS-REP" class="headerlink" title="AS_REQ &amp; AS_REP"></a>AS_REQ &amp; AS_REP</h2><h3 id="前言-1"><a href="#前言-1" class="headerlink" title="前言"></a>前言</h3><p>体量太大，所以每一个大章一个前言。</p>
 <p>熟悉内网渗透的应该都对IPC，黄金票据，白银票据，ntlm relay，Ptt,Ptk 这些词汇再熟悉不够了，对其利用工具也了如指掌，但是有些人对里面使用的原理还不太了解，知其然不知其所以然，本系列文章将针对内网渗透的常见协议(如kerbeos,ntlm,smb,ldap等)进行协议分析，相关漏洞分析以及漏洞工具分析利用。</p>
-<p>kerberos 篇将从四个方面来阐述kerberos协议，分别是kerberos的两个基础认证模块AS_REQ &amp; AS_REP,TGS_REQ &amp; TGS_REP。以及微软扩展的两个认证模块S4U和PAC。这篇文章是 kerberos 篇的第一篇文章 <code>AS_REQ</code> &amp; <code>AS_REP</code> 。</p>
+<p>kerberos 篇将从四个方面来阐述kerberos协议，分别是kerberos的两个基础认证模块AS_REQ &amp; AS_REP,TGS_REQ &amp; TGS_REP。以及微软扩展的两个认证模块S4U和PAC。这个章节是 kerberos 篇的第一块 <code>AS_REQ</code> &amp; <code>AS_REP</code> 。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01176eab7c7a39d1d9.png"></p>
 <h3 id="kerberos-协议概述"><a href="#kerberos-协议概述" class="headerlink" title="kerberos 协议概述"></a>kerberos 协议概述</h3><p>Kerberos是一种由MIT（麻省理工大学）提出的一种网络身份验证协议。它旨在通过使用密钥加密技术为客户端 &#x2F; 服务器应用程序提供强身份验证。</p>
 <p>在Kerberos协议中主要是有三个角色的存在：</p>
@@ -34,7 +34,7 @@
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt015f25c3d61e10068e.png"></p>
 <p>点击修改配置，支持明文密码以及hash</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ee3217094e548c8c.png"></p>
-<p>协议的各个字段将在本篇文章以及接下来的几篇文章里面详细阐述，配合此工具理解kerberos 字段，效果更佳。</p>
+<p>协议的各个字段将在本章节以及接下来的几个章节里面详细阐述，配合此工具理解kerberos 字段，效果更佳。</p>
 <h3 id="AS-REQ"><a href="#AS-REQ" class="headerlink" title="AS_REQ"></a>AS_REQ</h3><p>用户向KDC发起AS_REQ,请求凭据是用户 hash加密的时间戳。请求凭据放在PA_DATA里面。详情见以下每个字段的详细介绍。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt010aad636f2c02d394.png"></p>
 <h4 id="pvno"><a href="#pvno" class="headerlink" title="pvno"></a>pvno</h4><p>kerberos 版本号</p>
@@ -59,7 +59,7 @@
 <ul>
 <li>KRB_NT_PRINCIPAL &#x3D; 1 means just the name of the principal 如dailker</li>
 <li>KRB_NT_SRV_INST &#x3D; 2 service and other unique instance (krbtgt) 如krbtgt，cifs</li>
-<li>KRB_NT_ENTERPRISE_PRINCIPAL &#x3D; 10 如 <a href="mailto:&#x75;&#115;&#x65;&#114;&#64;&#x64;&#111;&#x6d;&#97;&#105;&#x6e;&#46;&#x63;&#111;&#x6d;">&#x75;&#115;&#x65;&#114;&#64;&#x64;&#111;&#x6d;&#97;&#105;&#x6e;&#46;&#x63;&#111;&#x6d;</a><br>在AS_REQ里面cname 是请求的用户,这个用户名存在和不存在，返回的包有差异，可以用于枚举域内用户名。详情见<a href='#p1'>相关的安全问题&gt;用户名枚举</a></li>
+<li>KRB_NT_ENTERPRISE_PRINCIPAL &#x3D; 10 如 <a href="mailto:&#x75;&#115;&#x65;&#114;&#x40;&#x64;&#111;&#109;&#97;&#105;&#x6e;&#x2e;&#x63;&#111;&#109;">&#x75;&#115;&#x65;&#114;&#x40;&#x64;&#111;&#109;&#97;&#105;&#x6e;&#x2e;&#x63;&#111;&#109;</a><br>在AS_REQ里面cname 是请求的用户,这个用户名存在和不存在，返回的包有差异，可以用于枚举域内用户名。详情见<a href='#p1'>相关的安全问题&gt;用户名枚举</a></li>
 </ul>
 </li>
 <li><p>sname<br>PrincipalName 类型<br>在AS_REQ里面sname是krbtgt，类型是KRB_NT_SRV_INST</p>
@@ -181,7 +181,7 @@
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0111d61a08ff02f41d.png"></p>
 <h4 id="DomainPasswordSpray"><a href="#DomainPasswordSpray" class="headerlink" title="DomainPasswordSpray"></a>DomainPasswordSpray</h4><p>DomainPasswordSpray是用PowerShell编写的工具，用于对域用户执行密码喷洒攻击。默认情况下，它将利用LDAP从域中导出用户列表，然后扣掉被锁定的用户，再用固定密码进行密码喷洒。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt018884748fa98a8512.png"></p>
-<h2 id="TGS-REQ-amp-TGS-REP"><a href="#TGS-REQ-amp-TGS-REP" class="headerlink" title="TGS_REQ &amp; TGS_REP"></a>TGS_REQ &amp; TGS_REP</h2><h3 id="前言-2"><a href="#前言-2" class="headerlink" title="前言"></a>前言</h3><p>这篇文章是主讲TGS_REQ&amp; TGS_REP。在TGS_REQ &amp; TGS_REP阶段，用户通过AS_REP拿到的TGT票据，去向KDC申请特定服务的访问权限，KDC校验TGT票据，如果校验通过的话，会向用户发送一个TGS票据，之后用户再拿着TGS去访问特定的服务。这一阶段，微软引进了两个扩展S4U2SELF和S4U2PROXY。考虑到这两个扩展是TGS的子协议，把S4U归纳到这篇文章里面一起讲。</p>
+<h2 id="TGS-REQ-amp-TGS-REP"><a href="#TGS-REQ-amp-TGS-REP" class="headerlink" title="TGS_REQ &amp; TGS_REP"></a>TGS_REQ &amp; TGS_REP</h2><h3 id="前言-2"><a href="#前言-2" class="headerlink" title="前言"></a>前言</h3><p>该章节是主讲TGS_REQ&amp; TGS_REP。在TGS_REQ &amp; TGS_REP阶段，用户通过AS_REP拿到的TGT票据，去向KDC申请特定服务的访问权限，KDC校验TGT票据，如果校验通过的话，会向用户发送一个TGS票据，之后用户再拿着TGS去访问特定的服务。这一阶段，微软引进了两个扩展S4U2SELF和S4U2PROXY。考虑到这两个扩展是TGS的子协议，把S4U归纳到这个章节里面一起讲。</p>
 <p>TGS_REQ这个阶段不需要账号密码，需要AS_REP获取到的TGT凭据。这里面工具需要指定域控的地址。连接配置里面的其他信息都在凭据里面，这里可以不用指定。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ecc0dcdbc1334e4a.png"></p>
 <h3 id="TGS-REQ"><a href="#TGS-REQ" class="headerlink" title="TGS_REQ"></a>TGS_REQ</h3><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt013a3af94337ac907b.png"></p>
@@ -366,7 +366,7 @@
 <p>这里面只做漏洞原理演示。方便的工具化的利用参见部分相关的工具</p>
 <h4 id='p3'>白银票据</h4>
 
-<p>在TGS_REP里面的ticket的encpart是使用服务的hash进行加密的，如果我们拥有服务的hash，就可以给我们自己签发任意用户的TGS票据，这个票据也被称为白银票据。相较于黄金票据，白银票据使用要访问服务的hash，而不是krbtgt的hash，由于生成的是tgs票据，不需要跟域控打交道，但是白银票票据只能访问特定服务。但是要注意的一点是，伪造的白银票据没有带有有效KDC签名的PAC。如果将目标主机配置为验证KDC PAC签名(关于PAC的详细信息，将在下一篇文章里面详细介绍)，则银票将不起作用。</p>
+<p>在TGS_REP里面的ticket的encpart是使用服务的hash进行加密的，如果我们拥有服务的hash，就可以给我们自己签发任意用户的TGS票据，这个票据也被称为白银票据。相较于黄金票据，白银票据使用要访问服务的hash，而不是krbtgt的hash，由于生成的是tgs票据，不需要跟域控打交道，但是白银票票据只能访问特定服务。但是要注意的一点是，伪造的白银票据没有带有有效KDC签名的PAC。如果将目标主机配置为验证KDC PAC签名(关于PAC的详细信息，将在下一章节里面详细介绍)，则银票将不起作用。</p>
 <h4 id="非约束委派攻击"><a href="#非约束委派攻击" class="headerlink" title="非约束委派攻击"></a>非约束委派攻击</h4><p>非约束委派的安全问题就是如果我们找到配置了非约束的委派的账户，比如这里面的<code>JACKSON-PC$</code>，并且通过一定手段拿下该账户的权限，然后诱导域管访问该<code>JACKSON-PC$</code>，这个时候域管会将自己TGT发送到<code>JACKSON-PC$</code>并缓存到LSASS中，那我们就可以从LSASS中导出域管的TGT票据，然后通过PTT，从而拥有域管的权限。</p>
 <ul>
 <li>找到配置了非约束的委派的账户</li>
@@ -543,7 +543,7 @@
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01a6d224249922b744.png"></p>
 <p>添加个DNS记录</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0127cb3685282cd7c0.png"></p>
-<h2 id="PAC"><a href="#PAC" class="headerlink" title="PAC"></a>PAC</h2><h3 id="前言-3"><a href="#前言-3" class="headerlink" title="前言"></a>前言</h3><p>这是kerbreos篇的最后一篇文章了。这篇文章主要讲的内容是微软为了访问控制而引进的一个扩展PAC，以及PAC在历史上出现过的一个严重的，允许普通用户提升到域管的漏洞MS14068。</p>
+<h2 id="PAC"><a href="#PAC" class="headerlink" title="PAC"></a>PAC</h2><h3 id="前言-3"><a href="#前言-3" class="headerlink" title="前言"></a>前言</h3><p>这是kerbreos篇的最后一节了。这篇该节主要讲的内容是微软为了访问控制而引进的一个扩展PAC，以及PAC在历史上出现过的一个严重的，允许普通用户提升到域管的漏洞MS14068。</p>
 <h3 id="PAC-介绍"><a href="#PAC-介绍" class="headerlink" title="PAC 介绍"></a>PAC 介绍</h3><p>网上很多版本的kerberos的流程是</p>
 <ol>
 <li>用户向KDC发起AS_REQ,请求凭据是用户hash加密的时间戳，KDC使用用户hash进行解密，如果结果正确返回用krbtgt hash加密的TGT票据</li>
@@ -689,7 +689,7 @@
 <p>现在我们已经能够伪造pac,将我们放在域管的组里，然后伪造检验和。但是即使用户可以伪造PAC。该漏洞的利用依旧还有一个棘手的问题。 前面我们说过。PAC是包含在TGT里面的,而TGT是krbtgt的用户hash加密的，也就意味着即使我们可以伪造PAC，那我们有什么办法讲PAC放在票据里面传输给KDC呢。漏洞的作者用了一个很巧妙的方式。通过查看pykek的源码发现， 作者将PAC加密成密文放在enc-authorization-data里面，enc-authorization-data的结构如下</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line">AuthorizationData::= SEQUENCE OF SEQUENCE &#123;</span><br><span class="line">   ad-type[<span class="number">0</span>] Int32,</span><br><span class="line">   ad-data[<span class="number">1</span>] OCTET STRING</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>ad-type是加密算法 ad-data是pac加密后的内容 加密用的key是客户端生成的。KDC并不知道这个key。KDC会从PA-DATA里面的AP_REQ获取到这个key。从而对ad-data进行解密，然后拿到PAC，再检查校验和。 可能很多人抓包,在AP_REQ里面并没有找到这个key。在上一篇文章里面对于AP_REQ介绍得不多。</p>
+<p>ad-type是加密算法 ad-data是pac加密后的内容 加密用的key是客户端生成的。KDC并不知道这个key。KDC会从PA-DATA里面的AP_REQ获取到这个key。从而对ad-data进行解密，然后拿到PAC，再检查校验和。 可能很多人抓包,在AP_REQ里面并没有找到这个key。在上一节里面对于AP_REQ介绍得不多。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ed2dbaa28ada4357.png"></p>
 <p>只是说了TGT票据就放在这个结构体里面。这里补充介绍下。 AP_REQ的type是PADATA_TYPE.AP_REQ(INTEGER 1)</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0124ad34409cf6eee2.png"></p>
@@ -721,7 +721,7 @@
 <p>注意这里的logon_time来自于第一步中生成的AS_REP的enc_part解密后的的authtime，在工具里面右键复制就行</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt016faf1d0dcd0df8b3.png"></p>
 <ol start="3">
-<li>发起一次服务用户是krbtgt的TGS_REQ，此时导入的TGT里面是不含有PAC的(在第一步里面选择include&#x3D;False返回的TGT不含有pac)，然后将我们伪造的PAC是加密放在 enc-authorization-data里面。加密用的key的放在PA-DATA里面的AP_REQ。此时返回的TGS里面就含有我们伪造的PAC。在之前的文章里面我们说过，在TGS里面，如果请求的服务是krbtgt的话，那么返回的TGS票据是可以当做TGT的。在我们的kerbreos测试工具里面，只需要导入上面makepac.py生成的pac文件。</li>
+<li>发起一次服务用户是krbtgt的TGS_REQ，此时导入的TGT里面是不含有PAC的(在第一步里面选择include&#x3D;False返回的TGT不含有pac)，然后将我们伪造的PAC是加密放在 enc-authorization-data里面。加密用的key的放在PA-DATA里面的AP_REQ。此时返回的TGS里面就含有我们伪造的PAC。在之前的章节里面我们说过，在TGS里面，如果请求的服务是krbtgt的话，那么返回的TGS票据是可以当做TGT的。在我们的kerbreos测试工具里面，只需要导入上面makepac.py生成的pac文件。</li>
 </ol>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01fb7979dfaa15534e.png"></p>
 <ol start="4">
@@ -750,12 +750,14 @@
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0192b5103cce31cc74.png"></p>
 <p>验证tgt是否具备域管权限</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f84fbfeeb70e2b7b.png"></p>
-<h1 id="NTLM-篇"><a href="#NTLM-篇" class="headerlink" title="NTLM 篇"></a>NTLM 篇</h1><h2 id="NTLM-基础"><a href="#NTLM-基础" class="headerlink" title="NTLM 基础"></a>NTLM 基础</h2><h3 id="前言-4"><a href="#前言-4" class="headerlink" title="前言"></a>前言</h3><p>这个系列文章主要讲ntlm认证相关的内容。以及着重介绍ntlm两大安全问题–PTH和ntlm_relay。</p>
-<p>ntlm篇分为四篇文章</p>
-<p>第1篇文章也是本文，这篇文章主要简单介绍一些基础概念以及引进一些相关的漏洞，比如<code>Pass The Hash</code>以及<code>ntlm_relay</code>。</p>
-<p>其余三篇文章的内容全部都是讲<code>ntlm_relay</code>,这个安全问题是ntlm篇的重点内容。</p>
-<p>第2篇文章主要讲触发windows向攻击者发起ntlm请求的一些方式,比如大家耳熟能详的打印机漏洞。</p>
-<p>第3篇文章主要讲的是攻击者接收到ntlm请求之后做的事，如爆破<code>Net-ntlm</code>，又或者relay到SMB,HTTP,Exchange,LDAP等。</p>
+<h1 id="NTLM-篇"><a href="#NTLM-篇" class="headerlink" title="NTLM 篇"></a>NTLM 篇</h1><h2 id='p8'>NTLM 基础</h2>
+
+<h3 id="前言-4"><a href="#前言-4" class="headerlink" title="前言"></a>前言</h3><p>这个系列文章主要讲ntlm认证相关的内容。以及着重介绍ntlm两大安全问题–PTH和ntlm_relay。</p>
+<p>ntlm篇分为四部分</p>
+<p>第1块也是本文，这篇主要简单介绍一些基础概念以及引进一些相关的漏洞，比如<code>Pass The Hash</code>以及<code>ntlm_relay</code>。</p>
+<p>其余三块的内容全部都是讲<code>ntlm_relay</code>,这个安全问题是ntlm篇的重点内容。</p>
+<p>第2块主要讲触发windows向攻击者发起ntlm请求的一些方式,比如大家耳熟能详的打印机漏洞。</p>
+<p>第3块主要讲的是攻击者接收到ntlm请求之后做的事，如爆破<code>Net-ntlm</code>，又或者relay到SMB,HTTP,Exchange,LDAP等。</p>
 <h3 id="LM-Hash-amp-NTLM-Hash"><a href="#LM-Hash-amp-NTLM-Hash" class="headerlink" title="LM Hash &amp; NTLM Hash"></a>LM Hash &amp; NTLM Hash</h3><p>windows内部是不保存明文密码的，只保存密码的hash。</p>
 <p>其中本机用户的密码hash是放在 本地的SAM文件 里面，域内用户的密码hash是存在域控的NTDS.DIT文件 里面。那hash的格式是怎么样的呢?</p>
 <p>在Windows系统导出密码的时候，经常看到这样的密码格式</p>
@@ -1002,7 +1004,7 @@
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01299ecabe2d3f6a3c.png"></p>
 <p>msf底下也有类似的模块<code>auxiliary/scanner/smb/smb_version</code></p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01196b6db158cce01b.png"></p>
-<h4 id="ntlm-relay"><a href="#ntlm-relay" class="headerlink" title="ntlm relay"></a>ntlm relay</h4><p>Hot Potato，2018-8581,2019-1040相信大家也都不陌生了，这其中都有ntlm_relay的影子。作为一个在上世纪就被提出的安全问题，时至2019的今天，ntlm_relay仍然在远程命令执行。横向扩展，权限提升等方面发挥着巨大的作用。本篇文章剩余部门简单的介绍一些ntlm_relay相关的概念。</p>
+<h4 id="ntlm-relay"><a href="#ntlm-relay" class="headerlink" title="ntlm relay"></a>ntlm relay</h4><p>Hot Potato，2018-8581,2019-1040相信大家也都不陌生了，这其中都有ntlm_relay的影子。作为一个在上世纪就被提出的安全问题，时至2019的今天，ntlm_relay仍然在远程命令执行。横向扩展，权限提升等方面发挥着巨大的作用。本块剩余部门简单的介绍一些ntlm_relay相关的概念。</p>
 <ol>
 <li>ntlm_relay 的一般过程</li>
 </ol>
@@ -1032,10 +1034,12 @@
 <ol start="5">
 <li>挖掘ntlm_relay的一般方法</li>
 </ol>
-<p>如何触发Inventory Server 向Attacker发起请求，将在下篇文章里面详细阐述<br>Attacker拿到请求之后，是进行ntlm ntlm破解还是选择进行relay，relay的话，可以跨协议relay，那relay到不同的协议能起到什么作用，将在下下章节里面详细阐述。</p>
-<h2 id="发起NTLM-请求"><a href="#发起NTLM-请求" class="headerlink" title="发起NTLM  请求"></a>发起NTLM  请求</h2><h3 id="前言-5"><a href="#前言-5" class="headerlink" title="前言"></a>前言</h3><p>这篇文章是ntlm篇的第二大章，怎么发起ntlm请求。在 阅读这篇文章之前，有两点说明</p>
+<p>如何触发Inventory Server 向Attacker发起请求，将在下一部分里面详细阐述<br>Attacker拿到请求之后，是进行ntlm ntlm破解还是选择进行relay，relay的话，可以跨协议relay，那relay到不同的协议能起到什么作用，将在下下章节里面详细阐述。</p>
+<h2 id='p5'>发起NTLM请求</h2>
+
+<h3 id="前言-5"><a href="#前言-5" class="headerlink" title="前言"></a>前言</h3><p>这篇块是ntlm篇的第二大章，怎么发起ntlm请求。在 阅读这部分之前，有两点说明</p>
 <ol>
-<li>这篇文章的主要内容是使服务器向攻击者发起ntlm 请求，但是没有进一步利用，因此本篇文件的表述都是获得net-ntlm hash。使用Responder来捕获。Responder的用法可自行搜索。这里不展开。</li>
+<li>这块的主要内容是使服务器向攻击者发起ntlm 请求，但是没有进一步利用，因此本篇文件的表述都是获得net-ntlm hash。使用Responder来捕获。Responder的用法可自行搜索。这里不展开。</li>
 <li>有些地方较为敏感，因此使用的net-ntlm hash的截图并非真实图片。这个地方不重要，主要证明能发起请求就行，出现net-ntlm hash 截图的地方都是本地测试，真实收到请求的。</li>
 </ol>
 <h3 id="图标"><a href="#图标" class="headerlink" title="图标"></a>图标</h3><h4 id="desktop-ini"><a href="#desktop-ini" class="headerlink" title="desktop.ini"></a>desktop.ini</h4><p>文件夹底下都有个文件desktop.ini来指定文件夹图标之类的。默认不可见。去掉隐藏受保护的操作系统文件就可以看到</p>
@@ -1057,7 +1061,7 @@
 <p>在更改账户图片处。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt019c8338b41bc63f6a.png"></p>
 <p>用普通用户的权限指定一个webadv地址的图片，如果普通用户验证图片通过，那么SYSTEM用户(域内是机器用户)也去访问172.16.100.180，并且携带凭据，我们就可以拿到机器用户的net-ntlm hash，这个可以用来提权。后面会详细讲。</p>
-<h3 id="系统命令携带UNC路径"><a href="#系统命令携带UNC路径" class="headerlink" title="系统命令携带UNC路径"></a>系统命令携带UNC路径</h3><p>这个比较鸡肋，都能执行命令了，干啥不行呢。但作为一种场景，也说明下。说不定有些限制的命令注入就是支持传进UNC路径呢。我平时在测试的时候一般都是用 dir \ip\xxx来做测试的，很多cmd命令是支持传进UNC路径的，执行的时候我们就可以拿到用户的net-ntlm hash了。至于有哪些命令。这篇文章总结了一些命令,总结得挺全面的。 <a href="https://www.anquanke.com/post/id/177123">内网渗透——针对hash的攻击</a></p>
+<h3 id="系统命令携带UNC路径"><a href="#系统命令携带UNC路径" class="headerlink" title="系统命令携带UNC路径"></a>系统命令携带UNC路径</h3><p>这个比较鸡肋，都能执行命令了，干啥不行呢。但作为一种场景，也说明下。说不定有些限制的命令注入就是支持传进UNC路径呢。我平时在测试的时候一般都是用 dir \ip\xxx来做测试的，很多cmd命令是支持传进UNC路径的，执行的时候我们就可以拿到用户的net-ntlm hash了。至于有哪些命令。这一块总结了一些命令,总结得挺全面的。 <a href="https://www.anquanke.com/post/id/177123">内网渗透——针对hash的攻击</a></p>
 <figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">&gt; net.exe use \hostshare </span><br><span class="line">&gt; attrib.exe \hostshare  </span><br><span class="line">&gt; bcdboot.exe \hostshare  </span><br><span class="line">&gt; bdeunlock.exe \hostshare  </span><br><span class="line">&gt; cacls.exe \hostshare  </span><br><span class="line">&gt; certreq.exe \hostshare <span class="comment">#(noisy, pops an error dialog) </span></span><br><span class="line">&gt; certutil.exe \hostshare  </span><br><span class="line">&gt; cipher.exe \hostshare  </span><br><span class="line">&gt; ClipUp.exe <span class="literal">-l</span> \hostshare  </span><br><span class="line">&gt; cmdl32.exe \hostshare  </span><br><span class="line">&gt; cmstp.exe /s \hostshare  </span><br><span class="line">&gt; colorcpl.exe \hostshare <span class="comment">#(noisy, pops an error dialog)  </span></span><br><span class="line">&gt; comp.exe /N=<span class="number">0</span> \hostshare \hostshare  </span><br><span class="line">&gt; compact.exe \hostshare  </span><br><span class="line">&gt; control.exe \hostshare  </span><br><span class="line">&gt; convertvhd.exe <span class="literal">-source</span> \hostshare <span class="literal">-destination</span> \hostshare  </span><br><span class="line">&gt; Defrag.exe \hostshare  </span><br><span class="line">&gt; diskperf.exe \hostshare  </span><br><span class="line">&gt; dispdiag.exe <span class="literal">-out</span> \hostshare  </span><br><span class="line">&gt; doskey.exe /MACROFILE=\hostshare  </span><br><span class="line">&gt; esentutl.exe /k \hostshare  </span><br><span class="line">&gt; expand.exe \hostshare  </span><br><span class="line">&gt; extrac32.exe \hostshare  </span><br><span class="line">&gt; FileHistory.exe \hostshare <span class="comment">#(noisy, pops a gui)  </span></span><br><span class="line">&gt; findstr.exe * \hostshare  </span><br><span class="line">&gt; fontview.exe \hostshare <span class="comment">#(noisy, pops an error dialog)  </span></span><br><span class="line">&gt; fvenotify.exe \hostshare <span class="comment">#(noisy, pops an access denied error)  </span></span><br><span class="line">&gt; FXSCOVER.exe \hostshare <span class="comment">#(noisy, pops GUI)  </span></span><br><span class="line">&gt; hwrcomp.exe <span class="literal">-check</span> \hostshare  </span><br><span class="line">&gt; hwrreg.exe \hostshare  </span><br><span class="line">&gt; icacls.exe \hostshare   </span><br><span class="line">&gt; licensingdiag.exe <span class="literal">-cab</span> \hostshare  </span><br><span class="line">&gt; lodctr.exe \hostshare  </span><br><span class="line">&gt; lpksetup.exe /p \hostshare /s  </span><br><span class="line">&gt; makecab.exe \hostshare  </span><br><span class="line">&gt; msiexec.exe /update \hostshare /quiet  </span><br><span class="line">&gt; msinfo32.exe \hostshare <span class="comment">#(noisy, pops a &quot;cannot open&quot; dialog)  </span></span><br><span class="line">&gt; mspaint.exe \hostshare <span class="comment">#(noisy, invalid path to png error)  </span></span><br><span class="line">&gt; msra.exe /openfile \hostshare <span class="comment">#(noisy, error)  </span></span><br><span class="line">&gt; mstsc.exe \hostshare <span class="comment">#(noisy, error)  </span></span><br><span class="line">&gt; netcfg.exe <span class="literal">-l</span> \hostshare <span class="literal">-c</span> p <span class="literal">-i</span> foo</span><br></pre></td></tr></table></figure>
 
 <h3 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h3><p>利用xss构造</p>
@@ -1271,11 +1275,11 @@
 <p>如下图，使用printerbug.py对172.16.100.5发起请求，172.16.100.5就会向172.16.100.1发起ntlm 请求。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0194265565e1e16f3a.png"></p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b973a1501589a825.png"></p>
-<h2 id="Net-NTLM-利用"><a href="#Net-NTLM-利用" class="headerlink" title="Net- NTLM 利用"></a>Net- NTLM 利用</h2><h3 id="前言-6"><a href="#前言-6" class="headerlink" title="前言"></a>前言</h3><p>在上一章节中,讲了12种发起NTLM请求的方式。这篇文章接着上文，主要讲解拿到NTLM 请求之后的进一步利用。有Net-NTLM Hash的破解(v1 和 v2)以及Relay到支持NTLM SSP的协议，事实上，只要是支持NTLM SSP的协议，都可以Relay过去，本文主要讲的是几种比较常遇到，且能达到命令执行效果的，SMB,EWS,LDAP。</p>
+<h2 id="Net-NTLM-利用"><a href="#Net-NTLM-利用" class="headerlink" title="Net- NTLM 利用"></a><h2 id='p6'>Net- NTLM 利用</h2></h2><h3 id="前言-6"><a href="#前言-6" class="headerlink" title="前言"></a>前言</h3><p>在上一章节中,讲了12种发起NTLM请求的方式。这块接着上文，主要讲解拿到NTLM 请求之后的进一步利用。有Net-NTLM Hash的破解(v1 和 v2)以及Relay到支持NTLM SSP的协议，事实上，只要是支持NTLM SSP的协议，都可以Relay过去，本文主要讲的是几种比较常遇到，且能达到命令执行效果的，SMB,EWS,LDAP。</p>
 <h3 id="Relay"><a href="#Relay" class="headerlink" title="Relay"></a>Relay</h3><h4 id="Relay2SMB"><a href="#Relay2SMB" class="headerlink" title="Relay2SMB"></a>Relay2SMB</h4><p>能直接relay到smb服务器，是最直接最有效的方法。可以直接控制该服务器(包括但不限于在远程服务器上执行命令，上传exe到远程命令上执行，dump 服务器的用户hash等等等等)。</p>
 <p>主要有两种场景</p>
 <ol>
-<li><p>工作组环境<br>这个实用性比较差。在工作组环境里面，工作组中的机器之间相互没有信任关系，每台机器的账号密码Hash只是保存在自己的SAM文件中，这个时候Relay到别的机器，除非两台机器的账号密码一样(如果账号密码一样，我为啥不直接pth呢)，不然没有别的意义了，这个时候的攻击手段就是将机器reflect回机子本身。因此微软在ms08-068中对smb reflect到smb 做了限制。这个补丁在CVE-2019-1384(Ghost Potato)被绕过。将在下篇文章里面详细讲。</p>
+<li><p>工作组环境<br>这个实用性比较差。在工作组环境里面，工作组中的机器之间相互没有信任关系，每台机器的账号密码Hash只是保存在自己的SAM文件中，这个时候Relay到别的机器，除非两台机器的账号密码一样(如果账号密码一样，我为啥不直接pth呢)，不然没有别的意义了，这个时候的攻击手段就是将机器reflect回机子本身。因此微软在ms08-068中对smb reflect到smb 做了限制。这个补丁在CVE-2019-1384(Ghost Potato)被绕过。将在下一部分里面详细讲。</p>
 </li>
 <li><p>域环境<br>域环境底下域用户的账号密码Hash保存在域控的 ntds.dit里面。如下没有限制域用户登录到某台机子，那就可以将该域用户Relay到别人的机子，或者是拿到域控的请求，将域控Relay到普通的机子，比如域管运维所在的机子。(为啥不Relay到其他域控，因为域内就域控默认开启smb签名)</p>
 </li>
@@ -1328,7 +1332,207 @@
 <p>在server2012r2之后，如果没有以上两个权限。可以通过设置基于资源的约束委派。</p>
 <p>在NTLM发起者属性马上到！S-AllowedToActOnBehalfOfOtherIdentity里面添加一条ace,可以让任何机器用户和服务用户可以控制该用户(NTLM发起者)。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0162651181f81ddd6b.png"></p>
-<h1 id="LDAP-篇"><a href="#LDAP-篇" class="headerlink" title="LDAP 篇"></a>LDAP 篇</h1><h2 id="Active-Directory"><a href="#Active-Directory" class="headerlink" title="Active Directory"></a>Active Directory</h2><h3 id="前言-7"><a href="#前言-7" class="headerlink" title="前言"></a>前言</h3><p>这是LDAP篇的第一章节。在域渗透中，可能大家对Active Directory，LDAP，Naming Context这些概念既熟悉又模糊，比如Active Directory跟LDAP有啥关系等等。在LDAP篇，我们将系统地介绍跟Active Directory相关的方方面面。第一篇文章主要介绍一些基本概念，让大家对整个Active Directory有个基本印象。在之后的文章里面会陆续介绍Active Directory相关的方方面面。包括但不限于。</p>
+<h2 id="漏洞概述"><a href="#漏洞概述" class="headerlink" title="漏洞概述"></a>漏洞概述</h2><h3 id="前言-7"><a href="#前言-7" class="headerlink" title="前言"></a>前言</h3><p>这是NTLM篇的最后一块了，在之前已经花了三大部分阐述了跟NTLM_Relay有关的方方面面的内容。在该块中将要介绍下签名，他决定了NTLM_Relay能不能利用成功。以及我们将会介绍跟NTLM_Relay相关的一些漏洞,MS08-068,MS16-074,CVE-2015-0005,CVE2019-1040,CVE-2019-1384，将整个NTLM_Relay漏洞利用串起来。在之后阐述NTLM_Relay漏洞利用链的时候，我们会主要从一下三方面阐述。</p>
+<ol>
+<li><p>怎么发起ntlm请求</p>
+</li>
+<li><p>拿到ntlm 请求之后要做什么</p>
+</li>
+<li><p>服务端是否要求签名</p>
+</li>
+</ol>
+<h3 id="SMB签名-以及LDAP签名"><a href="#SMB签名-以及LDAP签名" class="headerlink" title="SMB签名 以及LDAP签名"></a>SMB签名 以及LDAP签名</h3><h4 id="关于签名的一点细节"><a href="#关于签名的一点细节" class="headerlink" title="关于签名的一点细节"></a>关于签名的一点细节</h4><p>当认证完毕之后，使用一个客户端和服务端都知道的key 对后续所有的操作进行加密，攻击者由于没有key，也没法对内容进行加密解密，所以也就没办法进行Relay,最多只能将流量原封不动转发过去。那这个key是什么呢。之前在网上看到的一个说法就是这个key是session_key，需要使用用户hash去生成，攻击者没有用户hash(有也就不需要Relay了，直接pth多好)，所以没有session_key,也就是没办法加解密，这个时候签名也就起到了防御Relay的效果。</p>
+<p>下面详细介绍下三个key，比较绕，大家大致理解下。(对于3个key的命名，不同地方表述不同)</p>
+<ol>
+<li>exported_session_key</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">def <span class="title function_">get_random_export_session_key</span><span class="params">()</span>:</span><br><span class="line">    <span class="keyword">return</span> os.<span class="title function_">urandom</span><span class="params">(<span class="number">16</span>)</span></span><br></pre></td></tr></table></figure>
+
+<p>这个key是随机数。如果开启签名的话，客户端和服务端是用这个做为key进行签名的。</p>
+<ol start="2">
+<li>key_exchange_key</li>
+</ol>
+<p>这个key使用用户密码，Server Challenge,Client Challenge经过一定运算得到的。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f6642281b8157af5.png"></p>
+<ol start="3">
+<li>encrypted_random_session_key</li>
+</ol>
+<p>前面说过开启签名的话，客户端是使用exported_session_key做为key进行加密解密的，而exported_session_key是客户端生成的随机数，那服务端不知道这个key。这个时候就需要协商密钥。encrypted_random_session_key的生成如下图所示，使用key_exchange_key做为Key,RC4加密算法加密exported_session_key。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01864bb7cfb55ad23a.png"></p>
+<p>对于攻击者，由于没有用户hash，也就没办法生成key_exchange_key，虽然在流量里面能够拿到encrypted_random_session_key，但是没有key_exchange_key，也就没办法运算出exported_session_key，也就没法对流量进行加解密。从而进行Relay。</p>
+<h4 id="SMB-签名"><a href="#SMB-签名" class="headerlink" title="SMB 签名"></a>SMB 签名</h4><p>有些地方表述为个人pc 默认没有开启smb签名，服务器计算机默认开启smb签名，在我实际测试中发现这个说法是不正确。在域内的默认设置是仅在域控制器上启用，域成员机器并没有启用。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0111febb2898f4b59b.png"></p>
+<h4 id="LDAP-签名"><a href="#LDAP-签名" class="headerlink" title="LDAP 签名"></a>LDAP 签名</h4><p>在默认情况底下，ldap服务器就在域控里面，而且默认策略就是协商签名。而不是强制签名。也就是说是否签名是有客户端决定的。服务端跟客户端协商是否签名。(客户端分情况，如果是smb协议的话，默认要求签名的，如果是webadv或者http协议，是不要求签名的)</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b80068da80370b02.png"></p>
+<p>微软公司于 2019-09-11 日发布相关通告称微软计划于 2020 年 1 月发布安全更新。为了提升域控制器的安全性，该安全更新将强制开启所有域控制器上 LDAP channel binding 与 LDAP signing 功能。</p>
+<h3 id="漏洞概览"><a href="#漏洞概览" class="headerlink" title="漏洞概览"></a>漏洞概览</h3><h4 id="MS08-068"><a href="#MS08-068" class="headerlink" title="MS08-068"></a>MS08-068</h4><p>在这之前，当拿到用户的smb请求之后，最直接的就是把请求Relay回用户本身，即Reflect。从而控制机子本身。漏洞危害特别高。微软在kb957097补丁里面通过修改SMB身份验证答复的验证方式来防止凭据重播，从而解决了该漏洞。防止凭据重播的做法如下:</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0136db5569cead54d9.png"></p>
+<p>主机A向主机B(访问\B)进行SMB认证的时候，将pszTargetName设置为cifs&#x2F;B,然后在type 2拿到主机B发送Challenge之后，在lsass里面缓存(Challenge,cifs&#x2F;B)。</p>
+<p>然后主机B在拿到主机A的type 3之后，会去lsass里面有没有缓存(Challenge,cifs&#x2F;b)，如果存在缓存，那么认证失败。</p>
+<p>这种情况底下，如果主机B和主机A是不同的主机的话，那lsass里面就不会缓存(Challenge,cifs&#x2F;B)。如果是同一台主机的话，那lsass里面肯定有缓存，这个时候就会认证失败。</p>
+<h4 id="CVE-2015-0005"><a href="#CVE-2015-0005" class="headerlink" title="CVE-2015-0005"></a>CVE-2015-0005</h4><p>本文前面说过，在签名的情况底下。对于攻击者，由于没有用户hash，也就没办法生成key_exchange_key，虽然在流量里面能够拿到encrypted_random_session_key，但是没有key_exchange_key，也就没办法算出exported_session_key，也就没法对流量进行加解密。从而进行Relay。</p>
+<p>攻击者一旦拿到key_exchange_key的话，就可以进行Relay。而CVE-2015-0005正好是泄漏了这个key，因此这里单独拿出来说说。</p>
+<p>之前的文章说过，在域内进行NTLM_RELAY的时候，如果登录的用户是域用户，这个时候认证服务器本地是没有域用户的hash的，这个时候会通过NETLOGON把type 1,type 2,type 3全部发给域控，让域控去判断。并不是向域控索要域用户的hash。那在认证之后，由于没有用户的hash，也没有办法算出key_exchange_key，这个时候认证服务器就会通过NETLOGON去找域控索要key_exchange_key。从而算出exported_session_key。</p>
+<p>但是这个漏洞就出在，不是只有认证服务器才能找域控索要key_exchange_key，只要是机器用户来索要key_exchange_key，域控都会给，并没有做鉴权。我们拥有一个机器用户的话，可以去找域控索要key_exchange_key，然后跟流量里面的encrypted_random_session_key算出exported_session_key，使用exported_session_key进行加解密。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d25f110cff2a7b8a.png"></p>
+<p>对于该漏洞，在impacket的<code>smbrelayx.py</code>已经集成</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt011ae25a51a9d6859f.png"></p>
+<p>不需要指定额外的参数，当发现服务端要求进行签名的时候就会自动调用(当然，需要指定一个机器用户以及他的凭据，不然漏洞无法利用)</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01642797f1682fae01.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f28026316ceae041.png"></p>
+<h4 id="MS16-075"><a href="#MS16-075" class="headerlink" title="MS16-075"></a>MS16-075</h4><p>这个漏洞也叫Hot Potato，从这个漏洞引申出很多Potato，比如Rotten Potato，Ghost potato。</p>
+<p>这是一个典型的NTLM_RELAY利用链。按照Relay的一般流程，我们从三方面着手，将思路串起来，达到本地提权的效果。</p>
+<ol>
+<li><p>怎么发起ntlm请求<br>发起ntlm请求请求的方式我们最早在Windows内网协议学习NTLM篇之发起NTLM请求里面已经说过，就是配合NBNS投毒欺骗和伪造WPAD代理服务器拿到用户的Net-NTML hash，所有的HTTP请求将会被重定向至<code>http://localhost/GETHASHESxxxxx</code>，其中的xxxxx表示的是某些唯一标识符。将会影响目标主机中所有的用户，包括管理员账户和系统账户。更多关于NBNS和wpad的细节，在之前的文章已经说过了，这里不再赘述。</p>
+</li>
+<li><p>拿到ntlm 请求之后要做什么<br>MS08-068虽然限制了同台主机之间smb到smb的Relay，但是并没有限制从http到smb，我们配置配合NBNS投毒欺骗和伪造WPAD代理服务器拿到的ntlm请求说http的形式，我们可以直接relay 到本机的smb。</p>
+</li>
+<li><p>服务端是否要求签名<br>我们Relay到的服务端协议是smb，除非是域内的域控，不然在工作组环节底下，或者域内的域成员机器，都是不要求签名的。</p>
+</li>
+</ol>
+<h4 id="CVE-2018-8581"><a href="#CVE-2018-8581" class="headerlink" title="CVE-2018-8581"></a>CVE-2018-8581</h4><p>这个漏洞最早是一个SSRF漏洞。可以访问任意用户的邮件。</p>
+<p>该漏洞由SSRF漏洞结合NTLM_RELAY可以访问任意用户的邮件，获取域管权限。按照Relay的一般流程，我们从三方面着手，将思路串起来，从而达到获取域管的效果。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01fd2740d19b45b983.png"></p>
+<ol>
+<li><p>怎么发起ntlm请求<br>Exchange允许任何用户为推送订阅指定所需的URL，服务器将尝试向这个URL发送通知。问题出在Exchange服务器使用<a href="https://docs.microsoft.com/en-us/dotnet/api/system.net.credentialcache.defaultcredentials?view=net-6.0">CredentialCache.DefaultCredentials</a>进行连接。传进的URL我们可控，也就说我们可以控制Exchange服务器向我们发起HTTP 协议的NTLM 请求。我们就能拿到Exchange机器用户的 Net-Ntlm Hash。如图中的步骤1，步骤2所示。</p>
+</li>
+<li><p>拿到ntlm 请求之后要做什么<br>当我们拿到ntlm 请求的时候网上主要有两种利用思路。</p>
+</li>
+</ol>
+<ul>
+<li>思路1 访问任意用户的邮件<br>由于Exchange服务器还默认设置了以下注册表项</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\LsaDisableLoopbackCheck = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>也就是说我们可以将请求Relay 回机器本身。我们拿到的是机器用户的Net-Ntlm Hash。并不能直接用以登录。但是Exchange 机器用户可以获得TokenSerializationRight的”特权”会话，可以Relay 到 机子本身的Ews接口，然后可以使用SOAP请求头来冒充任何用户。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt013e4122b3e51e2740.png"></p>
+<p>这个也是网上流传得比较广的一份<a href="https://github.com/WyAtu/CVE-2018-8581">exp</a>的利用思路</p>
+<ul>
+<li>思路2 获取域管权限</li>
+</ul>
+<p>在上一部分中的Relay2Ldap里面，我们简单得提了一下这个思路 。这里我们详细说下。</p>
+<p>我们来做个测试</p>
+<p>用户daiker 对域没有acl</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt017169770375f16247.png"></p>
+<p>这个时候进行Dcsync</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0103e6ba08d3c3fa92.png"></p>
+<p>权限不足,这个时候我们添加两条ACL</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27;DS-Replication-Get-Changes&#x27;</span>     = <span class="number">1131f</span>6aa<span class="number">-9</span>c07<span class="number">-11</span>d1-f79f<span class="number">-00</span>c04fc2dcd2</span><br><span class="line"><span class="string">&#x27;DS-Replication-Get-Changes-All&#x27;</span> = <span class="number">1131f</span>6ad<span class="number">-9</span>c07<span class="number">-11</span>d1-f79f<span class="number">-00</span>c04fc2dcd2</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ec9b9524e524f8a5.png"></p>
+<p>验证一下</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01c8850e2a8783bad0.png"></p>
+<p>这个时候我们进行dcsync</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f2c68f6de0cba266.png"></p>
+<p>成功，也就是说如果我们只要能够在域内添加两台ACL，这两条ACL的受托人就具备Dcsync的权限。<br>那什么样子的用户才能具备添加 ACL的权限呢。我们通过adfind 查下(下一个系列LDAP篇将紧紧围绕adfind和admod展开)。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0130409e1d9046a251.png"></p>
+<p>我们发现<code>Exchange Windows Permissions,Exchange Trusted Subsystem</code>都具备Write-ACL的权限。</p>
+<p>其实<code>Exchange Trusted Subsystem</code>是<code>Exchange Windows Permissions</code> 组内成员</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0143d8fa8afdba6f98.png"></p>
+<p>Exchange Trusted Subsystem的成员包括Exchange机器用户</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d9c8fd106457f410.png"></p>
+<p>前面啰嗦了一大堆，现在来总结下获取域管权限的思路。</p>
+<p>由于Exchange机器在Exchange Trusted Subsystem组里面，Exchange Trusted Subsystem对域有Write-ACL权限，Exchange机器用户自然而然具备Write-ACL权限，我们在拿到Exchange机器的http请求的时候，可以将请求Relay到Ldap,然后由于Exchange机器</p>
+<p>用户具备Write-ACL权限，我们在域内给添加两条acl，acl的受托人可以是任意用户，</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27;DS-Replication-Get-Changes&#x27;</span>     = <span class="number">1131f</span>6aa<span class="number">-9</span>c07<span class="number">-11</span>d1-f79f<span class="number">-00</span>c04fc2dcd2</span><br><span class="line"><span class="string">&#x27;DS-Replication-Get-Changes-All&#x27;</span> = <span class="number">1131f</span>6ad<span class="number">-9</span>c07<span class="number">-11</span>d1-f79f<span class="number">-00</span>c04fc2dcd2</span><br></pre></td></tr></table></figure>
+
+<p>从而使该用户具备Dcsync的权限。然后dump 域管的hash进行pth，dump kebtgt的hash进行黄金票据，等等。<br>服务端是否要求签名</p>
+<ol start="3">
+<li>我们Relay到的服务端是Ldap,前面咱们说过Ldap服务器的默认策略是协商签名。而不是强制签名。也就是说是否签名是有客户端决定的。服务端跟客户端协商是否签名。在这个漏洞里面发起的请求是http协议，http协议是不要求进行签名，这也就意味着我们什么都不用做，在这个漏洞中并不要求签名。</li>
+</ol>
+<p>最后梳理一下8581第二种思路(获取域管权限)的打法:</p>
+<p>这里面<br>​<br>    攻击者:172.16.228.1<br>    ​<br>    Exchange:172.16.228.133<br>    ​<br>    域控:172.16.228.135</p>
+<ol>
+<li>使用impacket监听端口进行等待连接</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d7e208860e2d135b.png"></p>
+<ol start="2">
+<li>发起推送订阅指定所需的URL，Exchange. 服务器将尝试向这个URL发送通知</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt010a90ea44fc24448f.png"></p>
+<ol start="3">
+<li>Relay 到域控的Ldap 服务器并给普通用户daiker添加两条acl</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01bb0b802ddc4b8ff8.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0182c5f04ec5c601f5.png"></p>
+<ol start="4">
+<li>daiker进行Dcync</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0185dcce4f1830d535.png"></p>
+<h4 id="CVE-2019-1040"><a href="#CVE-2019-1040" class="headerlink" title="CVE-2019-1040"></a>CVE-2019-1040</h4><p>该洞最早在于攻击者可以利用该漏洞可绕过NTLM MIC的防护机制。很经典的一次NTLM_RELAY 。相信如果从windows内网协议学习从第一篇文章追踪过来的，对每个利用环节都无比熟悉。本篇文章要做的内容就是把这些漏洞利用点给串起来。跟CVE-2018-8581一样，我们主要关注一下三个方面，将思路串起来。</p>
+<ol>
+<li><p>怎么发起ntlm请求<br>这里利用到打印机漏洞，在<a href='#p5'>NTLM篇之发起NTLM请求</a>,我们有简单提到这个问题，这个也不算漏洞，微软官方认为是正常业务，也不给出补丁。微软的spoolsv.exe注册了一个服务和若干个rpc。允许认证用户远程调用，其中RemoteFindFirstPrinterChangeNotificationEx这个函数运行传进一个unc路径，打印机服务就会去请求该unc路径。由于打印机是以system权限运行的，所以我们访问打印机rpc，迫使打印机服务向我们发起请求拿到的net-ntlm hash是机器用户hash。这个地方有两个利用点。一个是攻击Exchange 机器，迫使Exchange机器用户向我们发起请求，另外一个就是攻击域管机器，迫使域管机器用户向我们发起请求。</p>
+</li>
+<li><p>拿到ntlm 请求之后要做什么<br>考虑到都是机器用户发起的请求，机器用户并不能直接登录。因此不考虑Relay 到smb。我们考虑Relay到Ldap。当是Exchange机器用户发起的请求时，我们可以跟CVE-2018-8581，由于Exchange机器用户在Exchange Trusted Subsystem组，Exchange Trusted Subsystem 有write-acl权限，可以给任意用户添加 Dcsync权限，这里不再赘述。<br>我们考虑另外一种情况，当发起者是域管用户的时候，这个时候别看是域管机器，但是权限真的并不高。首先，他并不在域管组里面。其次，他能控制的acl也并不多。在<a href='#p6'>NTLM篇之Net-NTLM利用</a>里面我们介绍了三种通用的漏洞利用思路，前两种在这种情况下，在这里并不适用，在server2012r2，我们可以通过设置基于资源的约束委派。在域管机器属性马上到！S-AllowedToActOnBehalfOfOtherIdentity里面添加一条ace,可以让任何机器用户和服务用户可以控制该用户(NTLM发起者)，虽然不能直接登录，但是因为该机器是域管机器，我们可以进行dcync。</p>
+</li>
+<li><p>服务端是否要求签名<br>我们Relay到的服务端是Ldap,前面咱们说过Ldap服务器的默认策略是协商签名。而不是强制签名。也就是说是否签名是有客户端决定的。服务端跟客户端协商是否签名。不像CVE-2018-8581，发起的协议是HTTP协议，通过打印机漏洞，发起的请求是Smb协议的请求，这也意味着我们客户端默认是要求签名的。这也是这个漏洞的核心所在。前面的思路，在<a href="https://shenaniganslabs.io/2019/01/28/Wagging-the-Dog.html">Wagging the Dog: Abusing Resource-Based Constrained Delegation to Attack Active Directory</a>里面就已经提到了，作者在文章里面提及。</p>
+</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0152f58737cb3ef6ad.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ab25a2d2d94f4fa2.png"></p>
+<p>这个标识用于协商服务端是否进行签名，因为发起者是smb协议，默认这个标志位(即NTLMSSP_NEGOTIATE_ALWAYS_SIGN和NTLMSSP_NEGOTIATE_SIGN)为1，服务端会选择进行签名，但是当我们修改数据包将Flag位置为0的话，微软又设计了一套MIC校验。就是下图这个。它使用带有会话密钥的HMAC-MD5保护所有三个NTLM消息的完整性。如果更改了NTLM消息的Flag位，则MIC将无效并且身份验证将失败。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01805077904a992c42.png"></p>
+<p>有另外一个地方指示是否存在MIC(标志0x2表示该消息包括MIC)。如下图所示，我们称为msvAvFlag</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01739b840016a02b69.png"></p>
+<p>但是msvAvFlag 在targetInfo里面。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0197dfac4ecb9c4911.png"></p>
+<p>由于在计算Reponse的时候，该targetInfo参与Reponse的计算。(关于Response计算的更多细节可以此参考<a href='#p8'>NTLM篇之NTLM基础</a>介绍)</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt011f9f836f7aba8be3.png"></p>
+<p>改变了msvAvFlag值，targetInfo的值随之发生那改变，生成的Reponse在检验的时候肯定会出错，NetNTLM响应将无效并且身份验证将失败。这个时候原文的作者也没有办法了。<br>但是前面已经说过了，该洞最早在于攻击者可以利用该漏洞可绕过NTLM MIC的防护机制。因此这个漏洞最核心的地方在于绕过了MIC的校验。<br>最新的绕过将NEGOTIATE_KEY_EXCHANGE和NEGOTIATE_VERSION位置为0，就不再检验MIC了。不像msvAvFlag那样参与Reponse的运算，因此置为0之后不仅不会校验mic，也不会使得Reponse校验出错。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt014b70c62c4e0e2a01.png"></p>
+<p>所以这一步，需要将4个Flag 位(TLMSSP_NEGOTIATE_ALWAYS_SIGN，NTLMSSP_NEGOTIATE_SIGN，NEGOTIATE_KEY_EXCHANGE，NEGOTIATE_VERSION)置0。<br>最后梳理一下1040的打法:<br>这里面<br>​ 攻击者:172.16.99.2<br>​ 域控2012:172.16.99.12<br>​ 域控2016:172.16.99.16</p>
+<ol>
+<li>使用impacket监听445进行等待域控进行连接</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e70b2c599e85198b.png"></p>
+<ol start="2">
+<li>使用打印机漏洞让域控连接我们的445(注意攻击的域控跟回连的LDAP所在的服务器不要在同一台域控)</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01657eb2793c5cc888.png"></p>
+<ol start="3">
+<li>Relay 到域控dc2016的Ldap 服务器并添加基于资源的约束委派</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b13dd70411879f7f.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt017d2da29e2f504d93.png"></p>
+<ol start="4">
+<li>发起win7$到dc2012的s4u，通过-impersonate参数模拟用户administrator的票证</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b8086fc2d25f27ba.png"></p>
+<ol start="5">
+<li>使用administrator用户的票据登录域控。</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt011472bc7b0d3a5051.png"></p>
+<h4 id="CVE-2019-1384"><a href="#CVE-2019-1384" class="headerlink" title="CVE-2019-1384"></a>CVE-2019-1384</h4><p>这个漏洞绕过了MS08-068之后，用户不能relay回本机的限制。先来回顾下MS08-068是怎么防止Relay的。</p>
+<blockquote>
+<p>主机A向主机B(访问\B)进行SMB认证的时候，将pszTargetName设置为cifs&#x2F;B,然后在type 2拿到主机B发送Challenge之后，在lsass里面缓存(Challenge,cifs&#x2F;B)。</p>
+</blockquote>
+<blockquote>
+<p>然后主机B在拿到主机A的type 3之后，会去lsass里面有没有缓存(Challenge,cifs&#x2F;b)，如果存在缓存，那么认证失败。</p>
+</blockquote>
+<blockquote>
+<p>这种情况底下，如果主机B和主机A是不同的主机的话，那lsass里面就不会缓存(Challenge,cifs&#x2F;B)。如果是同一台主机的话，那lsass里面肯定有缓存，这个时候就会认证失败。</p>
+</blockquote>
+<p>然而这个缓存(Challenge,cifs&#x2F;B)是有时效性的，这个时间是300秒，也就是说300秒后，缓存(Challenge,cifs&#x2F;B)就会被清空，这个时候即使主机A和主机B是同一台主机，那么由于缓存已经被清除，那么去lsass里面肯定找不到缓存(Challenge,cifs&#x2F;B)。</p>
+<p>漏洞利用图如下所示。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01c707eea9eb0e44c1.png"></p>
+<p>shenaniganslabs也放出漏洞利用<a href="https://shenaniganslabs.io/files/impacket-ghostpotato.zip">poc</a>。基于impacket进行修改。只实现的收到http协议的情况。其他协议大家可以自己实现。主要核心代码如下所示。会在sleep 315秒之后再发送type3。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0190f45fd835bedd51.png"></p>
+<p>poc的运行如下。<br>受害者机子的ip是172.16.228.134,攻击者IP是172.16.228.1</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b8d715f5d5e98e18.png"></p>
+<ol>
+<li>在172.16.228.1开启端口等待172.16.228.134的ntlm请求(作者的poc只支持http)</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e4e2bfc8f886416e.png"></p>
+<ol start="2">
+<li>172.16.228.134向172.16.228.1发起http请求(为什么不用ip，请看前面的文章)</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01da5bfa6ca050ebf2.png"></p>
+<ol start="3">
+<li>172.16.228.1将来自172.16.228.134的请求Relay回172.16.228.134本身的smb，exp的实现效果是在172.16.228.134启动目录上传个文件</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt014bf0fcb508394c78.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f6c3491f7a4edd03.png"></p>
+<h1 id="LDAP-篇"><a href="#LDAP-篇" class="headerlink" title="LDAP 篇"></a>LDAP 篇</h1><h2 id="Active-Directory"><a href="#Active-Directory" class="headerlink" title="Active Directory"></a>Active Directory</h2><h3 id="前言-8"><a href="#前言-8" class="headerlink" title="前言"></a>前言</h3><p>这是LDAP篇的第一章节。在域渗透中，可能大家对Active Directory，LDAP，Naming Context这些概念既熟悉又模糊，比如Active Directory跟LDAP有啥关系等等。在LDAP篇，我们将系统地介绍跟Active Directory相关的方方面面。第一块主要介绍一些基本概念，让大家对整个Active Directory有个基本印象。在之后的分块里面会陆续介绍Active Directory相关的方方面面。包括但不限于。</p>
 <ul>
 <li>域内用户介绍</li>
 <li>域内组介绍</li>
@@ -1336,7 +1540,7 @@
 <li>域信任关系介绍</li>
 <li>组策略介绍</li>
 </ul>
-<p>这篇文章对一些专业词汇统一保留英文</p>
+<p>这一部分对一些专业词汇统一保留英文</p>
 <h3 id="LDAP简介"><a href="#LDAP简介" class="headerlink" title="LDAP简介"></a>LDAP简介</h3><p>LDAP全称是Lightweight Directory Access Protocol，轻量目录访问协议。顾名思义，LDAP是设计用来访问目录数据库的一个协议。</p>
 <p>在这之前我们先介绍一下目录服务。目录数据库是由目录服务数据库和一套访问协议组成。</p>
 <p>目录服务数据库也是一种数据库，这种数据库相对于我们熟知的关系型数据库(比如MySQL,Oracle),主要有以下几个方面的特点。</p>
@@ -1393,7 +1597,7 @@
 </tr>
 <tr>
 <td align="center">CN&#x3D;Extended-Rights</td>
-<td align="center">扩展权限对象的容器，我们将在域内ACL那篇文章里面详解</td>
+<td align="center">扩展权限对象的容器</td>
 </tr>
 <tr>
 <td align="center">CN&#x3D;ForestUpdates</td>
@@ -1491,7 +1695,1119 @@
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt010567075683bbcec1.png"></p>
 <p>我们可以通过查看rootDSE查看域内的所有Naming Context以及Application Partitions，在属性namingContexts里面。</p>
 <p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt016f6df9329dd8e4f5.png"></p>
-<h3 id="Schema-NC"><a href="#Schema-NC" class="headerlink" title="Schema NC"></a>Schema NC</h3>]]></content>
+<h3 id="Schema-NC"><a href="#Schema-NC" class="headerlink" title="Schema NC"></a>Schema NC</h3><p>Schema NC里面包含Schema 信息，定义了Active Directory中使用的类和属性。所以在详细讲Schema NC之前我们先来讲一下LDAP里面的类和继承。</p>
+<p>LDAP里面的类和继承，跟开发里面的面向对象一样，相信有过面向对象开发经验的，理解起来并不困难。</p>
+<h4 id="LDAP-中的类和继承"><a href="#LDAP-中的类和继承" class="headerlink" title="LDAP 中的类和继承"></a>LDAP 中的类和继承</h4><p>类和实例<br>域内每个条目都是类的实例。而类是一组属性的集合。<br>举个例子:<br>域内机器<code>CN=WIN7</code>,<code>CN=Computers</code>,<code>DC=test</code>,<code>DC=local</code>在<code>Active Directory</code>里面是一个条目，里面有众多属性描述条目具体信息。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ae0cbb69bfbf7dbe.png"></p>
+<p>而这个条目有哪些属性是由他的类决定的。比如说这里的条目是<code>CN=WIN7</code>,<code>CN=Computers</code>,<code>DC=test</code>,<code>DC=local</code>是类Computer的实例，在objectClass属性可以看到</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01de8ef5c174dda4ea.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01cf698d1681d67366.png"></p>
+<p>类是可继承的。子类继承父类的所有属性，Top类是所有类的父类。在之前我们看objectClass的时候，可以看到条目是CN&#x3D;WIN7,CN&#x3D;Computers,DC&#x3D;test,DC&#x3D;local是类Computer的实例。但是我们注意到objectClass里面的值除了Computer之外，还有<code>top</code>,<code>person</code>,<code>organizationPerson</code>,<code>user</code>。这是因为objectClass保存了类继承关系。user是organizationPerson的子类， organizationPerson 是person的子类，person是top的子类。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0146db3ffc356a4b42.png"></p>
+<p>类的分类<br>类有三种类型</p>
+<ul>
+<li><p>结构类（Structural）<br>结构类规定了对象实例的基本属性，每个条目属于且仅属于一个结构型对象类。前面说过域内每个条目都是类的实例，这个类必须是结构类。只有结构类才有实例。比如说前面说过的Computer类。</p>
+</li>
+<li><p>抽象类(Abstract)<br>抽象类型是结构类或其他抽象类的父类，它将对象属性中公共的部分组织在一起。跟面对对象里面的抽象方法一样，他没有实例，只能充当结构类或者抽象类的父类。比如说top 类。注意抽象类只能从另一个抽象类继承。</p>
+</li>
+<li><p>辅助类(Auxiliary）<br>辅助类型规定了对象实体的扩展属性。虽然每个条目只属于一个结构型对象类，但可以同时属于多个辅助型对象类。注意辅助类不能从结构类继承</p>
+</li>
+</ul>
+<p>接下来让我们结合Schema NC中的类来具体理解下LDAP 中的类和继承</p>
+<h4 id="Schema-NC中的类"><a href="#Schema-NC中的类" class="headerlink" title="Schema NC中的类"></a>Schema NC中的类</h4><p>如果我们要查看Schema NC的内容，除了传统使用LDAP编辑器查看</p>
+<p>比如说ADExplorer</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b698f56e13c07b3a.png"></p>
+<p>还可以使用微软自带的<code>Active Directory Schema</code></p>
+<p>默认没有注册，运行regsvr32 schmmgmt.dll注册该dll</p>
+<p>然后在mmc里面添加即可</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt014471340ceb44a894.png"></p>
+<p>域内每个条目都是类的实例。所有的类都存储在Schema NC里面，是Schema NC的一个条目。</p>
+<p>我们以一个实例来说明。前面说过条目CN&#x3D;WIN7,CN&#x3D;Computers,DC&#x3D;test,DC&#x3D;local是类Computer的实例。那么类Computer就存储在Schema NC里面，是Schema NC的一个条目CN&#x3D;Computer,CN&#x3D;Schema,CN&#x3D;Configuration,DC&#x3D;test,DC&#x3D;local。</p>
+<p>我们下面来具体分析下这个条目的一些通用属性，希望大家对类条目有个大概的认识。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e8b26f26192c1ab7.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01016857c026e18031.png"></p>
+<ul>
+<li>前面说过每个条目都是类的实例，而类是是Schema NC的一个条目。因此类条目也是一个类的实例，这个类是classSchema(<code>CN=Class-Schema,CN=Schema,CN=Configuration,DC=test,DC=local</code>)。所有的类条目都是classSchema类的实例。</li>
+</ul>
+<p>我们可以在objectclass属性里面看到:</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt019c666e1f4f7a4221.png"></p>
+<ul>
+<li><p>名称是Computer(通过adminDescription，adminDisplayName，cn，name属性)</p>
+</li>
+<li><p>defaultSecurityDescriptor这个属性表明，如果在创建Computer这个类的实例的时候，如果没指定ACL，就用这个属性的值作为实例的ACL。在实例的nTSecurityDescriptor里面。</p>
+</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt015a2129f90f3b1297.png"></p>
+<p>注意跟nTSecurityDescriptor区分开来，nTSecurityDescriptor是这个条目的ACL，而defaultSecurityDescriptor是实例默认的ACL。举个例子。<br>CN&#x3D;Computer,CN&#x3D;Schema,CN&#x3D;Configuration,DC&#x3D;test,DC&#x3D;local 有两个属性nTSecurityDescriptor，defaultSecurityDescriptor。nTSecurityDescriptor是这条条目的ACL。<br>那Computer的实例化对象CN&#x3D;WIN7,CN&#x3D;Computers,DC&#x3D;test,DC&#x3D;local，如果在创建的时候，没有指定ACL，那么他的nTSecurityDescriptor的值就是CN&#x3D;Computer,CN&#x3D;Schema,CN&#x3D;Configuration,DC&#x3D;test,DC&#x3D;local 的属性defaultSecurityDescriptor的值。</p>
+<ul>
+<li>属性rDNAttID表明通过LDAP连接到类的实例的时候，使用的两个字母的前缀用过是cn。<br>所以他的实例CN&#x3D;WIN7,CN&#x3D;Computers,DC&#x3D;test,DC&#x3D;local,使用的前缀是cn。<br>这个我们再举个例子<br>比如条目OU&#x3D;Domain Controllers,DC&#x3D;test,DC&#x3D;locals 是一个ou，它是类organizationalUnit的实例</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01a6bc32faeec6eb5d.png"></p>
+<p>我们查看类organizationalUnit对应的条目CN&#x3D;Organizational-Unit,CN&#x3D;Schema,CN&#x3D;Configuration,DC&#x3D;test,DC&#x3D;local,就可以看到</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01cb815ec922829786.png"></p>
+<p>所以对于他的一个实例，他的前缀是OU，OU&#x3D;Domain Controllers</p>
+<ul>
+<li><p>属性objectClassCategory为1说明他是一个结构类</p>
+<ol>
+<li>代表是个结构类</li>
+<li>代表是个抽象类</li>
+<li>代表是个辅助类</li>
+</ol>
+</li>
+<li><p>属性subClassOf 表明他的父类是user类</p>
+</li>
+<li><p>systemPossSuperior约束了他的实例只能创建在这三个类<code>container</code>,<code>organizationalUnit</code>,<code>domainDNS</code>的实例底下。</p>
+</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01159f5461af2e1994.png"></p>
+<p>比如computer类的一个实例，CN&#x3D;WIN7,CN&#x3D;Computers,DC&#x3D;test,DC&#x3D;local，它位于容器CN&#x3D;Computers,DC&#x3D;test,DC&#x3D;local底下，而CN&#x3D;Computers,DC&#x3D;test,DC&#x3D;local是container的实例，container在systemPossSuperior底下，这不违反这个约束。</p>
+<ul>
+<li>最后一点也是最核心的，我们来讲下他的实例是怎么获取到基本属性的。</li>
+<li>这个类没有属性systemMustContain和MustContain，因此强制属性</li>
+<li>这个类属性systemMayContain和MayContain是可选的属性</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0142089bf16de91ff8.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01bc843dea75ffc9b6.png"></p>
+<ul>
+<li>上面这四个属性里面的属性集合是这个类独有的属性集合，我们之前说过，类是可继承的。因此一个类的属性集合里面除了前面的四个属性里面的值，还可能来自父类以及辅助类。</li>
+<li>辅助类的属性字段是systemAuxiliaryClass,这里面的computer类没有辅助类</li>
+<li>父类 可以通过subClassOf查看，这里是computer类的父类是user类。然后网上递归，user类查看那四个属性，以及他的辅助类，父类。直到top类。</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt010ff18e82445400b8.png"></p>
+<p>所以最后我们用Active DirectorySchema 查看的时候，就会看到属性的类型是可选还是强制，源类是哪个类。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt018e1b2cf6d4e49573.png"></p>
+<h4 id="Schema-NC中的属性"><a href="#Schema-NC中的属性" class="headerlink" title="Schema NC中的属性"></a>Schema NC中的属性</h4><p>Schema NC除了定义了Active Directory中使用的类，还定义了Active Directory中使用的属性。</p>
+<p>关于属性，我们之前接触的够多了。这里不再多做解释。</p>
+<p>每个属性都是一个条目，是类attributeSchema的实例</p>
+<p>在域内的所有属性必须在这里定义，而这里的条目，最主要的是限定了属性的语法定义。其实就是数据类型，比如 Boolean类型，Integer类型等。</p>
+<p>以<code>CN=Object-Sid,CN=Schema,CN=Configuration,DC=test,DC=local</code>为例。</p>
+<p>他的attributeSyntax是2.5.5.17</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01909ef5479f89015e.png"></p>
+<p>oMSyntax是</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt017c83d5943a2589d4.png"></p>
+<p>通过查表</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01110de96a7eeb8a2d.png"></p>
+<p>关于各种语法定义在这里不再这里一个个介绍，过于抽象，将在后面章节里面实际的案例根据需要详细讲解。</p>
+<h3 id="搜索Active-Directory"><a href="#搜索Active-Directory" class="headerlink" title="搜索Active Directory"></a>搜索Active Directory</h3><p>通过查询目录，可以直接收集到要求的数据。查询目录需要指定两个要素</p>
+<ul>
+<li>BaseDN</li>
+<li>过滤规则</li>
+</ul>
+<ol>
+<li>BaseDN</li>
+</ol>
+<p>BaseDN指定了这棵树的根。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01eaaf8466526c53fa.png"></p>
+<p>比如指定BaseDN为DC&#x3D;test.DC&#x3D;local就是以DC&#x3D;test.DC&#x3D;local为根往下搜索</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt011b739e13227aa815.png"></p>
+<p>BaseDN为<code>CN=Users,DC=test.DC=local</code>就是以<code>CN=Users,DC=test.DC=local</code>为根往下搜索</p>
+<h4 id="过滤规则"><a href="#过滤规则" class="headerlink" title="过滤规则"></a>过滤规则</h4><p>LDAP 过滤规则相对简单，很方便入手</p>
+<p>LDAP 搜索过滤器语法有以下子集：</p>
+<ul>
+<li>用与号 (&amp;) 表示的 AND 运算符。</li>
+<li>用竖线 (|) 表示的 OR 运算符。</li>
+<li>用感叹号 (!) 表示的 NOT 运算符。</li>
+<li>用名称和值表达式的等号 (&#x3D;) 表示的相等比较。</li>
+<li>用名称和值表达式中值的开头或结尾处的星号 (*) 表示的通配符。</li>
+</ul>
+<p>下面举几个例子</p>
+<ul>
+<li>(uid&#x3D;testuser)<br>匹配 uid 属性为testuser的所有对象</li>
+<li>(uid&#x3D;test*)<br>匹配 uid 属性以test开头的所有对象</li>
+<li>(!(uid&#x3D;test*))<br>匹配 uid 属性不以test开头的所有对象</li>
+<li>(&amp;(department&#x3D;1234)(city&#x3D;Paris))<br>匹配 department 属性为1234且city属性为Paris的所有对象</li>
+<li>(|(department&#x3D;1234)(department&#x3D;56*))<br>匹配 department 属性的值刚好为1234或者以56开头的所有对象。</li>
+</ul>
+<p>一个需要注意的点就是运算符是放在前面的，跟我们之前常规思维的放在中间不一样</p>
+<p>关于查询目录还有一些高级点的用法，比如 LDAP 控件，位掩码等。这里不一一列举，将在后面实际用到的时候再列举。</p>
+<h3 id="相关工具介绍"><a href="#相关工具介绍" class="headerlink" title="相关工具介绍"></a>相关工具介绍</h3><p>下面介绍一些能够访问Active Directory的工具</p>
+<h4 id="ADSI-编辑器"><a href="#ADSI-编辑器" class="headerlink" title="ADSI 编辑器"></a>ADSI 编辑器</h4><p>微软自带，输入adsiedit.msc可访问</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0163d5d7662c88d781.png"></p>
+<h4 id="LDP"><a href="#LDP" class="headerlink" title="LDP"></a>LDP</h4><p>微软自带，输入ldp可访问</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0136ee6369a0f72a10.png"></p>
+<h4 id="ADExplorer"><a href="#ADExplorer" class="headerlink" title="ADExplorer"></a><a href="https://docs.microsoft.com/en-us/sysinternals/downloads/adexplorer">ADExplorer</a></h4><p>sysinternals系列的工具,相较于ADSI 编辑器，更方便</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0184969163d2336b86.png"></p>
+<h4 id="The-LDAP-Explorer"><a href="#The-LDAP-Explorer" class="headerlink" title="The LDAP Explorer"></a><a href="http://www.ldapexplorer.com/index.htm">The LDAP Explorer</a></h4><p>付费版的神器，特别强大，比ADExplorer都强大，自己感受下</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0153db44564f80826a.png"></p>
+<h4 id="ldapsearch"><a href="#ldapsearch" class="headerlink" title="ldapsearch"></a>ldapsearch</h4><p>openldap里面的工具，在*nix里面比较常用</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt016cf21be78fc242f5.png"></p>
+<p>导出的格式为LDIF格式，有人写了个工具支持导出为sqlite文件，然后阅读sqlite文件</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01da656fdea14fde24.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt018a373c495f70ac04.png"></p>
+<h4 id="adfind-与-admod"><a href="#adfind-与-admod" class="headerlink" title="adfind 与 admod"></a><a href="http://www.joeware.net/freetools/tools/adfind/">adfind</a> 与 <a href="http://www.joeware.net/freetools/tools/admod/">admod</a></h4><p>这个是最牛逼的命令行工具了，在域渗透里面的出场率极高，adfind用于查询，admod用于修改。这个系列的主要块会围绕着这两个工具展开。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt012a433ba774c27e7d.png"></p>
+<h2 id='p9'>组和OU介绍</h2>
+
+<h3 id="前言-9"><a href="#前言-9" class="headerlink" title="前言"></a>前言</h3><p>这块文章主要介绍AD里面的组和组织单位(OU)。</p>
+<h3 id="一些LDAP高级搜索语法"><a href="#一些LDAP高级搜索语法" class="headerlink" title="一些LDAP高级搜索语法"></a>一些LDAP高级搜索语法</h3><h4 id="LDAP-查找中的位操作"><a href="#LDAP-查找中的位操作" class="headerlink" title="LDAP 查找中的位操作"></a>LDAP 查找中的位操作</h4><p>在LDAP 里面，有些字段是位字段，这里以userAccountControl举例，关于这个字段的详细意义，后面会详细介绍，这里先把他当做一个普通的位字段，不去考虑他的具体含义，这里先看下他的内容。</p>
+<p>他的属性类位于架构分区的<code>CN=User-Account-Control,CN=Schema,CN=Configuration,DC=test,DC=local</code></p>
+<p><code>attributeSyntax</code>是<code>2.5.5.9,oMSyntax</code>是2。</p>
+<p>查表可知是32位的Integer类型。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt015c2e48724038887f.png"></p>
+<p>之所以我们说他是位字段，是因为他是由一个个位构成。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt014df9519f018df4a7.png"></p>
+<p>比如说一个账户，他的LOCKOUT，以及NOT_DELEGATED，其他的位都没有，那这个用户的属性userAccountControl的值就为0x100000+0x0010。是个32 位 int 类型。</p>
+<p>那现在的难题就变成。如果我要搜索域内所有设置了NOT_DELEGATED的所有对象。那在上一篇文章里面我们学到的LDAP语法就显得力不从心。因为上一篇文章的语法只能对某个属性进行过滤，还不能对属性里面的某个具体位进行过滤，这也是我们这一节要讲的内容。LDAP的语法支持按位搜索。</p>
+<p>执行过滤器以搜索位字段，必须遵循以下语法：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">&lt;属性名称&gt;：&lt;BitFilterRule-ID&gt; := &lt;十进制比较值&gt;</span><br></pre></td></tr></table></figure>
+
+<p>其中的<code>BitFilterRule-ID</code>，内容如下。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01a25c7551c331ecdc.png"></p>
+<p>我们最常的是AND ，也就是<code>1.2.840.113556.1.4.803</code></p>
+<p>我们举几个例子。</p>
+<p>我们想查询哪些对象设置了<code>TRUSTED_FOR_DELEGATION</code></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01623cf8677b23bb1a.png"></p>
+<p><code>TRUSTED_FOR_DELEGATION</code>对应的十进制比较值位524288</p>
+<p>根据语法，我们就可以构造以下过滤规则</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">(userAccountControl:<span class="number">1.2</span><span class="number">.840</span><span class="number">.113556</span><span class="number">.1</span><span class="number">.4</span><span class="number">.803</span>:=<span class="number">524288</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01c5398334f0cf98cc.png"></p>
+<p>但是这种我们还得去记BitFilterRule，于是adfind提供了一个更为快捷的方式。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0164df9cd980f63284.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f02a9998557b012d.png"></p>
+<h4 id="LDAP-查找中的objectCategory和objectClass"><a href="#LDAP-查找中的objectCategory和objectClass" class="headerlink" title="LDAP 查找中的objectCategory和objectClass"></a>LDAP 查找中的objectCategory和objectClass</h4><ol>
+<li>objectClass</li>
+</ol>
+<p>在前面一节里面说过,在对象的<code>objectClass</code> 属性里面，可以看到这个对象是哪个类的实例，以及这个类的所有父类，比如说<code>CN=jane,CN=Users,DC=test,DC=local</code>的<code>objectClas</code>s是<code>top,person,organizationalPerson,user</code>。那我们通过过滤语句(<code>objectClass=user</code>),(<code>objectClass=organizationalPerson</code>)都能找到这个对象。</p>
+<p>所有的类都是top类的子类。因此当我们过滤(<code>objectClass=top</code>)可以找到域内的所有对象</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01c5cb3e1fd94ba736.png"></p>
+<ol start="2">
+<li>objectCategory</li>
+</ol>
+<p>在Windows Server 2008之前默认不对objectClass 属性进行索引。最初认为对多值属性(例如object Class)进行索引会导致性能下降。如此一来，Windows 2000 附带了未索引的objectClass 属性和另一个已建立索引的单值属性，称为objectCategory。</p>
+<p>接下来介绍下<code>objectCategory</code>这个属性。对象类的每个实例还具有一个objectCategory属性，该属性是一个单值属性。并且建立了索引。其中包含对象是其实例的类或其父类之一的专有名称。</p>
+<p>比如说<code>CN=jane,CN=Users,DC=test,DC=local.</code>他的<code>objectCategory</code>是<code>CN=Person,CN=Schema,CN=Configuration,DC=test,DC=local</code></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ac37d1cab9e83560.png"></p>
+<p>创建对象时，系统会将其objectCategory属性设置为由其对象类的defaultObjectCategory属性指定的值。无法更改对象的objectCategory属性。</p>
+<p>如果我们想过滤所有objectCategory的属性为<code>CN=Person,CN=Schema,CN=Configuration,DC=test,DC=local</code>的对象，这个很简单。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">(objectCategory=<span class="string">&quot;CN=Person,CN=Schema,CN=Configuration,DC=test,DC=local&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0148aa8b968c0d3557.png"></p>
+<p>但是这样，又有点不方便，需要记住记住类的DN，所以LDAP在实现上实现了个小技巧。对象类有个属性lDAPDisplayName，指定他的显示名。事实上，我们看objectClass属性里面的类以及父类(比如top.person)，他的名字都是这个类的lDAPDisplayName</p>
+<p>CN&#x3D;Person,CN&#x3D;Schema,CN&#x3D;Configuration,DC&#x3D;test,DC&#x3D;local的lDAPDisplayName是person.所以LDAP在实现上，支持用类的lDAPDisplayName作为搜索条件。所以如果我们想找所有CN&#x3D;Person,CN&#x3D;Schema,CN&#x3D;Configuration,DC&#x3D;test,DC&#x3D;local的实例，可以我简化为以下过滤规则。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">(objectCategory=person)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt012cd00a23567d7e63.png"></p>
+<ol start="3">
+<li>objectClass与objectCategory的结合使用</li>
+</ol>
+<p>如果想确保查询在所有版本的Active Directory上都能正常运行，建议使用 objectClass 和objectCategory结合。如果在目录中已经索引了ObjectClass ，或者所有域控制器都在运行Windows Server 2008或更高版本，则可以随意􏰁使用 objectClass，而不必担心会对性能产生影响。</p>
+<p>这里我们介绍下objectClass 和objectCategory的集合使用。前面我们分别介绍了objectClass 以及objectCategory，但是没讲怎么把他们结合在一起使用。</p>
+<p>我们这里再来理一理思路。</p>
+<p>CN&#x3D;jane,CN&#x3D;Users,DC&#x3D;test,DC&#x3D;local这个对象。</p>
+<p>他的objectClass是top,person,organizationalPerson,user。</p>
+<p>他的objectCategory是person。</p>
+<p>一个对象的objectClass 是一个类的对象类，以及这个对象类的所有父类。</p>
+<p>一个对象的objectCategory 是一个类的对象类或者这个对象类的所有父类。</p>
+<p>所以说一个对象的objectCategory 必定是objectClass 中的其中一个。</p>
+<p>user，person，organizationalPerson类将其defaultObjectCategory设置为person。这允许像（objectCategory&#x3D; person）这样的搜索过滤器通过单个查询定位所有这些类的实例。</p>
+<p>比如说，我们要定位所有的user 类的实例。(CN&#x3D;jane,CN&#x3D;Users,DC&#x3D;test,DC&#x3D;local就是user类的一个对象)</p>
+<p>user 类的继承关系如下。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">top =&gt; person =&gt; organizationalPerson =&gt; user</span><br></pre></td></tr></table></figure>
+
+<p>那person,organizationalPerson,user都将其defaultObjectCategory设置为person。因此我们可以先过滤。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">(objectCategory=person)</span><br></pre></td></tr></table></figure>
+
+<p>但是这样的结果并不精准。我们使用objectClass进一步在过滤后的结果进行过滤</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">(&amp;(objectCategory=person)(objectClass=user))</span><br></pre></td></tr></table></figure>
+
+<p>这样就能精准匹配到了。其实说通俗点就是，objectCategory建立索引，所以查询时间比较快。我们通过objectCategory划分一个大的范围，然后通过objectClass进行精准匹配。</p>
+<p>当然如果在目录中已经索引了ObjectClass ，或者所有域控制器都在运行Windows Server 2008或更高版本，我们直接使用 objectClass((objectClass&#x3D;user))也能很精准地匹配并且不用考虑效率问题。</p>
+<h3 id="组"><a href="#组" class="headerlink" title="组"></a>组</h3><h4 id="组介绍"><a href="#组介绍" class="headerlink" title="组介绍"></a>组介绍</h4><p>在域内，我们无时无刻不在跟组打交道，比如我们熟悉的域管，就是一个组。按照用途来分，组分为通讯组和安全组。对于通讯组，我们接触的比较多的就是邮件组，将若干个人划分到一个通讯组，给这个通讯组发件，那组内用户都能收到。但是通讯组不能控制对资源的访问，我们并不是很在意。这篇文章侧重介绍安全组。</p>
+<p>安全组是权限的集合。举个例子，运维需要对公司的网络进行管理，需要一些特殊的管理权限，我们就可以设置个组，对组配置权限。然后将运维拉近组里面，组里面的运维就拥有了该权限。安全组可以根据作用范围划分为。</p>
+<ul>
+<li>全局组 (Global group)</li>
+<li>通用组(Universal group)</li>
+<li>域本地组(Domain Local group)</li>
+</ul>
+<h4 id="查询组"><a href="#查询组" class="headerlink" title="查询组"></a>查询组</h4><p>所有的组都是group类的实例，</p>
+<p>我们可以用(objectClass&#x3D;group)或者(objectCategory&#x3D;group)来过滤组。</p>
+<p>如果需要考虑效率建议使用,正如前面所说objectCategory有建立索引。而objectClass在08之前并没有建立索引。</p>
+<p>那为啥不需要objectClass 和objectCategory配合使用。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt011b5424450893b730.png"></p>
+<p>我们之前说了，一般配合使用的场景都是通过objectCategory匹配划分一个大的范围，然后通过objectClass进行精准匹配。这里面通过objectCategory匹配到的已经是很精准了，就不需要再精准匹配了。</p>
+<p>组的类型由属性groupType决定，属性groupType是一个位字段</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01a600d38d7d392407.png"></p>
+<p>现在我们搜索一下</p>
+<ul>
+<li>查询域内的所有组</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0171a765ba2b0bf2c8.png"></p>
+<ul>
+<li>域内的所有全局组</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01dc814a8f7aa8dd4e.png"></p>
+<ul>
+<li>域内的所有通用组</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0107aad27ffae6a2a6.png"></p>
+<ul>
+<li>域内的所有域本地组</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d4bab2775bb4dc9f.png"></p>
+<ul>
+<li>域内的所有安全组，包括全局组，通用组，域本地组</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt014167dc8f912e9838.png"></p>
+<ul>
+<li>域内的所有通讯组，不属于安全组的组都是通讯组</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01fe060255e6e161dd.png"></p>
+<ul>
+<li>域内系统创建的群组</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01aa36df937822d37e.png"></p>
+<h4 id="组范围"><a href="#组范围" class="headerlink" title="组范围"></a>组范围</h4><p>之前说过安全组可以根据作用范围划分为。</p>
+<ul>
+<li>全局组 (Global group)</li>
+<li>通用组(Universal group)</li>
+<li>域本地组(Domain Local group)</li>
+</ul>
+<p>下面来详细介绍下</p>
+<p>先看个表格，比较下三个组。</p>
+<table>
+<thead>
+<tr>
+<th align="center">组类型</th>
+<th align="center">可以授予权限</th>
+<th align="center">可包含</th>
+<th align="center">可包含于</th>
+<th align="center">成员是否在全局编录复制</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">全局组</td>
+<td align="center">在同一林中或信任域或林中的任何域上</td>
+<td align="center">来自同一域的帐户<br />来自同一域的其他全局组</td>
+<td align="center">来自同一林中任何域的通用组<br />来自同一域的其他全局组<br />来自同一林中任何域或任何信任域的域本地组</td>
+<td align="center">无</td>
+</tr>
+<tr>
+<td align="center">通用组</td>
+<td align="center">在同一林或信任林中的任何域上</td>
+<td align="center">来自同一林中任何域的帐户<br />来自同一林中任何域的全局组<br />来自同一林中任何域的其他通用组</td>
+<td align="center">同一林中的其他通用组<br />在同一个林或信任林中域本地组</td>
+<td align="center">是</td>
+</tr>
+<tr>
+<td align="center">域本地组</td>
+<td align="center">在同一个域中</td>
+<td align="center">来自任何域或任何受信任域的帐户<br />来自任何域或任何受信任域的全局组<br />来自同一林中任何域的通用组<br />来自同一域的其他域本地组</td>
+<td align="center">来自同一域的其他域本地组</td>
+<td align="center">无</td>
+</tr>
+</tbody></table>
+<p>为了更直观，画了个图</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01055abab75530a0ba.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f9bccd2a8814565c.png"></p>
+<p>接下来详细介绍下三个组</p>
+<ul>
+<li>域本地组(Domain Local group)</li>
+</ul>
+<p>顾名思义，就是本域内的本地组。不适用于林，适用于本域。可包含林内的账户，通用组，全局组。其他域内的通用组要在本域拥有权限，一般都是加入这个域的域本地组。比如说一个林里面，只有林根域有Enterprise Admins这个组，这是个通用组。然后其他子域 的域本地组Administrators会把林根域的Enterprise Admins加进里面，所以林根域的Enterprise Admins组用户才在整个林内具备管理员权限。如果想要一个只允许访问同一个域中的资源的组，那么使用域本地组即可。</p>
+<ul>
+<li>通用组(Universal group)</li>
+</ul>
+<p>上面已经简单提过了通用组，典型例子是Enterprise Admins这个组。在林的场景下比较有用。组内成员会在GC内复制。如果你想要一个可以访问林中任何东西的组，并且可以在林中包含任何账户，请使用通用组。</p>
+<ul>
+<li>全局组 (Global group)</li>
+</ul>
+<p>全局组比较复杂，前面说了。在单域内用域本地组，在林中使用通用组。全局组应该说是一种比较折中的方案，他可以在林中使用，但是只能包含本域内的账户。全局组的使用范围是本域以及受信任关系的其他域。最为常见的全局组是Domain Admin，也就是我们常说的域管。因为全局组只能包含本域内账户，因此来自一个域的账户不能嵌套在另一个域中的全局组中，这就是为什么来自同一个域的用户不符合在外部域中的域管的成员资格（由于其全局范围的影响)。</p>
+<h4 id="常见组介绍"><a href="#常见组介绍" class="headerlink" title="常见组介绍"></a>常见组介绍</h4><ul>
+<li><p>Administrators<br>域本地组。具备系统管理员的权限，拥有对整个域最大的控制权，可以执行整个域的管理任务。Administrators包括Domain Admins和Enterprise Admins。</p>
+</li>
+<li><p>Domain Admins<br>全局组。我们常说的域管组。默认情况下，域内所有机器会把Domain Admins加入到本地管理员组里面。</p>
+</li>
+<li><p>Enterprise Admins<br>通用组。在林中，只有林根域才有这个组，林中其他域没有这个组，但是其他域默认会把这个组加入到本域的Administrators里面去。</p>
+</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt018dfec26bdc6b4a87.png"></p>
+<ul>
+<li>Domain Users</li>
+</ul>
+<p>全局组。包括域中所有用户帐户,在域中创建用户帐户后，该帐户将自动添加到该组中。默认情况下，域内所有机器会把Domain Users加入到本地用户组里面，也就是为什么默认情况底下，啥都不配置。域用户可以登录域内任何一台普通成员机器。</p>
+<p>更多的常见组，会在后续要使用到的时候进行介绍，这里不一一介绍了。</p>
+<h4 id="AGDLP"><a href="#AGDLP" class="headerlink" title="AGDLP"></a>AGDLP</h4><p>安全组是权限的集合，所以在微软的建议中，并不建议给赋予单个用户权限，而是赋予一个组权限，然后将成员拉近组。下面介绍下AGDLP策略。这里直接用网上的图。</p>
+<ul>
+<li>A表示用户账号，Account</li>
+<li>G表示全局组，Global group </li>
+<li>U表示通用组，Universal Group</li>
+<li>L表示本地组， local group</li>
+<li>DL表示域本地组，Domain local group</li>
+<li>P表示资源权限，Resource Permissions</li>
+</ul>
+<p>有常见的几种权限划分方式</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt011b7307be86d9898d.jpg"></p>
+<ul>
+<li>AGP，将用户账户添加到全局组，然后赋予全局组权限</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0144ea8fd9fdcfd13c.jpg"></p>
+<ul>
+<li>AGLP，将用户账户添加到全局组，将全局组添加到本地组， 然后赋予本地组权限</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt019d2b13a12e69594c.jpg"></p>
+<ul>
+<li>ADLP 将用户账户添加到域本地组，然后赋予域本地组权限</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b30769e58bc30d1b.jpg"></p>
+<ul>
+<li>AGDLP，将用户账户添加到全局组，将全局组添加到域本地组， 然后赋予域本地组权限</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ca031e9e49db2bf2.jpg"></p>
+<ul>
+<li>AGUDLP，将用户账户添加到全局组，将全局组添加到通用组，将通用组添加到域本地组， 然后赋予域本地组权限</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01785b14c5c4f449c4.jpg"></p>
+<h4 id="查询组内用户以及用户所属的组"><a href="#查询组内用户以及用户所属的组" class="headerlink" title="查询组内用户以及用户所属的组"></a>查询组内用户以及用户所属的组</h4><p>如果group4 是group2 组内的成员</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01c750503380ac36ca.png"></p>
+<p>那么<code>group2</code>有个属性<code>member</code> 标识<code>group4</code>是它的成员。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f9d11ec6871c7e37.png"></p>
+<p><code>group4</code>有个属性<code>memberOf</code> 标识它是<code>group2</code>的成员</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d9d14162b0253092.png"></p>
+<p>根据这两个属性，我们就可以开始过滤了。</p>
+<p>我们举个例子。</p>
+<p>在我们有四个组(group1,group2,group3,group4)，一个用户(it-1)。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01c257fa2f518e22b3.png"></p>
+<p>上面箭头意思是组成员</p>
+<p>group1 这个组里面有一个成员group2</p>
+<p>group2 这个组里面有两个个成员group4和it-1</p>
+<p>group3 这个组里面有一个成员it-1</p>
+<p>那我们开始进行搜索。</p>
+<ol>
+<li>查看group2有哪些成员</li>
+</ol>
+<p>最简单的，查看group2 这个对象的member属性</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ec9f57dab20b58fc.png"></p>
+<p>或者过滤memberOf为group2的所有对象</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0190ce78fc0b557d84.png"></p>
+<ol start="2">
+<li>查看<code>it-1</code> 属于哪些组</li>
+</ol>
+<p>最简单的，查看<code>it-1</code> 这个对象的<code>memberOf</code>属性</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0131d13d84190baa42.png"></p>
+<p>或者过滤<code>member</code>为<code>it-1</code>的所有对象</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f070b51f25409685.png"></p>
+<ol start="3">
+<li>查看group1有哪些成员，这些成员如果是组，就继续查下去，知道非组成员为止。</li>
+</ol>
+<p>上面两个都比较好理解，接下来，我们来分析一下。</p>
+<p>在这里</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01c257fa2f518e22b3.png"></p>
+<p>如果仅仅是查group1有哪些成员,那就只有group2，但是我们现在的需求是递归查下去，group2也是一个组，组内又有哪些成员。从图中我们可以看出有group2,group4,it-1</p>
+<p>这里LDAP 给我们提供一个特性，也是位操作符的一部分。BitFilterRule-ID 为1.2.840.113556.1.4.1941.在adfind 里面可以用INCHAIN简化。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0164df9cd980f63284.png"></p>
+<p>现在我们开始查group1的所有成员，以及成员的成员,…。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt019b2f52e776633274.png"></p>
+<ol start="4">
+<li>查看it-1 属于哪些组，这些组又属于哪些组，如此往上递归查询，直到这个组不属于其他组。</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01c257fa2f518e22b3.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f10c14520955c893.png"></p>
+<h3 id="组织单位-Organization-Unit"><a href="#组织单位-Organization-Unit" class="headerlink" title="组织单位(Organization Unit)"></a>组织单位(Organization Unit)</h3><h4 id="OU介绍"><a href="#OU介绍" class="headerlink" title="OU介绍"></a>OU介绍</h4><p>组织单位(Organization Unit)，简称OU，是一个容器对象，将域中的对象组织成逻辑组，帮助网络管理员简化管理组。组织单位包含下列类型的对象：用户，计算机，工作组，打印机，安全策略，其他组织单位等。可以在组织单位基础上部署组策略，统一管理组织单位中的域对象。 在企业域环境里面，我们经常看到按照部分划分的一个个OU。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt018e25ce8bb961e519.png"></p>
+<h4 id="OU跟容器的区别"><a href="#OU跟容器的区别" class="headerlink" title="OU跟容器的区别"></a>OU跟容器的区别</h4><p>组织单位（OU）是专用容器，与常规容器的区别在于管理员可以将组策略应用于OU，然后系统将其下推到OU中的所有计算机。您不能将组策略应用于容器。需要注意的是Domain Computers是一个普通容器，而Domain Controllers是一个OU，因此可以可以将组策略应该于Domain Controllers，不可以将组策略应用于Domain Computers。关于更多组策略的内容，我们后面会专门有一篇文章介绍组策略。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt017aff0c5b28d0d0d6.png"></p>
+<p>PS：上面说的<code>Domain Computers</code>和<code>Domain Controllers</code>特指根域的,不是User容器底下的，那个是组</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01a829f32fb734d85b.png"></p>
+<h4 id="OU跟组的区别"><a href="#OU跟组的区别" class="headerlink" title="OU跟组的区别"></a>OU跟组的区别</h4><p>组织单位跟组是两个完全不同的概念。很多人经常会把这两个弄混。组是权限的集合。OU是管理对象的集合。举个前面举过的例子，运维需要对公司的网络进行管理，需要一些特殊的管理权限，我们就可以设置个组，对组配置权限。然后将运维拉近组里面，组里面的运维就拥有了该权限。比如我们需要对财务部里面的用户进行统一管理，那我们可以设置个OU，然后把财务部的用户拉近这个OU，这样就可以进行集中管理，比如说下发组策略。说通俗点，组是管理的集合，OU是被管理的集合。关于权限的更多内容，后面会有一块文章专门介绍。</p>
+<h4 id="OU委派"><a href="#OU委派" class="headerlink" title="OU委派"></a>OU委派</h4><p>考虑这样一种需求，如果我们想允许某个用户把其他用户拉近OU，而不赋予这个用户域管权限，我们可以在这个OU给这个用户委派 添加成员的权限。组织单位的委派其实就是赋予某个域内用户对OU的某些管理权限。这些权限体现在ACL里面。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d44372bf257765d3.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt017e96021ac567c7b0.png"></p>
+<h4 id="查询OU"><a href="#查询OU" class="headerlink" title="查询OU"></a>查询OU</h4><p>所有的OU都是<code>organizationalUnit</code>类的实例，</p>
+<p>我们可以用<code>(objectClass=organizationalUnit)</code>或者<code>(objectCategory=organizationalUnit)</code>来过滤OU。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0186abe203e4176784.png"></p>
+<p>查询OU里面的账户，可以指定BaseDN为OU就行</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt013c9e0b67adb0a985.png"></p>
+<h2 id="域用户和计算机用户介绍"><a href="#域用户和计算机用户介绍" class="headerlink" title="域用户和计算机用户介绍"></a>域用户和计算机用户介绍</h2><h3 id="前言-10"><a href="#前言-10" class="headerlink" title="前言"></a>前言</h3><p>这块主要介绍AD里面的域用户，计算机用户。</p>
+<h3 id="域用户"><a href="#域用户" class="headerlink" title="域用户"></a>域用户</h3><h4 id="查询域用户"><a href="#查询域用户" class="headerlink" title="查询域用户"></a>查询域用户</h4><p>当我们拥有一个域用户的时候，想要枚举域内的所有用户，主要有两个方法。</p>
+<ol>
+<li>通过SAMR 协议查询</li>
+</ol>
+<p>samr 也不算是一种专门的协议，就是一个RPC接口(这里简单地提一下。后面在RPC篇里面详细介绍这个RPC接口)</p>
+<p>我们平时使用的<code>net user /domain</code>就是使用samr 进行查询的。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt018c6fd3bd4c6ef7a1.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d107c16808abfd22.png"></p>
+<p>在impacket 里面有一个脚本<code>samrdump.py</code>就是专门调用samr 去查询域用户的。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt018028b408c5d194aa.png"></p>
+<ol start="2">
+<li>通过Ldap 语法查询</li>
+</ol>
+<p>域用户存储于活动目录数据库里面，对其他用户可见。可以通过Ldap 去查询。</p>
+<p>过滤语法如下:</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">(&amp;(objectCategory=person)(objectClass=user))</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt014941fa87a014a8c8.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01eb716a3d86ac3472.png"></p>
+<h3 id="域用户部分属性介绍"><a href="#域用户部分属性介绍" class="headerlink" title="域用户部分属性介绍"></a>域用户部分属性介绍</h3><ul>
+<li>相关的用户名</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e758a060febfa6d5.png"></p>
+<p>​这些属性在LDAP 里面都可以查看</p>
+<ol>
+<li>姓对应的属性就是sn</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt016c9fef00b33a758a.png"></p>
+<ol start="2">
+<li>名对应的属性是giveName</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f453345c0ad7081d.png"></p>
+<ol start="3">
+<li>展示名，对应的属性是displayName</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ea42cdbe36e24d86.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d7a7f559f834fe2e.png"></p>
+<p>值得注意的是，displayName不能用于登陆，虽然跟域用户名往往一样。但是这个不是直接用于登陆的我们登陆用的账号，在一些公司里面，displayName往往是中文，登陆的用户名是拼音。登陆的格式有以下两种格式。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0188d6994cbdbc4240.png"></p>
+<ol start="4">
+<li>第一种格式是UserPrincipalName，我们简称为UPN，一般的格式是用户名@域名这样的格式。<br>​<br>比如这里就是<a href="mailto:&#108;&#x69;&#115;&#105;&#x40;&#116;&#x65;&#x73;&#116;&#46;&#x6c;&#111;&#99;&#97;&#108;">&#108;&#x69;&#115;&#105;&#x40;&#116;&#x65;&#x73;&#116;&#46;&#x6c;&#111;&#99;&#97;&#108;</a></li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e2811e15d3228c71.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b73488011e5e86a7.png"></p>
+<ol start="5">
+<li>第二种格式是域名\sAMAccountName这种格式</li>
+</ol>
+<p>比如这里就是test.local\lisi，这里的域名可以是netbios名，也可以是dns 名。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01595f47ef69ceef69.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt011ca5405da92980fc.png"></p>
+<p>用户相关的一些时间:</p>
+<ul>
+<li>whenCreated</li>
+<li>pwdLastSet</li>
+<li>Lastlogon</li>
+</ul>
+<p>看名字就可以大约猜出这些字段的含义了。账号创建时间，设置密码时间，上次登录时间，这些属性任意域用户都可以看的到。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e4f40a06b74baebe.png"></p>
+<p>只是这个并不直观，adfind 提供了转化</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01191e56d60c6d910b.png"></p>
+<p>这样更直观一点</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f824a499187bbbd1.png"></p>
+<p>值得注意的是<strong>Lastlogon</strong>这个属性值在不同的域控制器上是不会同步的。所以要查询一个用户的最后登录时间，得指定不同的域控制器来查询。</p>
+<ul>
+<li>userAccountControl</li>
+</ul>
+<p>在上一篇，讲位操作的时候有简单提及到这个<code>userAccountControl</code>，其实这个属性至关重要。在整个文章里面反复提及。userAccountControl对应的位如下。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt014df9519f018df4a7.png"></p>
+<p>我们可以利用ldap的位操作(关于Ldap的位操作见<a href='#p9'>LDAP篇之组和OU介绍</a>)来一个个过滤。</p>
+<p>比如，我们想查询查询密码永不过期的用户。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01461760288349e774.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01a2c4d034684a042b.png"></p>
+<p>又比如，我们想查询设置了约束委派的用户。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e117778c9f171747.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b5137b62844c9a49.png"></p>
+<p>又比如，我们想查询域内设置了对委派敏感的用户。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e07d11b4d72c67f4.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0162b49a36e774d790.png"></p>
+<p>等等等。大家可以查表，然后更改对应的十进制值来过滤。</p>
+<h3 id="机器用户"><a href="#机器用户" class="headerlink" title="机器用户"></a>机器用户</h3><p>默认情况底下，加入域的机器默认在CN&#x3D;Computer这个容器里面，域控默认在Domain Controllers这个OU里面。有些域内会通过redircmp进行修改</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01556863664fc3e42d.png"></p>
+<h4 id="机器用户跟system-用户的关系"><a href="#机器用户跟system-用户的关系" class="headerlink" title="机器用户跟system 用户的关系"></a>机器用户跟system 用户的关系</h4><p>考虑到这样一个场景，如果拿到一台域内机器，然后发现没有域内用户。 这个时候有很多人用mimikatz 抓一下，没抓到域用户，就束手无策了。</p>
+<p>我们随便点开一台Domain Computer，这里以WIN7这台机子做为测试。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01bdbdc91687c4d3d7.png"></p>
+<p>我们看他的对象类。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01aef09a6b19f7a1de.png"></p>
+<p>发现他是computer 类的实例。</p>
+<p>而computer 类的user 类的子类。域用户是user类的实例。之前我们说过类是属性的集合。子类继承了父类的所有属性，因此域用户该有的属性，计算用户都有，甚至我们可以说，机器用户就是一种域用户。</p>
+<p>那回到之前的那个问题，如果拿到一台域内机器，然后发现没有域内用户的情况。我们上面说了，机器用户其实就是一个域用户，那我们怎么使用这个机器用户呢。其实本地用户SYSTEM就对应于域内的机器用户，在域内的用户名就是机器名+$,比如win7，他的机器名是WIN7，那他在域内的登录名就是win7$,关于sAMAccountName我们在上一小节已经讲了。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt018f4edb0f65df5216.png"></p>
+<p>所以我们可以将当前用户提到system(非管理员需要配合提权漏洞，管理员组的非administrators需要bypassuac，administrator提到system。这个网上有很多方法，psexec，mimikatz等等)。就可以在域内充当机器用户了。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01359b16a3619b6b69.png"></p>
+<p>或者直接抓hash 也是一样的。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt018ea38fc7e5c8d9cc.png"></p>
+<h4 id="查找域内的所有机器"><a href="#查找域内的所有机器" class="headerlink" title="查找域内的所有机器"></a>查找域内的所有机器</h4><p>可以通过<code>objectclass=Computer</code>或者<code>objectcategory=Computer</code>查找域内的所有机器</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e35b57896aaad99b.png"></p>
+<p>adfind 对查询计算机，提供了一些快捷方式。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt011f6d61516131b3a2.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt016d99391843f63892.png"></p>
+<p>域内的域控都在<code>Domain Controller</code>这个OU底下，可以通过查看这个OU里面的机器来找到域内的所有域控。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0123cb663229836662.png"></p>
+<p>adfind 对查询域控，也提供了一些快捷方式。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01a86d45d667736a9d.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0122e276146c7b2402.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01a6cdd3bdf2ed54b6.png"></p>
+<h3 id="域用户账户与机器用户的对应关系"><a href="#域用户账户与机器用户的对应关系" class="headerlink" title="域用户账户与机器用户的对应关系"></a>域用户账户与机器用户的对应关系</h3><h4 id="域用户默认能登录域内的任何一台普通机器"><a href="#域用户默认能登录域内的任何一台普通机器" class="headerlink" title="域用户默认能登录域内的任何一台普通机器"></a>域用户默认能登录域内的任何一台普通机器</h4><p>如果我们是自己搭建过域环境的话，应该会知道，默认情况底下，域用户是能够登录域内的任何一台机器用户的。我们在这里面探究一下原因。</p>
+<p>在域成员机器的本地安全策略里面，默认情况底下，本地用户组允许本地登录。其中包括Users组。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01fae424a1729a3d42.png"></p>
+<p>其中Users组包括Domain Users</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt014c059b18478db24c.png"></p>
+<p>而域内用户默认都在Domain Users组里面。</p>
+<p>因为域用户默认都在Domain Users组里面，而Domain Users在Users组里面。默认情况底下Users组内的成员允许本地登录。所以域内成员默认都能登录域内任何一台机器。</p>
+<p>对于这种情况，很多域内都没有解决这个问题。而有些域内运维意识到这个问题。一般会有这两种修改方案。</p>
+<ol>
+<li>在域用户这边做限制</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0183042ce3b6e82148.png"></p>
+<p>设置域用户只允许登录到某台机器。</p>
+<ol start="2">
+<li>在机器这边做限制</li>
+</ol>
+<p>这个可以通过下发组策略实现。</p>
+<p>因为一般都会把常登陆这台机器的域用户加入到<code>Administrators</code>组里面。不允许User组里面用户本地登录。把下图的Users删除掉。这样登陆这台机器的域用户，因为在Administrators组里面，也可以登录。而其他域用户也不能登录。</p>
+<p>![](<a href="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01fae424a1729a3d42">https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01fae424a1729a3d42</a> (1).png)</p>
+<h4 id="查看域用户能够登录的主机"><a href="#查看域用户能够登录的主机" class="headerlink" title="查看域用户能够登录的主机"></a>查看域用户能够登录的主机</h4><p>域用户默认能本地登录域内的任何一台主机。为了缓解这个问题。上一小节我们提出了两种解决方案。也会带来新的问题。我们可以根据这个找到域用户能够登录的主机。限制了域用户只能登录到某台主机之后，在LDAP里面，会设置一个字段，userWorkStation。这个字段保存了这个域用户只能登录到某台机器。而这个字段对于域内任何用户都是可读的，我们可以通过读域用户的userWorkStation来查看域用户限制登录到那一台机子。那个用户也就能够登录那台机子。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt019504263021e8e453.png"></p>
+<h4 id="查看域用户正在登陆的主机"><a href="#查看域用户正在登陆的主机" class="headerlink" title="查看域用户正在登陆的主机"></a>查看域用户正在登陆的主机</h4><p>当我们想寻找一个域用户正在登陆的主机的情况下，主要有以下几种方式</p>
+<ol>
+<li>检查远程机器注册表项里HKEY_USERS来查询谁正在登陆机器</li>
+</ol>
+<p>比如我们远程登录SERVER12的注册表，看到HKEY_USERS底下的key有<code>S-1-5-21-1909611416-240434215-3714836602-1113</code>，将<code>S-1-5-21-1909611416-240434215-3714836602-1113</code>这个sid转化为用户名是TEST\maria，就可以看到用户TEST\maria当前正在SERVER12这台机器上登录。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0125436dc9baeaeb6d.png"></p>
+<p>远程查看注册表项这个操作可以通过API实现，我们可以遍历域内所有机器，查询机器正在登陆的用户。</p>
+<p>值得注意的有:</p>
+<ul>
+<li>默认PC机器，是没有开启注册表远程连接的。Server 机器，默认开启远程连接。</li>
+<li>域内任何用户，即使配置了，不能本地登录域内机器A，但是只要域内机器A开启远程注册表连接，我们就可以连接上机器A的注册表，从而枚举正在登陆的用户</li>
+</ul>
+<ol start="2">
+<li>利用 NetSessionEnum 来寻找登陆的网络会话</li>
+</ol>
+<p>一个win32 API，关于这个API的细节可以看官方文档<a href="https://docs.microsoft.com/en-us/windows/win32/api/lmshare/nf-lmshare-netsessionenum">NetSessionEnum function</a></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">NET_API_STATUS NET_API_FUNCTION <span class="title function_">NetSessionEnum</span><span class="params">(</span></span><br><span class="line"><span class="params">  LMSTR   servername,</span></span><br><span class="line"><span class="params">  LMSTR   UncClientName,</span></span><br><span class="line"><span class="params">  LMSTR   username,</span></span><br><span class="line"><span class="params">  DWORD   level,</span></span><br><span class="line"><span class="params">  LPBYTE  *bufptr,</span></span><br><span class="line"><span class="params">  DWORD   prefmaxlen,</span></span><br><span class="line"><span class="params">  LPDWORD entriesread,</span></span><br><span class="line"><span class="params">  LPDWORD totalentries,</span></span><br><span class="line"><span class="params">  LPDWORD resume_handle</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这个API 的第一个参数servername ，可以指定一个远程的机器A，会去调用远程机器A的RPC。然后返回其他用户在访问机器A的网络资源（例如文件共享）时所创建的网络会话，可以看到这个用户来自何处。比如我们访问DC2016，会看到kangkang和jane 正在连接DC2016，而kangkang来自172.16.103.131,jane来自172.16.103.128</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0120cc8a6465bb5758.png"></p>
+<p>值得注意的有:</p>
+<ol>
+<li><p>我们指定了servername 为机器A，并不能查询谁谁登陆了机器A，但是可以看到访问机器A的网络资源（例如文件共享）时所创建的网络会话。这个网络会话可以看到哪个域用户来自哪个IP，比如kangkang来自172.16.103.131，所以我们一般指定servername为域控或者文件共享服务器。</p>
+</li>
+<li><p>调用此函数的用户，指定了servername 为机器A，并不需要在机器A 上有管理员权限。所以域内任何用户都可以调用此函数，指定了servername 为域控。<br>利用NetWkstaUserEnum列出当前登录到该机器的所有用户的信息</p>
+</li>
+</ol>
+<p>同样的，这也是一个WIN32 API，关于这个API的细节可以看官方文档<a href="https://docs.microsoft.com/en-us/windows/win32/api/lmwksta/nf-lmwksta-netwkstauserenum">NetWkstaUserEnum function</a></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">NET_API_STATUS NET_API_FUNCTION <span class="title function_">NetWkstaUserEnum</span><span class="params">(</span></span><br><span class="line"><span class="params">  LMSTR    servername,</span></span><br><span class="line"><span class="params">  IN DWORD level,</span></span><br><span class="line"><span class="params">  LPBYTE   *bufptr,</span></span><br><span class="line"><span class="params">  IN DWORD prefmaxlen,</span></span><br><span class="line"><span class="params">  LPDWORD  entriesread,</span></span><br><span class="line"><span class="params">  LPDWORD  totalentries,</span></span><br><span class="line"><span class="params">  LPDWORD  resumehandle</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这个API 的第一个参数servername 可以指定一个远程的机器A，会去调用远程机器A的RPC。然后返回当前登录到机器A的所有用户的信息.值得注意的是，调用该函数的用户需要具备机器A的本地管理员权限。</p>
+<p>有一些现有的工具用来枚举正在登陆某台机子的用户(一般称为枚举会话)，其实本质上还是利用我们上面说的方法。这里举例几个</p>
+<ol>
+<li>psloggedon.exe</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01799916ea2ad56a53.png"></p>
+<ol start="2">
+<li>netsess.exe</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01c83aa26a11c85938.png"></p>
+<ol start="3">
+<li>PVEFindADUser.exe</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt010252498e75ffad23.png"></p>
+<ol start="4">
+<li>hunter.exe</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt015a5d5c875ff061d5.png"></p>
+<h4 id="查看域用户登录过的主机"><a href="#查看域用户登录过的主机" class="headerlink" title="查看域用户登录过的主机"></a>查看域用户登录过的主机</h4><ol>
+<li>通过查看outlook的邮件头</li>
+</ol>
+<p>当用户a 在公司内部使用outlook 给你发一封邮件的时候，我们可以在改邮件的头部看到用户a的内网IP</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d6cb7bc49c182ec0.png"></p>
+<ol start="2">
+<li>导出DC日志</li>
+</ol>
+<p>这个要求我们有域控权限，比如说我们在拿到域控之后想找到域内某个用户的主机。</p>
+<p>域内用户A在机器B正常登录的时候，由于本地没有域用户A的hash。机器B会去域控那边做验证，登录成功的话，在域控那边，会有个4624的日志，登录类型为3。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt019076f5c2131d62d9.png"></p>
+<p>值得注意的是，在域内可能存在多台域控，日志并不同步，请将每一台域控的日志都导出来。导出日志和查看日志有很多方式，这里提供一个实现。</p>
+<p>导出日志，wevtutil是自带的</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wevtutil epl Security C:\Users\Administrator\Desktop\1.evtx /q:“*[System[(EventID=4624)] and EventData[Data[@Name=‘LogonType’]=‘3’]]” //导出日志</span><br></pre></td></tr></table></figure>
+
+<p>将日志拷贝到我们的电脑.使用LogParser开始提取日志</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">LogParser.exe -i:EVT -o:CSV <span class="string">&quot;SELECT TO_UPPERCASE(EXTRACT_TOKEN(Strings,5,&#x27;|&#x27;)) as USERNAME,TO_UPPERCASE(EXTRACT_TOKEN(Strings,18,&#x27;|&#x27;)) as SOURCE_IP FROM 1.evtx&quot;</span> &gt;log.csv // 提取日志</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0199daa16d1f50005e.png"></p>
+<h2 id="域权限上"><a href="#域权限上" class="headerlink" title="域权限上"></a>域权限上</h2><h3 id="前言-11"><a href="#前言-11" class="headerlink" title="前言"></a>前言</h3><p>分成两块，这块主要是讲windows 域内的权限访问控制，这是上篇，主要有ACL,ACE相关的一些基础概念的介绍。</p>
+<h3 id="windows-访问控制模型"><a href="#windows-访问控制模型" class="headerlink" title="windows 访问控制模型"></a>windows 访问控制模型</h3><p>在 Active Directory 中设置权限，其方式与在文件中设置权限的方式几乎相同。权限控制都是使用windows 访问控制模型。这里简单提一下windows 访问控制模型。</p>
+<p>windows 访问控制模型是由两部分组成。</p>
+<ul>
+<li><p>访问令牌（Access Token）<br>包含用户的标识(User SID,Group SIDS)，以及特权列表。</p>
+</li>
+<li><p>安全描述符（security identifiers）。<br>被访问的安全对象的相关安全信息。<br>这里的安全对象包括但不限于</p>
+</li>
+<li><p>NTFS卷上的文件和目录</p>
+</li>
+<li><p>注册表项</p>
+</li>
+<li><p>网络共享</p>
+</li>
+<li><p>服务</p>
+</li>
+<li><p>Active Directory对象</p>
+</li>
+<li><p>进程等等</p>
+</li>
+</ul>
+<p>由于这个系列都是讲域相关的。所以这篇文章的安全对象我们特指Active Directory对象。也就是AD 树上的每个条目。<br>如下图所示。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01a7d6cfc208a394dd.gif"></p>
+<p>在域里面用户的身份上用sid 来表示而不是用用户名来查看，我们可以通过查看用户属性objectsid来查看一个用户的sid。</p>
+<p>大体的流程是。当对象A来访问B的时候，A会出示自己的Access Token,然后包含自己的用户sid，自己所在的组的sid，以及特权列表。B这个安全对象，有自己的ACL。</p>
+<ul>
+<li><p>B首先判断是不是需要特权才能访问，如果需要特权，则查看A的Access Token看有没有那个特权。</p>
+</li>
+<li><p>B通过A的Access Token，来判断A的用户 sid以及组sids，跟自己的ACL做比对，来判断是否让A进行访问。关于ACL的更多细节，将在下一节具体阐述。</p>
+</li>
+</ul>
+<h3 id="ACL-简介"><a href="#ACL-简介" class="headerlink" title="ACL 简介"></a>ACL 简介</h3><p>在前面说过，B通过A的Access Token，来判断A的用户 sid以及组sids，跟自己的ACL做比对，来判断是否让A进行访问。接下来详细介绍ACL。</p>
+<p>ACL主要有两个作用：</p>
+<ul>
+<li><p>权限访问控制<br>  一个用户能不能访问安全对象</p>
+</li>
+<li><p>日志记录功能<br>  访问成功与否</p>
+</li>
+</ul>
+<p>根据ACL的两个作用。ACL包含DACL和SACL。</p>
+<ol>
+<li>DACL</li>
+</ol>
+<p>DACL起到的作用是权限访问控制，也就是判断一个用户能不能访问安全对象。DACL 由若干条ACE构成。如下图所示，权限项目里面是一条又一条的ACE。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01db173de07f9509c2.png"></p>
+<p>那DACL 是怎么判断用户能否访问呢。</p>
+<p>我们来举个例子。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01efbf0de696e0724f.png"></p>
+<p>SRM对acl的解析是</p>
+<ol>
+<li>明确定义的DENYACE。</li>
+<li>明确定义的ALLOWACE</li>
+<li>继承的DENYACE。</li>
+<li>继承的ALLOWACE。</li>
+</ol>
+<p>在不考虑特权的情况底下。情况如下。</p>
+<ul>
+<li>当A 访问安全对象D的时候</li>
+</ul>
+<p>D 查看A的用户sid，以及组sids。首先到第二条(因为DENY优先于第一条的allow)进行匹配，没匹配上，然后到第一条ACE进行判断。允许sid 为50 的对象进行访问。A的用户sid 为50，因此允许A 对象访问。</p>
+<ul>
+<li>当B 访问安全对象D的时候</li>
+</ul>
+<p>D 查看B的用户sid，以及组sids。首先到第二条进行匹配，拒绝sid 为13的对象访问，发现B 的其中一个组sid 为13，拒绝B访问。</p>
+<ul>
+<li>当C 访问安全对象D的时候</li>
+</ul>
+<p>D 查看C的用户sid，以及组sids。首先到第二条ACE进行判断。没匹配上，然后匹配第一条，又没匹配上，因此拒绝C访问。</p>
+<p>当每条ACE都没匹配上的时候，是拒绝访问的。因此值得注意的是，这里有两种情况</p>
+<ol>
+<li><p>ACE 条目的数量为0 的情况<br>这种情况底下，有DACL,但是ACE条目的数量为0，是不允许任何用户访问的</p>
+</li>
+<li><p>没有DACL的情况<br>这种情况，是允许任何用户访问的。</p>
+</li>
+</ol>
+<ul>
+<li>SACL<br>SACL的作用是记录访问成功与否，SACL也是由一条一条的ACE构成，每条ACE的内容是某个用户访问成功&#x2F;失败 某个权限。当访问跟满足这条ACE的时候就会被记录下来。</li>
+</ul>
+<h3 id="ACE-简介"><a href="#ACE-简介" class="headerlink" title="ACE 简介"></a>ACE 简介</h3><p>DACL 是由一条条的ACE构成。SACL也是由一条条的ACE构成，在这里我们只关心DACL的ACE。</p>
+<p>在上面我们的举例里面，一条DACL的可能是这样。允许sid 为50 的用户访问。</p>
+<p>这个是为了简单得描述。其实一条ACE的内容量远不止于此。可以把一条ACE归纳为四个方面。</p>
+<ul>
+<li>谁对你有权限</li>
+<li>是允许还是拒绝</li>
+<li>有什么权限</li>
+<li>这个权限能不能被继承</li>
+</ul>
+<p>允许sid 为50 的用户访问。这个表述其实就解决了前面两个。谁对你有权限，是允许还是拒绝。</p>
+<p>接下来我们主要来讲下后面两个</p>
+<ol>
+<li>有什么权限</li>
+</ol>
+<p>前面说能访问吗，其实是很笼统的说法。关于权限，大致可以划分为三个大的权限。</p>
+<ul>
+<li>通用权限<br>就是对这个条目的通用权限，通用读，通用写等。</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt017c7c9903b4006142.png"></p>
+<ul>
+<li>对某个属性的权限<br>一个条目包含若干个属性，通用属性是对整个条目的权限。域内的ACL同时也支持某个属性的权限。</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01fc460ed7d6105e91.png"></p>
+<ul>
+<li>扩展权限<br>全面说的都是读写执行权限，但是域内的安全对象相对较为复杂，读写执行权限是不够用的，域内的ACL也支持扩展权限，比如强制更改密码。</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0160a2fb992819ffee.png"></p>
+<ol start="2">
+<li>这个权限能不能被继承</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt015e50c463670f1951.png"></p>
+<p>如上图所示，如果我们将权限作用作用于OU&#x3D;IT,如果设置这个权限能够继承的话，那这个权限能够作用于CN&#x3D;it-1。</p>
+<h3 id="SDDL-简介"><a href="#SDDL-简介" class="headerlink" title="SDDL 简介"></a>SDDL 简介</h3><ul>
+<li>存储位置  nTSecurityDescriptor</li>
+<li>存储格式 SDDL(Security Descriptor Definition Language)</li>
+</ul>
+<p>利用adfind 查看某个属性的ACL</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">AdFind.exe -b <span class="string">&quot;CN=PC-JACK-0DAY,CN=Computers,DC=0day,DC=org&quot;</span> nTSecurityDescriptor  -rawsddl</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt016f6abe66edcbc8a0.png"></p>
+<p>我们可以看到这一串看起来十分复杂的就是SDDL。看起来十分难以理解，接下来就让我们具体来分析一下。</p>
+<p>SDDL 可以可以大致划分为一下四个部分。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">O:DA  ——&gt; ower</span><br><span class="line"></span><br><span class="line">G:DU  --&gt;Primary Group </span><br><span class="line"></span><br><span class="line">D:</span><br><span class="line">(A;CIID;GW;;;S<span class="number">-1</span><span class="number">-5</span><span class="number">-21</span><span class="number">-1812960810</span><span class="number">-2335050734</span><span class="number">-3517558805</span><span class="number">-1103</span>)</span><br><span class="line">(OA;;WP;bf967950<span class="number">-0</span>de6<span class="number">-11</span>d0-a285<span class="number">-00</span>aa003049e2;bf967a86<span class="number">-0</span>de6<span class="number">-11</span>d0-a285<span class="number">-00</span>aa003049e2;S<span class="number">-1</span><span class="number">-5</span><span class="number">-21</span><span class="number">-1812960810</span><span class="number">-2335050734</span><span class="number">-3517558805</span><span class="number">-1133</span>)</span><br><span class="line"></span><br><span class="line">S:</span><br><span class="line">(OU;CIIOIDSA;WP;f30e3bbe<span class="number">-9f</span>f0<span class="number">-11</span>d1-b603<span class="number">-0000f</span>80367c1;bf967aa5<span class="number">-0</span>de6<span class="number">-11</span>d0-a285<span class="number">-00</span>aa003049e2;WD)(OU;CIIOIDSA;WP;f30e3bbf<span class="number">-9f</span>f0<span class="number">-11</span>d1-b603<span class="number">-0000f</span>80367c1;bf967aa5<span class="number">-0</span>de6<span class="number">-11</span>d0-a285<span class="number">-00</span>aa003049e2;WD)</span><br></pre></td></tr></table></figure>
+
+<p>其中O代表这条ACL的所有者</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01bde7f276875a119a.png"></p>
+<p>G表示<code>primary group，Windows</code> 通常忽略此参数（这是为了 POSIX 兼容性，但它现在已经退化了)</p>
+<p>然后剩下的两个部分就是DACL和SACL,都是由一条一条的ACE构成(在SDDL里面一个括号代表一条ACE)，这里侧重点说的是DACL的ACE。</p>
+<p>先看第一个例子。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">(A;CIID;GW;;;S<span class="number">-1</span><span class="number">-5</span><span class="number">-21</span><span class="number">-1812960810</span><span class="number">-2335050734</span><span class="number">-3517558805</span><span class="number">-1103</span>)</span><br></pre></td></tr></table></figure>
+
+<p>我们前面说过，DACL的ACE的作用主要可以分为</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0177ccf5bad5828e30.png"></p>
+<ol>
+<li>通用权限<br>然后我们将ACE拆开。</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">(</span><br><span class="line">A;  ACE类型（允许/拒绝/审核）</span><br><span class="line">CI; ACE标志（继承和审核设置）</span><br><span class="line">GW; 权限（增量权限列表）</span><br><span class="line">; 对象类型（GUID）</span><br><span class="line">; 继承的对象类型（GUID）</span><br><span class="line">S<span class="number">-1</span><span class="number">-5</span><span class="number">-21</span><span class="number">-1812960810</span><span class="number">-2335050734</span><span class="number">-3517558805</span><span class="number">-1103</span> 受托人SID</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>可以看到</p>
+<ul>
+<li><p>谁对你有权限<br>sid 为 S-1-5-21-1812960810-2335050734-3517558805-1103的用户</p>
+</li>
+<li><p>是允许还是拒绝<br>根据ACE类型可以看到是允许</p>
+</li>
+<li><p>有什么权限<br>GW 表示是通用权限</p>
+</li>
+<li><p>这个权限能不能被继承<br>CI 表示权限可以被继承<br>关于这些值的解释可以看<a href="https://clan8blog.wordpress.com/2016/08/08/sddl-explained/">https://clan8blog.wordpress.com/2016/08/08/sddl-explained/</a></p>
+</li>
+</ul>
+<ol start="2">
+<li>扩展权限<br>上面代表的是通用权限的情况，但是还有对某个属性的权限，以及扩展权限两种。看下面一个例子。</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">(</span><br><span class="line">OA; ACE类型（允许/拒绝/审核）</span><br><span class="line">; ACE标志（继承和审核设置）</span><br><span class="line">CR; 权限（增量权限列表）</span><br><span class="line"><span class="number">00299570</span><span class="number">-246</span>d<span class="number">-11</span>d0-a768<span class="number">-00</span>aa006e0529; 对象类型（GUID）</span><br><span class="line">; 继承的对象类型（GUID）</span><br><span class="line">S<span class="number">-1</span><span class="number">-5</span><span class="number">-21</span><span class="number">-1812960810</span><span class="number">-2335050734</span><span class="number">-3517558805</span><span class="number">-1178</span> 受托人SID</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>这个是扩展权限的，相较于通用权限，对某个属性的权限，以及扩展权限这两种权限的话，</p>
+<p>我们可以看到主要是多了个GUID(00299570-246d-11d0-a768-00aa006e0529),我们查下这个GUID(00299570-246d-11d0-a768-00aa006e0529)是强制更改密码，因此这个权限是扩展权限，强制更改密码。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01db86aed6c6e38ba2.png"></p>
+<p>对于某个具体属性的权限或者扩展权限，是哪个属性或者是哪个扩展权限，体现在对象类型里面，类型是GUID。</p>
+<p>对于扩展权限，都存储在<code>CN=Extended-Rights,CN=Configuration,DC=test,DC=local</code>里面,具体在rightsGuid这个属性里面，是字符串属性</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01c34832e335445a4c.png"></p>
+<p>如果我们已知GUID查询扩展权限的名字，可以通过这样查询</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">adfind -b <span class="string">&quot;CN=Extended-Rights,CN=Configuration,DC=test,DC=local&quot;</span> -f <span class="string">&quot;rightsGuid=00299570-246d-11d0-a768-00aa006e0529&quot;</span> name</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt013c3c867bdddfb820.png"></p>
+<ol start="3">
+<li>对某个属性的权限<br>对哪个属性的权限，也是用GUID 体现出来的，之前我们说过，所有属性的都存储在结构分区里面，可以以此作为查询</li>
+</ol>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01e8faef680788e11c.png"></p>
+<p>如果我们已知GUID要查询属性的名字，可以通过这样查询</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">adfind -schema -f <span class="string">&quot;schemaIDGUID=&#123;&#123;GUID:BF9679C0-0DE6-11D0-A285-00AA003049E2&#125;&#125;&quot;</span> -binenc  name</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt017a20487abbaa854b.png"></p>
+<p>但是SDDL的可阅读性实在太差了，Adfind 可以更方便阅读一点。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">AdFind.exe -b <span class="string">&quot;CN=PC-JACK-0DAY,CN=Computers,DC=0day,DC=org&quot;</span> nTSecurityDescriptor  -sddl</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01235283dc9465930e.png"></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">AdFind.exe -b <span class="string">&quot;CN=PC-JACK-0DAY,CN=Computers,DC=0day,DC=org&quot;</span> nTSecurityDescriptor  -sddl+++(+阅读，越容易阅读，最高三个+)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b2f26bb610c5538b.png"></p>
+<h3 id="利用adfind-过滤-ACL"><a href="#利用adfind-过滤-ACL" class="headerlink" title="利用adfind 过滤 ACL"></a>利用adfind 过滤 ACL</h3><p>如果想用adfind 过滤ACL的话，我们可以使用<code>-sddlfilter</code>,语法如下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">-sddlfilter ;;;;;</span><br></pre></td></tr></table></figure>
+
+<p>后面跟的参数对应的是ace条目相应的参数，值得注意的是，过滤的格式跟输出的格式要保持一致。</p>
+<p>如果-rawsddl ，最后一个参数是sid，这个时候用-sddlfilter进行过滤，最后一个参数就要用sid的形式。</p>
+<p>如果是-sddl+++，最后一个参数已经解析后账号名，这个时候用-sddlfilter进行过滤，最后一个参数就要用账号名的形式。</p>
+<p>下面举几个例子</p>
+<ol>
+<li>查找某个对象在域内的ACL权限</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">AdFind.exe -s subtree -b <span class="string">&quot;DC=test,DC=local&quot;</span> nTSecurityDescriptor   -sddl+++   -sddlfilter ;;;;;<span class="string">&quot;TEST\DC2016$&quot;</span>   -recmute</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01820587bbe037011c.png"></p>
+<ol start="2">
+<li>查找更改一个对象的马上到！S-AllowedToActOnBehalfOfOtherIdentity的权限</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">AdFind.exe -s subtree -b <span class="string">&quot;DC=test,DC=local&quot;</span> nTSecurityDescriptor   -sddl++   -sddlfilter ;;;<span class="string">&quot;msDS-AllowedToActOnBehalfOfOtherIdentity&quot;</span>;;  -recmute</span><br></pre></td></tr></table></figure>
+
+<p>AdFind.exe -s subtree -b “DC&#x3D;test,DC&#x3D;local” nTSecurityDescriptor   -sddl++   -sddlfilter ;;;”msDS-AllowedToActOnBehalfOfOtherIdentity”;;  -recmute</p>
+<ol start="3">
+<li>查找域内具备dcync 权限的用户</li>
+</ol>
+<p>对域对象只需要具备一下这两个权限，就有dcsync的权限。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27;DS-Replication-Get-Changes&#x27;</span>     = <span class="number">1131f</span>6aa<span class="number">-9</span>c07<span class="number">-11</span>d1-f79f<span class="number">-00</span>c04fc2dcd2</span><br><span class="line"><span class="string">&#x27;DS-Replication-Get-Changes-All&#x27;</span> = <span class="number">1131f</span>6ad<span class="number">-9</span>c07<span class="number">-11</span>d1-f79f<span class="number">-00</span>c04fc2dcd2</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt013783aa074686a3cf.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01783c2e12d6384581.png"></p>
+<p>开始进行搜索</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt011c3a109eabb651d5.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt015d193bee48b235f1.png"></p>
+<h2 id="域权限下"><a href="#域权限下" class="headerlink" title="域权限下"></a>域权限下</h2><h3 id="前言-12"><a href="#前言-12" class="headerlink" title="前言"></a>前言</h3><p>这一块主要有SeEnableDelegationPrivilege特权，一些高危ACL以及AdminSDHolder的介绍，可用于域内的ACL路径攻击以及留作后门。</p>
+<h3 id="特权"><a href="#特权" class="headerlink" title="特权"></a>特权</h3><p>在上一篇windows 访问控制模型的时候，有讲到过，A访问B,首先判断安全对象B是不是需要特权才能访问，如果需要特权，则查看A的Access Token看有没有那个特权。。</p>
+<p>如果我们需要赋予域用户特权一般都是通过组策略下发。比如说默认情况底下的<code>Default Domain Controllers Policy(GUID=&#123;6AC1786C-016F-11D2-945F-00C04FB984F9&#125;)</code>这条组策略会把<code>SeEnableDelegationPrivilege</code>这个特权赋予<code>Administrators</code></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt016923bca2594cd1e9.png"></p>
+<p>而查询一个用户具备的特权，可以用<code>whoami /priv</code>来查看</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt019f8d709741d32a0f.png"></p>
+<p>然后这里着重介绍一个特权<code>SeEnableDelegationPrivilege</code>,其实特权这个东西不止是域，在整个windows安全体系里面都很重要，有兴趣可以深入研究下。</p>
+<h4 id="SeEnableDelegationPrivilege"><a href="#SeEnableDelegationPrivilege" class="headerlink" title="SeEnableDelegationPrivilege"></a>SeEnableDelegationPrivilege</h4><p>在之前的章节里面，我们有详细介绍了下非约束委派以及约束委派。在之前的文章里面的利用思路一般都是找到域内的非约束委派用户或者约束委派用户，然后加以利用，因为，默认情况底下，在域内只有SeEnableDelegationPrivilege权限的用户才能设置委派。而这个权限默认域内的Administrators组的用户才能拥有，所以我们一般都是使用SeEnableDelegationPrivilege这个权限来留后门。</p>
+<p>![](<a href="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt016923bca2594cd1e9">https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt016923bca2594cd1e9</a> (1).png)</p>
+<p>我们赋予<code>kangkang SeEnableDelegationPrivilege</code>特权(这一步需要通过组策略来实现，而且需要域管权限)</p>
+<p>可以通过图形化的组策略管理编辑器进行编辑</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0102da87e98bfe2836.png"></p>
+<p>这一步会同步到<code>C:\Windows\SYSVOL\sysvol\test.local\Policies\&#123;6AC1786C-016F-11D2-945F-00C04fB984F9&#125;\MACHINE\Microsoft\Windows NT\SecEdit</code>的GptTmpl.inf里面去，所以这里我们也可以直接编辑GptTmpl.inf，将kangkang的sid 添加进去。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0116376eb6600739f5.png"></p>
+<p>kangkang这个用户就拥有SeEnableDelegationPrivilege特权了(这一步有个地方要注意，由于是通过组策略的方法，不会立刻更新，可以通过gpupdate &#x2F;force 手动更新)。</p>
+<p>接下来我们使用kangkang这个用户来设置约束委派。</p>
+<p>前提条件是</p>
+<ul>
+<li>kangkang拥有<code>SeEnableDelegationPrivilege</code>特权</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d7ad3ed58dcaaa17.png"></p>
+<ul>
+<li>以及kangkang 对自己有GenericAll &#x2F; GenericWrite权限(这个默认是没有的)</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt013c46cbd652d1fe23.png"></p>
+<p>开始利用</p>
+<ul>
+<li>给kangkang 设置spn，因为只有拥有spn的用户才能设置委派(所以在一些地方，包括我之前的文章会表述为只有服务用户和机器用户才能设置委派)</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt019672830ff087b3af.png"></p>
+<ul>
+<li>修改kangkang的userAccountControl,加上TRUSTED_TO_AUTHENTICATE_FOR_DELEGATION</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01c2a2a13e3431f319.png"></p>
+<ul>
+<li>修改kangkang的msDS-AllowedToDelegateTo</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01bb154dcedff5510c.png"></p>
+<p>这样就配置了从kangkang 到<code>dc2016.test.local</code>的约束(cifs)委派</p>
+<p>然后发起s4u2self 和s4u2proxy，模拟administrator 访问dc2016.test.local</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d36ba73a4b86255c.png"></p>
+<h3 id="ACL"><a href="#ACL" class="headerlink" title="ACL"></a>ACL</h3><h4 id="一些比较有攻击价值的ACL权限介绍"><a href="#一些比较有攻击价值的ACL权限介绍" class="headerlink" title="一些比较有攻击价值的ACL权限介绍"></a>一些比较有攻击价值的ACL权限介绍</h4><p>下面介绍一些比较有实战价值的权限，可以用以在域渗透的时候寻找攻击路径或者用于充当后门。</p>
+<ol>
+<li>对某些属性的WriteProperty ，有以下属性</li>
+</ol>
+<ul>
+<li>member(bf9679c0-0de6-11d0-a285-00aa003049e2)</li>
+<li>servicePrincipalName(28630EBB-41D5-11D1-A9C1-0000F80367C1)</li>
+<li>GPC-File-Sys-Path(f30e3bc1-9ff0-11d1-b603-0000f80367c1)</li>
+</ul>
+<ol start="2">
+<li>扩展权限有</li>
+</ol>
+<ul>
+<li><p><code>User-Force-Change-Password(0299570-246d-11d0-a768-00aa006e0529)</code><br>可以在不知道当前目标用户的密码的情况下更改目标用户的密码</p>
+</li>
+<li><p><code>DS-Replication-Get-Changes(1131f6aa-9c07-11d1-f79f-00c04fc2dcd2)</code> 和 <code>DS-Replication-Get-Changes-All(1131f6ad-9c07-11d1-f79f-00c04fc2dcd2)</code><br>对域对象具有这两个扩展权限的用户具备dcsync 权限</p>
+</li>
+</ul>
+<ol start="3">
+<li>通用权限有</li>
+</ol>
+<ul>
+<li>WriteDacl</li>
+<li>AllExtendedRights</li>
+<li>WriteOwner</li>
+<li>GenericWrite</li>
+<li>GenericAll</li>
+<li>Full Control</li>
+</ul>
+<p>下面逐个演示利用方式</p>
+<h4 id="AddMembers"><a href="#AddMembers" class="headerlink" title="AddMembers"></a>AddMembers</h4><p>可以将任意用户，组或计算机添加到目标组。</p>
+<p>如果一个用户对一个组有<code>AddMembers</code>权限，那么这个用户可以讲任何用户加入这个组，从而具备这个组的权限。</p>
+<p>比如说kangkang这个用户具备对Domain Admin这个组的<code>AddMembers</code>权限，其实也就是对member(bf9679c0-0de6-11d0-a285-00aa003049e2) 这个属性的写权限。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01396ce9df0a033e32.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f563227b0cdc3f82.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01524773358358e06c.png"></p>
+<p>通过admod 将任意用户(这里是kangkang)加进Domain Admin</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">adfind -users -rb CN=kangkang -dsq|admod -users -rb CN=<span class="string">&quot;Domain Admins&quot;</span> -stdinadd member</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f082ac7434df1ef3.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ec881992cd46144a.png"></p>
+<h4 id="servicePrincipalName-28630EBB-41D5-11D1-A9C1-0000F80367C1"><a href="#servicePrincipalName-28630EBB-41D5-11D1-A9C1-0000F80367C1" class="headerlink" title="servicePrincipalName(28630EBB-41D5-11D1-A9C1-0000F80367C1)"></a>servicePrincipalName(28630EBB-41D5-11D1-A9C1-0000F80367C1)</h4><p>如果对一个对象有写入spn的权限，那么就可以对这个对象进行kerberosting了，如果密码强度不强的话，有机会获取到密码。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt013148e2dda10cec6e.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0159a1c8ffeda51224.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt011e4510fd1f6596c9.png"></p>
+<p>有权限，可以设置spn</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01a3ac6723857c3446.png"></p>
+<p>查看spn</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01710d8bd30669d01d.png"></p>
+<p>kerberoasting</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt014fc208e692a0e20e.png"></p>
+<h4 id="GPC-File-Sys-Path-f30e3bc1-9ff0-11d1-b603-0000f80367c1"><a href="#GPC-File-Sys-Path-f30e3bc1-9ff0-11d1-b603-0000f80367c1" class="headerlink" title="GPC-File-Sys-Path(f30e3bc1-9ff0-11d1-b603-0000f80367c1)"></a>GPC-File-Sys-Path(f30e3bc1-9ff0-11d1-b603-0000f80367c1)</h4><p>这个是一个跟组策略有关的属性，关于组策略。这里我们关心的是GPC-File-Sys-Path这个属性，这个属性讲GPO与GPT链接起来，GPT是组策略具体的策略配置信息，其位于域控制器的SYSVOL共享目录下，也就是说，如果我们能够控制GPC-File-Sys-Path的话，可以将ad活动目录里面的gpo指向我们自定义的GPT，而GPT里面包含的是组策略具体的策略配置信息，也就是说我们可以修改组策略配置信息的内容。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0171b2c87a01cb123a.png"></p>
+<p>关于GPO,GPT的相关细节，将在下一块里面详细讲。因此我们将漏洞利用留到下一篇文章，这个往往能用来充当后门。</p>
+<h4 id="User-Force-Change-Password-0299570-246d-11d0-a768-00aa006e0529"><a href="#User-Force-Change-Password-0299570-246d-11d0-a768-00aa006e0529" class="headerlink" title="User-Force-Change-Password(0299570-246d-11d0-a768-00aa006e0529)"></a>User-Force-Change-Password(0299570-246d-11d0-a768-00aa006e0529)</h4><p>可以在不知道当前目标用户的密码的情况下更改目标用户的密码。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt012fe3dea2c63d9778.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01005e81a253323a9a.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ce87cc64bf5829c0.png"></p>
+<p>我们可以通过admod 进行强制更改密码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">admod  -b CN=Administrator,CN=Users,DC=test,DC=local unicodepwd::<span class="number">123</span>!@<span class="meta">#qazwsx -optenc</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ef13d22aad472aac.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0195ee0916fed322ee.png"></p>
+<h4 id="Dcsync"><a href="#Dcsync" class="headerlink" title="Dcsync"></a>Dcsync</h4><p>之前我们已经提过，对域对象只需要具备一下这两个权限，就有dcsync的权限</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27;DS-Replication-Get-Changes&#x27;</span>     = <span class="number">1131f</span>6aa<span class="number">-9</span>c07<span class="number">-11</span>d1-f79f<span class="number">-00</span>c04fc2dcd2</span><br><span class="line"><span class="string">&#x27;DS-Replication-Get-Changes-All&#x27;</span> = <span class="number">1131f</span>6ad<span class="number">-9</span>c07<span class="number">-11</span>d1-f79f<span class="number">-00</span>c04fc2dcd2</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0197938b0a61ad5c7d.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt016def116a770e5425.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01687c0a21f8fd5aea.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b9e5edbdc175f56f.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f3c86113dee22948.png"></p>
+<h4 id="WriteDACL"><a href="#WriteDACL" class="headerlink" title="WriteDACL"></a>WriteDACL</h4><p>将新ACE写入目标对象的DACL的功能。例如，攻击者可以向目标对象DACL写入新的ACE，从而使攻击者可以“完全控制”目标对象。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01019ab83a010b24d1.png"></p>
+<p>这里我们使用<a href="https://docs.microsoft.com/en-us/sysinternals/downloads/adexplorer">ADExplorer</a>,给kangkang钩上复制目录更改，复制目录更改所有项 两个权限。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt013798f7cbd944104a.png"></p>
+<p>再来查一下</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt013d71e39fb5292466.png"></p>
+<p>此时kangkang 就具备了dcync的权限了。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt016f14e947fe8c1d9b.png"></p>
+<h4 id="AllExtendedRights"><a href="#AllExtendedRights" class="headerlink" title="AllExtendedRights"></a>AllExtendedRights</h4><p>顾名思义，所有扩展权限。比如，User-Force-Change-Password权限。</p>
+<h4 id="WriteOwner"><a href="#WriteOwner" class="headerlink" title="WriteOwner"></a>WriteOwner</h4><p>这个权限这个修改Owner为自己。</p>
+<p>而Owner 默认拥有WriteDacl 和 RIGHT_READ_CONTROL权限。因此我们就可以利用WriteDacl的利用方式</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01cf221641146a5687.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b6a37300768157c4.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0191ac668b308318fa.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0167f31975ce60a861.png"></p>
+<p>Kankang 称为所有者之后，其实也就具备了WriteDacl的权限了。这里我给kangkang 自己增加了修改密码的权限，其实利用思路的可以自己扩展。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01abf9d1fb02f3d8fb.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01d8d46935d54c234d.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01a9b68c0061a73d92.png"></p>
+<h4 id="GenericWrite"><a href="#GenericWrite" class="headerlink" title="GenericWrite"></a>GenericWrite</h4><p>可以修改所有参数，因此包括对某些属性的WriteProperty，比如member。</p>
+<h4 id="GenericAll"><a href="#GenericAll" class="headerlink" title="GenericAll"></a>GenericAll</h4><p>这包括riteDacl和WriteOwner，WRITE_PROPERTY等权限。随便找一个利用就行了。</p>
+<h4 id="Full-Control"><a href="#Full-Control" class="headerlink" title="Full Control"></a>Full Control</h4><p>这个权限就具备以上所有的权限，随便挑一个特殊权限的攻击方式进行攻击就行了。</p>
+<h4 id="AdminSDHolder"><a href="#AdminSDHolder" class="headerlink" title="AdminSDHolder"></a>AdminSDHolder</h4><p>AdminSDHolder是位于Active Directory中的系统分区（CN&#x3D;AdminSDHolder,CN&#x3D;System,DC&#x3D;test,DC&#x3D;loca）中的一个对象。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01337533df67776a11.png"></p>
+<p>这个的作用就是，他会作为域内某些特权组的安全模版。所谓安全模版，就是说有一个进程(SDProp),每隔60分钟运行一次，将这个对象的ACL复制到某些特权组成员的对象的ACL里面去。 这些特权组和用户默认有 · Account Operators · Administrator · Administrators · Backup Operators · Domain Admins · Domain Controllers · Enterprise Admins · Krbtgt · Print Operators · Read-only Domain Controllers · Replicator · Schema Admins · Server Operators</p>
+<p>属性adminCount在Active Directory中标记特权组和用户，对于特权组和用户，该属性将设置为1。通过查看adminCount设置为1的所有对象，可以找到所有的特权组和用户。 但值得注意的是。一旦用户从特权组中删除，他们仍将adminCount值保持为1，但Active Directory不再将其视为受保护的对象。因此通过admincount&#x3D;1匹配到的所有对象，不一定都是特权组</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01f683e8ff5adf0e05.png"></p>
+<p>因为AdminSDHolder对象的这个作用，因此我们常常用AdminSDHolder来做后门。</p>
+<p>我们给AdminSDHolder对象新增一条ACE。kangkang的完全控制</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b3a70c4f30ebb112.png"></p>
+<p>由于这个ACL过个60分钟会同步到特权组和用户，这个特权组和用户包括域管，所以其实kangkang对域管已经有完全控制的权限了，达到了后门的目的。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01a6fd6fd5ad4b470c.png"></p>
+<p>最后还有一点，默认这个时间是60分钟是可以更改的，通过更改注册表项</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">HKLM\SYSTEM\CurrentControlSet\Services\NTDS\Parameters\AdminSDProtectFrequency</span><br></pre></td></tr></table></figure>
+
+<p>这个项目默认是没有的，也就是取默认值为60分钟。没有的话，我们可以新增，这里我们设置为1分钟(在生产环境中，不宜太频繁)。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01877ca8ff31bfee99.png"></p>
+<h2 id="组策略"><a href="#组策略" class="headerlink" title="组策略"></a>组策略</h2><h3 id="前言-13"><a href="#前言-13" class="headerlink" title="前言"></a>前言</h3><p>就讲一些组策略，相关的东西，也是最后一节。</p>
+<h3 id="组策略基本介绍"><a href="#组策略基本介绍" class="headerlink" title="组策略基本介绍"></a>组策略基本介绍</h3><p>组策略可以控制用户帐户和计算机帐户的工作环境。他提供了操作系统、应用程序和活动目录中用户设置的集中化管理和配置。有本机组策略和域的组策略。本机组策略用于计算机管理员统一管理本机以及所有用户，域内的组策略用于域管统一管理域内的所有计算机以及域用户。 在本文中侧重点讲的是域内的组策略。</p>
+<p>打开组策略管理(gpms.msc)，可以看到在域林里面有一条条的组策略。如下图，我们可以看到<code>Default Domain Policy、Default Domain Controller Policy</code>、财务桌面壁纸三条组策略。其中前两条是默认的组策略，财务桌面壁纸那条组策略是我自己加进去。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0174e370a706263a77.png"></p>
+<p>对于组策略，我们一般关心两点。</p>
+<ul>
+<li>这条组策略链接到哪里。</li>
+<li>这条组策略的内容是啥。</li>
+</ul>
+<p>以Default Domain Policy为例。</p>
+<h4 id="组策略链接"><a href="#组策略链接" class="headerlink" title="组策略链接"></a>组策略链接</h4><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt014e7e92e953b0139a.png"></p>
+<p>在右边的作用域里面，我们可以看到他链接到test.local整个域，也就是说在test.local域内的所有计算机，用户都会受到这条组策略的影响。链接的位置可以是站点，域，以及OU(特别注意，这里没有组，只有OU，至于为啥，可以返回去看组和OU的区别)。又比如说财务桌面壁纸这条组策略。他就链接到财务这个OU。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01a62772b02471bfff.png"></p>
+<p>加入财务这个OU的所有计算机以及用户会受到影响。</p>
+<h4 id="组策略内容"><a href="#组策略内容" class="headerlink" title="组策略内容"></a>组策略内容</h4><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01a0593462f7373af7.png"></p>
+<p>我们右键保存报告，可以将组策略的内容导出为htlm。对于<code>Default Domain Policy</code>这条组策略</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0195cb773145d5bf1a.png"></p>
+<p>我们可以看到他配置的一些内容，设置密码最长期限为42天，最短密码长度为7个字符等。如果我们想配置这条组策略的内容，在组策略条目上右键编辑，我们就可以打开组策略编辑器。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt011a50860410d50e22.png"></p>
+<p>我们可以看到左边分为计算机配置以及用户配置。在里面的配置分别作用于计算机和用户。</p>
+<p>在配置底下又分为策略以及首选项。首选项是Windows Server 2008发布后用来对GPO中的组策略提供额外的功能。策略和首选项的不同之处就在于强制性。策略是受管理的、强制实施的。而组策略首选项则是不受管理的、非强制性的。</p>
+<p>对于很多系统设置来说，管理员既可以通过策略设置来实现，也可以通过策略首选项来实现，二者有相当一部分的重叠。</p>
+<p>大家自已自己每个条目点一点，看看组策略具体能干嘛，在后面，我们会罗列一些渗透中用于横向或者后门的条目。</p>
+<h4 id="组策略更新"><a href="#组策略更新" class="headerlink" title="组策略更新"></a>组策略更新</h4><p>默认情况下，客户端更新组策略的方式主要有</p>
+<ol>
+<li>后台轮询，查看sysvol 里面GPT.ini，如果版本高于本地保存的组策略版本，客户端将会更新本地的组策略。轮询的时间是，默认情况下，计算机组策略会在后台每隔 90 分钟更新一次，并将时间作 0 到 30 分钟的随机调整。域控制器上的组策略会每隔 5 分钟更新一次。</li>
+<li>计算机开机，用户登录时，查看sysvol 里面GPT.ini，如果版本高于本地保存的组策略版本，客户端将会更新本地的组策略。</li>
+<li>客户端强制更新，执行<code>gupdate /force</code>。<br>域控强制客户端更新，执行 <code>Invoke-GPUpdate -Computer &quot;TEST\win10&quot; -Target &quot;User&quot;</code><br>如果域控制器强制客户端刷新组策略，那么不会比较域共享目录中组策略的版本</li>
+</ol>
+<h3 id="组策略高级介绍"><a href="#组策略高级介绍" class="headerlink" title="组策略高级介绍"></a>组策略高级介绍</h3><h4 id="组策略存储"><a href="#组策略存储" class="headerlink" title="组策略存储"></a>组策略存储</h4><p>每条组策略，可以看做是存储在域级别的一个虚拟对象。我们叫做GPO，每个GPO有唯一标志。用来标识每条组策略(或者说每个GPO)</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01028d34505b4f8aeb.png"></p>
+<p>那GPO 在域内的怎么存储的，他分为两个部分。</p>
+<ul>
+<li><p>GPC</p>
+</li>
+<li><p>GPT<br>GPC 位于LDAP中，CN&#x3D;Policies,CN&#x3D;System,<code>&lt;BaseDn&gt;</code>底下，每个条目对应一个GPC。</p>
+</li>
+</ul>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt010664e0db3a670721.png"></p>
+<p>其中包含GPO属性，例如版本信息，GPO状态和其他组件设置</p>
+<p>GPC 里面的属性gPCFileSysPath链接到GPT里面。GPT 是是一个文件系统文件夹，其中包含由.adm文件，安全设置，脚本文件以及有关可用于安装的应用程序的信息指定的策略数据。GPT位于域\Policies子文件夹中的SysVol中。基本上组策略的配制信息都位于GPT里面。</p>
+<p>以Default Domain Policy为例。他对应的GPC是<code>CN=&#123;31B2F340-016D-11D2-945F-00C04FB984F9&#125;,CN=Policies,CN=System,DC=test,DC=local,displayName</code>是Default Domain Policy。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0168e6ad81bb69b815.png"></p>
+<p>通过<code>gPCFileSysPath</code>关联到<code>GPT\\test.local\sysvol\test.local\Policies\&#123;31B2F340-016D-11D2-945F-00C04FB984F9&#125;</code>这个文件夹。GPT里面包含了一些策略数据。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01fa49a15910a9ae8f.png"></p>
+<p>那在LDAP 是如何体现链接呢。</p>
+<p>在域，站点，OU上面有个属性gPLink来标识链接到这里的组策略</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01cfa627ffcace0e6f.png"></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01263a55e2576071e8.png"></p>
+<p>在域，站点，OU上面同样还有个属性gPOptions来标识组策略是否会继承。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01ad6989fd83048519.png"></p>
+<p>举个例子，财务这个OU位于test.local 这个域内， Default Domain Policy 这条组策略链接到 test.local 这个域，所以默认情况底下，OU 会继承，这条组策略也同时会作用于财务这个OU，如果我在财务这边选择组织继承，就不会作用域财务这个OU，在LDAP上下的体现就是财务这个OU的属性</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt018e74b3c04bda44a7.png"></p>
+<h4 id="WMI筛选"><a href="#WMI筛选" class="headerlink" title="WMI筛选"></a>WMI筛选</h4><p>在之前，我们通过链接，将组策略链接到站点，工作组，OU。然后作用于链接对象的计算机，用户。但是如果有新的需求，我要作用于部分计算机，用户。比如说作用于所有WIN7 的电脑，这个时候微软提供了另外一项技术，叫WMI筛选。他复用了windows 本身的wmic 技术，每一个建立的WMI筛选器都可以连接到不同的现有组策略对象，一旦产生关联与应用之后，只要组织单位中的目标计算机符合WMI筛选器所设置的条件，那么这项组策略对象将会生效。</p>
+<p>举个例子，作用于所有大于Windows 8.1的电脑。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Select BuildNumber from Win32_OperatingSystem WHERE BuildNumber &gt;= <span class="number">9200</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="组策略相关的ACL"><a href="#组策略相关的ACL" class="headerlink" title="组策略相关的ACL"></a>组策略相关的ACL</h3><p>我们主要关心以下权限。有个需要注意的是，底下有一些权限是对某个属性的WriteProperty，但是 不管啥属性的WriteProperty，拥有(WriteDacl，WriteOwner，GenericWrite，GenericAll，Full Control)这 些权限，都包括了对某个属性的WriteProperty。为了方便阐述，底下就只写对某个属性的 WriteProperty。不列举出这些通用权限。建议大家对域内的ACL有一定了解，再来看这一小节</p>
+<h4 id="创建GPO的权限"><a href="#创建GPO的权限" class="headerlink" title="创建GPO的权限"></a>创建GPO的权限</h4><p>创建GPO的权限其实就是对CN&#x3D;Policies,CN&#x3D;System,<BaseDn>具备CreateChild的权限。</p>
+<p>我们可以用adfind 查询域内具备创建GPO的权限。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">adfind -b CN=Policies,CN=System,DC=test,DC=local -sddl+++ -s base -sdna -sddlfilter ;;<span class="string">&quot;CR CHILD&quot;</span>;;;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0105ee69579827ec3a.png"></p>
+<h4 id="GPO链接的权限"><a href="#GPO链接的权限" class="headerlink" title="GPO链接的权限"></a>GPO链接的权限</h4><p>之前我们说到在域，站点，OU上面有个属性gPLink来标识链接到这里的组策略。所以我们只要遍历所有的域，站点，OU 上面的所有ACE，如果有对gPLink属性或者gPOpptions属性的修改权限，就可以修改这个这个域&#x2F;站点&#x2F;OU链接的OU。这里使用adfind 来演示枚举，其他工具可以自行考证。</p>
+<ol>
+<li>枚举域内的所有站点，OU</li>
+<li>遍历站点</li>
+</ol>
+<p>在Configuration Naming Contex中的过滤规则是(objectCategory&#x3D;organizationalUnit)</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">adfind -b CN=Configuration,DC=test,DC=local -f <span class="string">&quot;(objectCategory=site)&quot;</span> -s subtree -dn</span><br><span class="line">adfind -sites -f <span class="string">&quot;(objectCategory=site)&quot;</span>  -dn</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>遍历OU<br>以adfind 以例</li>
+</ul>
+<p>过滤规则是<code>(objectCategory=organizationalUnit)</code></p>
+<ol>
+<li>遍历所有的域，站点，OU 上面的所有ACE。这里遍历财务这个OU</li>
+</ol>
+<p>对gLink或者gPOpptions的WriteProperty权限</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">adfind -b OU=财务,DC=test,DC=local -sddl+++ -s base  -sdna -sddlfilter ;;;gPlink;;</span><br><span class="line">adfind -b OU=财务,DC=test,DC=local -sddl+++ -s base -sdna -sddlfilter ;;;gPOpptions;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改现有的GPO的权限"><a href="#修改现有的GPO的权限" class="headerlink" title="修改现有的GPO的权限"></a>修改现有的GPO的权限</h4><p>修改现有GPO的权限。</p>
+<p>我们主要关心两个</p>
+<ul>
+<li><p>GPC 链接到GPT 的权限</p>
+</li>
+<li><p>修改GPT的权限</p>
+</li>
+</ul>
+<p>上面提到过，GPC 与 GPT之间的关联是GPC有个属性gPCFileSysPath关联到GPT。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0117af0d4de9d22c74.png"></p>
+<p>我们只需要查找对这个属性的WriteProperty就行。</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">adfind <span class="literal">-b</span> CN=Policies,CN=System,DC=test,DC=local nTSecurityDescriptor <span class="literal">-sddl</span>+++ <span class="literal">-s</span> subtree <span class="literal">-sdna</span> <span class="literal">-sddlfilter</span> ;;;gPCFileSysPath;; <span class="literal">-recmute</span></span><br></pre></td></tr></table></figure>
+
+<p>修改GPT的权限，由于GPT 是文件夹的形式，并不在LDAP里面，因此我们得使用一款能查看文件夹ACL的工具，这里我使用系统自带的icacls。</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">icacls \\test.local\sysvol\test.local\scripts\*</span><br><span class="line">icacls \\test.local\sysvol\test.local\policies\*</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt012dd026917fc7849e.png"></p>
+<p>我们看到小明对31B2F340-016D-11D2-945F-00C04FB984F9这条组策略的GPT 具有完全控制的权限，前面我们又说到基本上组策略的配制信息都位于GPT里面。因为可以修改GPT，就等同于可以随意修改组策略配置。</p>
+<p>可以使用adfind 查看这条组策略的名字</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">adfind -b CN=&#123;<span class="number">31B</span>2F340<span class="number">-016</span>D<span class="number">-11</span>D2<span class="number">-945F</span><span class="number">-00</span>C04FB984F9&#125;,CN=Policies,CN=System,DC=test,DC=local -s base displayName</span><br></pre></td></tr></table></figure>
+
+<h3 id="SYSVOL-漏洞-MS14-025"><a href="#SYSVOL-漏洞-MS14-025" class="headerlink" title="SYSVOL 漏洞(MS14-025)"></a>SYSVOL 漏洞(MS14-025)</h3><p>在早期的版本，某些组策略首选项可以存储加密过的密码，加密方式为AES 256，虽然目前AES 256很难被攻破，但是微软选择公开了私钥:)。</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt016b35d9da99ba64ad.png"></p>
+<p>主要存在于以下组策略首选项中</p>
+<ul>
+<li>驱动器映射</li>
+<li>本地用户和组</li>
+<li>计划任务</li>
+<li>服务</li>
+<li>数据源</li>
+</ul>
+<p>如果想复现这个漏洞，在SERVER 2008R2底下。以计划任务为例</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt013ef15da37c75419a.png"></p>
+<p>然后我们在普通成员机器上就可以通过查看GPT看到加密后的密码</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt018166a64e6bf7d1db.png"></p>
+<p>进行解密，解密脚本网上挺多的，大家可以自行查找</p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt018121ca992016d3e9.png"></p>
+<p>在实际渗透，我们可以通过以下命令来快速搜索</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">findstr /S cpassword \\test.org\sysvol\*.xml</span><br></pre></td></tr></table></figure>
+
+<h3 id="利用组策略扩展"><a href="#利用组策略扩展" class="headerlink" title="利用组策略扩展"></a>利用组策略扩展</h3><p>在拿到域控之后，有时候可能网络ACL 到达不了目标电脑，可以通过组策略进行横向。下面列举几种横向的方法。</p>
+<h4 id="在“软件安装”下推出-msi"><a href="#在“软件安装”下推出-msi" class="headerlink" title="在“软件安装”下推出.msi"></a>在“软件安装”下推出.msi</h4><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0147b28fa5d10ab2b2.png"></p>
+<h4 id="推出特定的启动脚本"><a href="#推出特定的启动脚本" class="headerlink" title="推出特定的启动脚本"></a>推出特定的启动脚本</h4><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0152d9efcbf147d953.png"></p>
+<h4 id="计划任务"><a href="#计划任务" class="headerlink" title="计划任务"></a>计划任务</h4><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt014183bb7782bc4ce4.png"></p>
+<h3 id="组策略后门的一些思路"><a href="#组策略后门的一些思路" class="headerlink" title="组策略后门的一些思路"></a>组策略后门的一些思路</h3><p>组策略很适合用于留后门，下面列举几种留后门的方式</p>
+<h4 id="将域帐户添加到本地管理员-x2F-RDP组"><a href="#将域帐户添加到本地管理员-x2F-RDP组" class="headerlink" title="将域帐户添加到本地管理员&#x2F; RDP组"></a>将域帐户添加到本地管理员&#x2F; RDP组</h4><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt0142daf4f6efd21bf6.png"></p>
+<h4 id="添加特权"><a href="#添加特权" class="headerlink" title="添加特权"></a>添加特权</h4><p>可以通过组策略给某个用户授予特权。 我们用的比较多的有<code>SeEnableDelegationPrivilege</code>特权，详情可以看这个地方 <code>SeEnableDelegationPrivilege</code></p>
+<h4 id="降级凭据保护"><a href="#降级凭据保护" class="headerlink" title="降级凭据保护"></a>降级凭据保护</h4><p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b040ac4a8ac4178f.png"></p>
+<h4 id="更改现有的安全策略以启用明文密码提取"><a href="#更改现有的安全策略以启用明文密码提取" class="headerlink" title="更改现有的安全策略以启用明文密码提取"></a>更改现有的安全策略以启用明文密码提取</h4><p>微软很早就更新了补丁来防止获取高版本windows的明文密码，但是可以修改注册表… 使 <code>\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest</code>下的<code>UseLogonCredentiald</code>的键值为<code>1</code></p>
+<p><img src="https://gallery-1304405887.cos.ap-nanjing.myqcloud.com/markdownt01b035a4eb6a185f46.png"></p>
+<h4 id="组策略ACL-后门"><a href="#组策略ACL-后门" class="headerlink" title="组策略ACL 后门"></a>组策略ACL 后门</h4><p>在我们之前组策略相关的ACL里面有提到三种特权</p>
+<ol>
+<li>创建GPO的权限</li>
+<li>GPO链接OU的权限。</li>
+<li>修改现有的GPO的权限</li>
+</ol>
+<p>除了在渗透中可以用于发现域内的安全隐患，也可以用于留后门，比如赋予某个用户创建GPO ，以及链接到域的权限，那么这个用户其实就等效于域管了。或者赋予某个用户拥有对某条GPO修改的权限，比如拥有修改<code>Default Domain Policy</code>的权限，那么这个用户就可以授予别的用户<code>SeEnableDelegationPrivilege</code>的权限，这个后门相对比较灵活，大家可以自己扩展。</p>
+<h1 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h1><p><strong><a href="https://3gstudent.github.io/3gstudent.github.io/%E6%B8%97%E9%80%8F%E6%8A%80%E5%B7%A7-%E5%88%A9%E7%94%A8PDF%E6%96%87%E4%BB%B6%E8%8E%B7%E5%8F%96Net-NTLM-hash">渗透技巧——利用PDF文件获取Net-NTLM hash</a></strong><br><strong><a href="https://3gstudent.github.io/3gstudent.github.io/%E6%B8%97%E9%80%8F%E6%8A%80%E5%B7%A7-%E5%88%A9%E7%94%A8%E5%9B%BE%E6%A0%87%E6%96%87%E4%BB%B6%E8%8E%B7%E5%8F%96%E8%BF%9E%E6%8E%A5%E6%96%87%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84NTLMv2-Hash/">利用图标文件获取连接文件服务器的NTLMv2 Hash</a><br><a href="https://blog.netspi.com/microsoft-word-unc-path-injection-image-linking/">Microsoft Word – UNC Path Injection with Image Linking</a><br><a href="https://wooyun.js.org/drops/%E5%9F%BA%E4%BA%8EWPAD%E7%9A%84%E4%B8%AD%E9%97%B4%E4%BA%BA%E6%94%BB%E5%87%BB.html">基于WPAD的中间人攻击</a><br><a href="https://blog.fox-it.com/2018/01/11/mitm6-compromising-ipv4-networks-via-ipv6/">mitm6 – compromising IPv4 networks via IPv6</a><br><a href="http://d1iv3.me/2018/12/08/LM-Hash%E3%80%81NTLM-Hash%E3%80%81Net-NTLMv1%E3%80%81Net-NTLMv2%E8%AF%A6%E8%A7%A3/">LM-Hash、NTLM-Hash、Net-NTLMv1、Net-NTLMv2详解</a><br><a href="http://davenport.sourceforge.net/ntlm.html">The NTLM Authentication Protocol and Security Support Provider</a><br><a href="https://shenaniganslabs.io/2019/01/28/Wagging-the-Dog.html">Wagging the Dog: Abusing Resource-Based Constrained Delegation to Attack Active Directory</a><br><a href="https://shenaniganslabs.io/2019/11/12/Ghost-Potato.html">Ghost Potato</a><br><a href="https://www.cnblogs.com/wilburxu/p/9174353.html">LDAP概念和原理介绍</a><br><a href="https://blog.51cto.com/407711169/1439623">LDAP基础概念</a><br><a href="https://docs.microsoft.com/en-us/windows/win32/ad/active-directory-domain-services">Active Directory Domain Services</a><br><a href="https://www.ibm.com/support/knowledgecenter/en/SSYJ99_8.5.0/admin-system/rbug_ldapfltrxprns.html">LDAP search filter expressions</a><br><a href="https://www.amazon.com/Active-Directory-Designing-Deploying-Running/dp/1449320023">Active Directory: Designing, Deploying, and Running Active Directory Fifth Edition</a><br><a href="https://ldapwiki.com/wiki/Filtering%20for%20Bit%20Fields">Filtering for Bit Fields</a><br><a href="https://docs.microsoft.com/zh-cn/windows/win32/adschema/rootdse">Active Directory Schema (AD Schema)</a><br><a href="https://blog.51cto.com/ilanni/557207">AD活动目录中什么是AGDLP策略</a><br><a href="https://social.technet.microsoft.com/wiki/contents/articles/5392.active-directory-ldap-syntax-filters.aspx">Active Directory: LDAP Syntax Filters</a><br><a href="http://www.harmj0y.net/blog/activedirectory/a-pentesters-guide-to-group-scoping/">A Pentester’s Guide to Group Scoping</a><br><a href="https://rcoil.me/2019/10/[%E5%9F%9F%E6%B8%97%E9%80%8F]%E5%9F%9F%E5%86%85%E4%BC%9A%E8%AF%9D%E6%94%B6%E9%9B%86/">域内会话收集</a><br><a href="https://xz.aliyun.com/t/1766">域渗透中查询域用户对域成员机器关系</a><br><a href="https://wald0.com/?p=112">BloodHound 1.3 – The ACL Attack Path Update</a><br><a href="https://www.0x01f.cn/post/windows/windows_access/">Windows访问控制</a><br><a href="https://www.specterops.io/assets/resources/an_ace_up_the_sleeve.pdf">an_ace_up_the_sleeve</a><br><a href="https://www.harmj0y.net/blog/activedirectory/the-most-dangerous-user-right-you-probably-have-never-heard-of/">The Most Dangerous User Right You (Probably) Have Never Heard Of</a><br><a href="https://3gstudent.github.io/3gstudent.github.io/%E5%9F%9F%E6%B8%97%E9%80%8F-%E5%88%A9%E7%94%A8GPO%E4%B8%AD%E7%9A%84%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1%E5%AE%9E%E7%8E%B0%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C/">域渗透——利用GPO中的计划任务实现远程执行</a><br><a href="https://3gstudent.github.io/3gstudent.github.io/%E5%9F%9F%E6%B8%97%E9%80%8F-%E5%88%A9%E7%94%A8SYSVOL%E8%BF%98%E5%8E%9F%E7%BB%84%E7%AD%96%E7%95%A5%E4%B8%AD%E4%BF%9D%E5%AD%98%E7%9A%84%E5%AF%86%E7%A0%81/">域渗透-利用SYSVOL还原组策略中保存的密码</a><br><a href="https://docs.microsoft.com/en-us/previous-versions/windows/desktop/policy/group-policy-start-page">组策略API</a><br><a href="https://github.com/FSecureLABS/SharpGPOAbuse">SharpGPOAbuse</a></strong></p>
+]]></content>
       <categories>
         <category>后渗透理论篇</category>
       </categories>
